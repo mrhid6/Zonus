@@ -5,7 +5,6 @@ import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -156,11 +155,6 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 		}
 
 		outputItem();
-
-		for (ItemStack a : ing) {
-			// if(a!=null)
-			// System.out.println(a.getItemName()+":"+a.stackSize);
-		}
 	}
 
 	public void decreaseRightinv( ItemStack[] items ) {
@@ -254,29 +248,6 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 			}
 		}
 
-		/*
-		 * int itemsLeft = 0;
-		 * 
-		 * for (ItemStack a : items) { if (a != null) { ItemStack var1 =
-		 * InventoryUtils.copyStack(a, a.stackSize); itemsLeft +=
-		 * var1.stackSize; } }
-		 * 
-		 * System.out.println(itemsLeft);
-		 * 
-		 * for (int i = 10; i < 19; i++) { if (inventory[i] != null) { ItemStack
-		 * var1 = InventoryUtils.copyStack(inventory[i],
-		 * inventory[i].stackSize);
-		 * 
-		 * for (int ia = 0; ia < 9; ia++) {
-		 * 
-		 * if (items[ia] != null) { ItemStack var2 =
-		 * InventoryUtils.copyStack(items[ia], items[ia].stackSize);
-		 * 
-		 * if (var1.itemID == var2.itemID) { int amount = 0; if (var1.stackSize
-		 * >= var2.stackSize) { amount = var2.stackSize;
-		 * System.out.println(var2.stackSize); itemsLeft -= amount; break; }
-		 * else { amount = var1.stackSize; } itemsLeft -= amount; } } } } }
-		 */
 		boolean res = true;
 		for (int i = 0; i < items.length; i++) {
 
@@ -362,7 +333,6 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 			return;
 		}
 
-		boolean update = false;
 		putActiveRecipeInOutput();
 		if (TickSinceUpdate % 2 == 0) {
 			if (!foundController()) {
@@ -370,11 +340,16 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 					getGrid().removeMachine(this);
 				}
 				gridindex = -1;
-				sendUpdatePacket(Side.CLIENT);
+				setUpdate(true);
 			}
 
 		}
 		instataCraft();
+		
+		if(isUpdate()){
+			sendUpdatePacket(Side.CLIENT);
+			this.setUpdate(false);
+		}
 
 		TickSinceUpdate++;
 	}

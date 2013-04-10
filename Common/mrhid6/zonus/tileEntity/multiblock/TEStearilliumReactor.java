@@ -7,6 +7,7 @@ import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TEMachineBase;
 import mrhid6.zonus.tileEntity.TETriniumCable;
@@ -82,8 +83,6 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 		checkForExplode();
 		if(TickSinceUpdate%2 == 0){
 
-
-
 			if(isCore()){
 				if (!foundController()) {
 					if (getGrid() != null) {
@@ -96,7 +95,7 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 				
 				
 				if(getGrid()!=null){
-					getGrid().addEnergy(0.337F*cablesConnected);
+					getGrid().addEnergy(Reference.POWER_GENERATION_RATE * cablesConnected);
 				}
 			}
 			

@@ -160,7 +160,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 					getGrid().removeMachine(this);
 				}
 				gridindex = -1;
-				sendUpdatePacket(Side.CLIENT);
+				setUpdate(true);
 			}
 		}
 
@@ -191,6 +191,11 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 				this.processCur += 1;
 				this.isActive = true;
 			}
+		}
+		
+		if(isUpdate()){
+			sendUpdatePacket(Side.CLIENT);
+			this.setUpdate(false);
 		}
 		onInventoryChanged();
 

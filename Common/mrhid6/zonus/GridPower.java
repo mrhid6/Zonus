@@ -36,7 +36,7 @@ public class GridPower {
 
 	private float Power = 0.0F;
 
-	private ArrayList<TEZoroChest> storageArray;
+	private HashMap<TEZoroChest, Integer> chestArray;
 
 	public GridPower() {
 
@@ -45,7 +45,7 @@ public class GridPower {
 		energyCubeArray = new HashMap<TEStearilliumEnergyCube, Integer>();
 		reactorArray = new HashMap<TEStearilliumReactor, Integer>();
 		converterArray = new HashMap<TETriniumConverter, Integer>();
-		storageArray = new ArrayList<TEZoroChest>();
+		chestArray = new HashMap<TEZoroChest, Integer>();
 
 		Power = 0;
 
@@ -111,11 +111,13 @@ public class GridPower {
 		}
 	}
 
-	public void addStorage( TEZoroChest te ) {
-		storageArray.remove(te);
-		storageArray.add(te);
-
-		te.gridindex = gridIndex;
+	public void addChest( TEZoroChest te ) {
+		
+		if(!hasChest(te)){
+			chestArray.put(te, 2);
+			te.gridindex = gridIndex;
+			te.setUpdate(true);
+		}
 	}
 
 	public boolean canDiscoverObj( TEPoweredBase te ) {
@@ -250,7 +252,7 @@ public class GridPower {
 	}
 
 	public void cleanup() {
-		storageArray.clear();
+		chestArray.clear();
 	}
 
 	public int countEnergyCubes() {
@@ -372,6 +374,15 @@ public class GridPower {
 	public boolean hasMachine( TEMachineBase te ) {
 		for (TEMachineBase te1 : machineArray.keySet()) {
 			if (te == te1 && machineArray.get(te1) == 2) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasChest( TEZoroChest te ) {
+		for (TEZoroChest te1 : chestArray.keySet()) {
+			if (te == te1 && chestArray.get(te1) == 2) {
 				return true;
 			}
 		}
@@ -518,7 +529,7 @@ public class GridPower {
 		machineArray.clear();
 		energyCubeArray.clear();
 		converterArray.clear();
-		storageArray.clear();
+		chestArray.clear();
 		energystorage = 0;
 		masterController = null;
 		reactorArray.clear();
@@ -533,11 +544,10 @@ public class GridPower {
 		}
 	}
 
-	public void removeStorage( TEPoweredBase te ) {
-		storageArray.remove(te);
-
-		for (TEZoroChest te1 : storageArray) {
-			te1.gridindex = -1;
+	public void removeChest( TEZoroChest te ) {
+		if(chestArray.containsKey(te) && chestArray.get(te).intValue() == 2){
+			chestArray.put(te, 1);
+			System.out.println("removed Chest!");
 		}
 	}
 

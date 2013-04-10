@@ -24,6 +24,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 	protected static int descPacketId;
 	private byte facing = 3;
+	private boolean update = false;
 	public float lidAngle;
 
 	public int numUsingPlayers;
@@ -38,7 +39,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	public void breakBlock() {
 
 		if (getGrid() != null) {
-			getGrid().removeStorage(this);
+			getGrid().removeChest(this);
 		}
 	}
 
@@ -314,16 +315,39 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		if (Utils.isClientWorld()) {
 			return;
 		}
-
-		boolean update = false;
-		if ((TickSinceUpdate % 10) == 0) {
-
+		
+		if ((TickSinceUpdate % 5) == 0) {
+			if (!foundController()) {
+				if (getGrid() != null) {
+					getGrid().removeChest(this);
+				}
+				gridindex = -1;
+				setUpdate(true);
+			}
 		}
 
-		if (update) {
+		if(isUpdate()){
 			sendUpdatePacket(Side.CLIENT);
+			this.setUpdate(false);
 		}
 
 		TickSinceUpdate++;
+	}
+	
+	public boolean isUpdate() {
+		return update;
+	}
+
+	public void setUpdate( boolean update ) {
+		this.update = update;
+	}
+	
+	public boolean foundController() {
+
+		if (getGrid() != null) {
+			return getGrid().hasChest(this) && getGrid().canDiscoverObj(this);
+		}
+
+		return false;
 	}
 }

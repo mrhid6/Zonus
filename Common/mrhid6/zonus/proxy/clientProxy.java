@@ -93,7 +93,7 @@ public class clientProxy extends commonProxy implements ITickHandler {
                         	shownMessage = true;
 
                             if (VersionControll.getResult() == 2) {
-                                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage("§eThe current version of Zonus is outdated. A newer version is available at "+VersionControll.updateLocation);
+                                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage("The current version of Zonus is outdated. A newer version is available at "+VersionControll.updateLocation);
                             }
                         }
                     }

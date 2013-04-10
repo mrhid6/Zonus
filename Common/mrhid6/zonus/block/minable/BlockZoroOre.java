@@ -11,6 +11,7 @@ public class BlockZoroOre extends BlockTexturedBase {
 	public BlockZoroOre( int id, String name ) {
 		super(id, name, name, true);
 		setHardness(5.0F);
+		this.setStepSound(soundStoneFootstep);
 	}
 
 	@Override

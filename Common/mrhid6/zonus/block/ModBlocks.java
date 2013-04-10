@@ -11,6 +11,7 @@ import mrhid6.zonus.block.fancy.HazelspringLeaves;
 import mrhid6.zonus.block.fancy.WinterbirchLeaves;
 import mrhid6.zonus.block.machine.BlockStearilliumCrafter;
 import mrhid6.zonus.block.machine.BlockStearilliumEnergyCube;
+import mrhid6.zonus.block.machine.BlockTriniumConverter;
 import mrhid6.zonus.block.machine.BlockTriniumMiner;
 import mrhid6.zonus.block.machine.BlockZoroChest;
 import mrhid6.zonus.block.machine.BlockZoroController;

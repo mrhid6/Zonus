@@ -1,6 +1,8 @@
 package mrhid6.zonus.block;
 
+import java.util.Random;
 import mrhid6.zonus.Zonus;
+import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TETriniumCable;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -36,5 +38,12 @@ public class BlockTriniumCable extends BlockCableBase {
 		icons[0] = iconRegister.registerIcon(Zonus.Modname + "triniumcableOff");
 		icons[1] = iconRegister.registerIcon(Zonus.Modname + "triniumcableOn");
 	}
+
+	@Override
+	public int idDropped( int par1, Random par2Random, int par3 ) {
+		return ModItems.triniumCable.itemID;
+	}
+	
+	
 
 }

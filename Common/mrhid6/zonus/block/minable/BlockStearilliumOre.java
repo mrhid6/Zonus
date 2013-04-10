@@ -13,6 +13,7 @@ public class BlockStearilliumOre extends BlockTexturedBase {
 	public BlockStearilliumOre( int id, String name ) {
 		super(id, name, name, true);
 		setHardness(7.0F);
+		this.setStepSound(soundStoneFootstep);
 	}
 
 	@Override

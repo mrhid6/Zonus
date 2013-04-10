@@ -11,6 +11,7 @@ public class BlockTriniumOre extends BlockTexturedBase {
 	public BlockTriniumOre( int id, String name ) {
 		super(id, name, name, true);
 		setHardness(8.0F);
+		this.setStepSound(soundStoneFootstep);
 	}
 
 	@Override

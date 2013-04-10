@@ -2,6 +2,7 @@ package mrhid6.zonus.tileEntity;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.gui.ContainerZoroChest;
@@ -12,9 +13,11 @@ import mrhid6.zonus.interfaces.IXorGridObj;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -39,6 +42,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	public void breakBlock() {
 
 		if (getGrid() != null) {
+			dropContent(0);
 			getGrid().removeChest(this);
 		}
 	}
@@ -315,7 +319,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		if (Utils.isClientWorld()) {
 			return;
 		}
-		
+
 		if ((TickSinceUpdate % 5) == 0) {
 			if (!foundController()) {
 				if (getGrid() != null) {
@@ -333,7 +337,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 		TickSinceUpdate++;
 	}
-	
+
 	public boolean isUpdate() {
 		return update;
 	}
@@ -341,7 +345,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	public void setUpdate( boolean update ) {
 		this.update = update;
 	}
-	
+
 	public boolean foundController() {
 
 		if (getGrid() != null) {

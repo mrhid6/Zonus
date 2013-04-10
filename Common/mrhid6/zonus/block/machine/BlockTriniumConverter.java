@@ -1,6 +1,7 @@
-package mrhid6.zonus.block;
+package mrhid6.zonus.block.machine;
 
 import mrhid6.zonus.Zonus;
+import mrhid6.zonus.block.BlockTexturedBase;
 import mrhid6.zonus.render.BRTriniumConverter;
 import mrhid6.zonus.tileEntity.TETriniumConverter;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -16,6 +17,8 @@ public class BlockTriniumConverter extends BlockTexturedBase {
 		super(id, texture, name, true);
 
 		this.setBlockBounds(0, 0, 0, 1F, 0.9F, 1F);
+		this.setResistance(2.0F);
+		this.setHardness(2.0F);
 	}
 
 	@Override

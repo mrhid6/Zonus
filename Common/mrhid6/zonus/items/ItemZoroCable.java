@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 public class ItemZoroCable extends ItemTexturedBase {
 
 	public ItemZoroCable( int id, int maxStackSize, String name ) {
-		super(id, 1, name);
+		super(id, 64, name);
 	}
 
 	

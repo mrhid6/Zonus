@@ -14,6 +14,7 @@ public abstract class BlockMachine extends BlockTexturedBase {
 
 	public BlockMachine( int id, String texture, String name, boolean craftable ) {
 		super(id, texture, name, craftable);
+		this.setStepSound(soundMetalFootstep);
 	}
 
 	@Override

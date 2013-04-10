@@ -18,8 +18,8 @@ public class BlockStearilliumCrafter extends BlockMachine {
 	public BlockStearilliumCrafter( int id, String textureName, String name, boolean craftable ) {
 		super(id, textureName, name, craftable);
 
-		this.setResistance(6.0F);
-		this.setHardness(6.0F);
+		this.setResistance(2.0F);
+		this.setHardness(2.0F);
 		icons = new Icon[4];
 	}
 

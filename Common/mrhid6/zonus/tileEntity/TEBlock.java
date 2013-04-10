@@ -1,5 +1,7 @@
 package mrhid6.zonus.tileEntity;
 
+import java.util.Random;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,43 @@ public abstract class TEBlock extends TEPoweredBase implements IInventory {
 
 	@Override
 	public void closeChest() {
+	}
+	
+	public void dropContent(int newSize)
+	{
+
+		Random random = new Random();
+		for (int l = newSize; l < getSizeInventory(); l++)
+		{
+			ItemStack itemstack = getStackInSlot(l);
+			if (itemstack == null)
+			{
+				continue;
+			}
+			float f = random.nextFloat() * 0.8F + 0.1F;
+			float f1 = random.nextFloat() * 0.8F + 0.1F;
+			float f2 = random.nextFloat() * 0.8F + 0.1F;
+			while (itemstack.stackSize > 0)
+			{
+				int i1 = random.nextInt(21) + 10;
+				if (i1 > itemstack.stackSize)
+				{
+					i1 = itemstack.stackSize;
+				}
+				itemstack.stackSize -= i1;
+				EntityItem entityitem = new EntityItem(worldObj, (float) xCoord + f, (float) yCoord + (newSize > 0 ? 1 : 0) + f1, (float) zCoord + f2,
+						new ItemStack(itemstack.itemID, i1, itemstack.getItemDamage()));
+				float f3 = 0.05F;
+				entityitem.motionX = (float) random.nextGaussian() * f3;
+				entityitem.motionY = (float) random.nextGaussian() * f3 + 0.2F;
+				entityitem.motionZ = (float) random.nextGaussian() * f3;
+				if (itemstack.hasTagCompound())
+				{
+					entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
+				}
+				worldObj.spawnEntityInWorld(entityitem);
+			}
+		}
 	}
 
 	@Override

@@ -21,8 +21,8 @@ public class BlockStearilliumEnergyCube extends BlockMachine {
 	public BlockStearilliumEnergyCube( int id, String name ) {
 		super(id, name, name, true);
 
-		this.setResistance(6.0F);
-		this.setHardness(6.0F);
+		this.setResistance(2.0F);
+		this.setHardness(2.0F);
 		icons = new Icon[2];
 	}
 

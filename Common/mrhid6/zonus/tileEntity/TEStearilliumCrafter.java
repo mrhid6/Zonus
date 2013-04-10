@@ -46,6 +46,7 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 	}
 
 	public void breakBlock() {
+		dropContent(10);
 		if (getGrid() != null) {
 			getGrid().removeMachine(this);
 		}

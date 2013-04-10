@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 public class ItemTriniumCable extends ItemTexturedBase {
 
 	public ItemTriniumCable( int id, int maxStackSize, String name ) {
-		super(id, 1, name);
+		super(id, 64, name);
 	}
 
 	

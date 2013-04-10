@@ -2,6 +2,7 @@ package mrhid6.zonus.tileEntity;
 
 import java.util.List;
 import mrhid6.zonus.Config;
+import mrhid6.zonus.InventoryUtils;
 import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
@@ -157,7 +158,10 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	}
 
 	private void mineStack( ItemStack stack ) {
-
+		
+		ItemStack added = addToNetworkedInventory(stack);
+		stack.stackSize -= added.stackSize;
+		
 		if (stack.stackSize > 0) {
 			float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 			float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
@@ -248,6 +252,94 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		data.setInteger("depth", depth);
 
 		data.setBoolean("donemining", doneMineing);
+	}
+	
+	private ItemStack addToNetworkedInventory(ItemStack stack) {
+		ItemStack added = InventoryUtils.copyStack(stack, stack.stackSize);
+		
+		if(getGrid()!=null){
+			
+			TEZoroChest chest = getGrid().getFirstChest();
+			if(chest!=null){
+				int injected = 0;
+	
+				int slot = -1;
+				while ((slot = getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
+					injected += addToSlot(slot, stack, injected, true, chest);
+				}
+	
+				slot = 0;
+				while ((slot = getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
+					injected += addToSlot(slot, stack, injected, true, chest);
+				}
+				chest.onInventoryChanged();
+	
+				added.stackSize=injected;
+			}
+		}
+
+		return added;
+	}
+	
+	protected int getEmptySlot(int startSlot, int endSlot, TEZoroChest chest) {
+		for (int i = startSlot; i < endSlot; i++)
+			if (chest.getStackInSlot(i) == null)
+				return i;
+
+		return -1;
+	}
+	
+	protected int getPartialSlot(ItemStack stack, int startSlot, int endSlot, TEZoroChest chest) {
+
+		for (int i = startSlot; i < endSlot; i++) {
+			if (chest.getStackInSlot(i) == null) {
+				continue;
+			}
+
+			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
+				continue;
+			}
+
+			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
+				continue;
+			}
+
+			return i;
+		}
+
+		return -1;
+	}
+	
+	protected int addToSlot(int slot, ItemStack stack, int injected, boolean doAdd, TEZoroChest chest) {
+		int available = stack.stackSize - injected;
+		int max = Math.min(stack.getMaxStackSize(), chest.getInventoryStackLimit());
+
+		ItemStack stackInSlot = chest.getStackInSlot(slot);
+		if (stackInSlot == null) {
+			int wanted = Math.min(available, max);
+			if (doAdd) {
+				stackInSlot = stack.copy();
+				stackInSlot.stackSize = wanted;
+				chest.setInventorySlotContents(slot, stackInSlot);
+			}
+			return wanted;
+		}
+
+		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack))
+			return 0;
+
+		int wanted = max - stackInSlot.stackSize;
+		if (wanted <= 0)
+			return 0;
+
+		if (wanted > available)
+			wanted = available;
+
+		if (doAdd) {
+			stackInSlot.stackSize += wanted;
+			chest.setInventorySlotContents(slot, stackInSlot);
+		}
+		return wanted;
 	}
 
 }

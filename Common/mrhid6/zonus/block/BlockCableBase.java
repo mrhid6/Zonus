@@ -20,8 +20,8 @@ public class BlockCableBase extends BlockTexturedBase {
 	public BlockCableBase( int id, String name, boolean craftable ) {
 		super(id, name, name, craftable);
 
-		this.setResistance(4.0F);
-		this.setHardness(4.0F);
+		this.setResistance(0.5F);
+		this.setHardness(0.5F);
 		this.setStepSound(soundClothFootstep);
 		icons = new Icon[2];
 

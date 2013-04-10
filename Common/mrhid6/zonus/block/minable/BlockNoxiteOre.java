@@ -13,7 +13,8 @@ public class BlockNoxiteOre extends BlockTexturedBase {
 
 	public BlockNoxiteOre( int id, String name ) {
 		super(id, name, name, true);
-		setHardness(6.0F);
+		setHardness(8.0F);
+		this.setStepSound(soundStoneFootstep);
 	}
 
 	@Override

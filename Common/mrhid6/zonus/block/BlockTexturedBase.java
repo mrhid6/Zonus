@@ -27,7 +27,7 @@ public abstract class BlockTexturedBase extends BlockContainer {
 		}
 		this.setHardness(89.3F);
 		this.setResistance(89.5F);
-		this.setStepSound(soundMetalFootstep);
+		this.setStepSound(soundStoneFootstep);
 		this.setUnlocalizedName(name);
 	}
 

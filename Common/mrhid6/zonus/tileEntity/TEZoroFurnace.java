@@ -8,6 +8,7 @@ import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
 import mrhid6.zonus.items.ModItems;
+import mrhid6.zonus.lib.Reference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
@@ -37,7 +38,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 	}
 
 	public void breakBlock() {
-
+		dropContent(0);
 		if (getGrid() != null) {
 			getGrid().removeMachine(this);
 		}
@@ -168,7 +169,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 			if (this.processCur < this.processEnd) {
 				this.processCur += 1;
 				if(getGrid()!=null){
-					getGrid().subtractPower(8.23F);
+					getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER);
 				}
 			}
 			if (canFinish()) {

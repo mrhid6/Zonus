@@ -3,7 +3,9 @@ package mrhid6.zonus;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.items.ModItems;
+import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.network.PacketHandler;
+import mrhid6.zonus.proxy.BuildcraftProxy;
 import mrhid6.zonus.proxy.commonProxy;
 import mrhid6.zonus.world.WorldGenBase;
 import net.minecraft.entity.Entity;
@@ -24,7 +26,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "zonus", name = "Zonus", version = Config.Version)
+@Mod(modid = "zonus", name = "Zonus", version = Config.Version, dependencies = "after:mod_BuildCraftCore;after:mod_BuildCraftEnergy;after:mod_BuildCraftFactory;after:mod_BuildCraftSilicon;after:mod_BuildCraftTransport;")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false, channels = { "Zonus" }, packetHandler = PacketHandler.class)
 public class Zonus {
 
@@ -81,5 +83,6 @@ public class Zonus {
 	public void preInit( FMLPreInitializationEvent event ) {
 		Config.init(event.getSuggestedConfigurationFile());
 		VersionControll.Execute();
+		Reference.useBuildCraft = BuildcraftProxy.isBuildCraftInstalled();
 	}
 }

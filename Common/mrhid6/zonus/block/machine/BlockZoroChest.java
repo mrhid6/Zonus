@@ -21,8 +21,8 @@ public class BlockZoroChest extends BlockMachine {
 	public BlockZoroChest( int id, String textureName, String name ) {
 		super(id, textureName, name, true);
 
-		this.setResistance(6.0F);
-		this.setHardness(6.0F);
+		this.setResistance(2.0F);
+		this.setHardness(2.0F);
 		// setBlockBounds(0.0625F, 0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
 	}
 
@@ -44,16 +44,11 @@ public class BlockZoroChest extends BlockMachine {
 	}
 
 	@Override
-	public Icon getBlockTexture( IBlockAccess par1IBlockAccess, int x, int y, int z, int blockSide ) {
-
-		return null;
-	}
-
 	@SideOnly(Side.CLIENT)
-	@Override
-	public Icon getBlockTextureFromSideAndMetadata( int i, int j ) {
-		return null;
+	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+		return blockIcon;
 	}
+
 
 	@Override
 	public int getRenderType() {
@@ -102,7 +97,7 @@ public class BlockZoroChest extends BlockMachine {
 
 	@Override
 	public void registerIcons( IconRegister iconRegister ) {
-
+		blockIcon = iconRegister.registerIcon(Zonus.Modname + "machine");
 	}
 
 	@Override

@@ -1,13 +1,17 @@
 package mrhid6.zonus.armour;
 
 import mrhid6.zonus.Config;
+import mrhid6.zonus.Utils;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.items.ModItems;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.IArmorTextureProvider;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -46,6 +50,20 @@ public class TriniumArmour extends ItemArmor implements IArmorTextureProvider {
 		case 3:
 			iconIndex = iconRegister.registerIcon(Zonus.Modname + "triniumboots");
 			break;
+		}
+	}
+
+	@ForgeSubscribe
+	public void onEntityLivingFallEvent(LivingFallEvent event)
+	{
+		System.out.println("fall event was called!");
+		if (Utils.isServerWorld() && event.entity instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer)event.entity;
+			ItemStack armor = player.inventory.armorInventory[0];
+
+			if ((armor != null) && (armor.itemID == this.itemID)) {
+				event.setCanceled(true);
+			}
 		}
 	}
 

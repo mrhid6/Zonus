@@ -17,4 +17,6 @@ public class ZonRecipes {
 		GameRegistry.addRecipe(new ItemStack(ModItems.zoroStaff, 1), new Object[] { "a  ", " b ", "  c", 'a', ModItems.zoroIngot, 'b', Item.stick, 'c', Block.cloth });
 
 	}
+	
+	
 }

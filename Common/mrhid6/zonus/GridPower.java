@@ -5,6 +5,7 @@ import java.util.HashMap;
 import mrhid6.zonus.network.PacketGrid;
 import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.tileEntity.TECableBase;
+import mrhid6.zonus.tileEntity.TEMachineBase;
 import mrhid6.zonus.tileEntity.TEPoweredBase;
 import mrhid6.zonus.tileEntity.TEStearilliumEnergyCube;
 import mrhid6.zonus.tileEntity.TETriniumConverter;
@@ -28,7 +29,7 @@ public class GridPower {
 	private int energystorage = 0;
 	public int gridIndex;
 
-	private ArrayList<TEPoweredBase> machineArray;
+	private HashMap<TEMachineBase, Integer> machineArray;
 	public TEZoroController masterController;
 
 	private float maxPower = 30000.0F;
@@ -40,7 +41,7 @@ public class GridPower {
 	public GridPower() {
 
 		cablesArray = new HashMap<TECableBase, Integer>();
-		machineArray = new ArrayList<TEPoweredBase>();
+		machineArray = new HashMap<TEMachineBase, Integer>();
 		energyCubeArray = new HashMap<TEStearilliumEnergyCube, Integer>();
 		reactorArray = new HashMap<TEStearilliumReactor, Integer>();
 		converterArray = new HashMap<TETriniumConverter, Integer>();
@@ -49,8 +50,6 @@ public class GridPower {
 		Power = 0;
 
 		gridIndex = GridManager.addGridToManager(this);
-
-		System.out.println(Utils.isClientWorld()+"new grid power!");
 	}
 
 	public void addCable( TECableBase te ) {
@@ -58,7 +57,7 @@ public class GridPower {
 			cablesArray.put(te, 2);
 			te.gridindex = gridIndex;
 			te.setUpdate(true);
-			System.out.println("Added Cable :"+te.toString());
+			//System.out.println("Added Cable :"+te.toString());
 		}
 	}
 
@@ -68,7 +67,7 @@ public class GridPower {
 			converterArray.put(te, 2);
 			te.gridindex = gridIndex;
 			te.setUpdate(true);
-			System.out.println("Added Converter :"+te.toString());
+			//System.out.println("Added Converter :"+te.toString());
 		}
 	}
 
@@ -78,7 +77,10 @@ public class GridPower {
 		if (Power > getMaxEnergy()) {
 			Power = getMaxEnergy();
 		}
-
+		
+		if(masterController!=null){
+			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
+		}
 	}
 
 	public void addEnergyCube( TEStearilliumEnergyCube te ) {
@@ -86,7 +88,7 @@ public class GridPower {
 		energystorage++;
 		te.gridindex = gridIndex;
 		te.setUpdate(true);
-		System.out.println("added cube");
+		//System.out.println("added cube");
 		WorkOutMaxPower();
 
 	}
@@ -95,14 +97,18 @@ public class GridPower {
 		reactorArray.put(te, 2);
 		te.gridindex = gridIndex;
 		te.setUpdate(true);
-		System.out.println("added reactor");
+		//System.out.println("added reactor");
 		
 	}
 
-	public void addMachine( TEPoweredBase te ) {
-		machineArray.remove(te);
-		machineArray.add(te);
-		cleanupneeded();
+	public void addMachine( TEMachineBase te ) {
+		
+		if(!hasMachine(te)){
+			machineArray.put(te, 2);
+			te.gridindex = gridIndex;
+			te.setUpdate(true);
+			//System.out.println("Added Machine :"+te.toString());
+		}
 	}
 
 	public void addStorage( TEZoroChest te ) {
@@ -244,11 +250,7 @@ public class GridPower {
 	}
 
 	public void cleanup() {
-		machineArray.clear();
 		storageArray.clear();
-	}
-
-	public void cleanupneeded() {
 	}
 
 	public int countEnergyCubes() {
@@ -311,10 +313,6 @@ public class GridPower {
 		return Power;
 	}
 
-	public ArrayList<TEPoweredBase> getMachines() {
-		return machineArray;
-	}
-
 	public float getMaxEnergy() {
 
 		return ClientMaxPower;
@@ -335,7 +333,7 @@ public class GridPower {
 		if (Utils.isClientWorld()) {
 			gridIndex = packet.payload.intPayload[0];
 			energystorage = packet.payload.intPayload[1];
-			setEnergyStored(packet.payload.floatPayload[0]);
+			//setEnergyStored(packet.payload.floatPayload[0]);
 			// ClientMaxPower = packet.payload.floatPayload[1];
 		}
 		WorkOutMaxPower();
@@ -371,9 +369,9 @@ public class GridPower {
 		return false;
 	}
 
-	public boolean hasMachine( TEPoweredBase te ) {
-		for (TEPoweredBase te1 : machineArray) {
-			if (te.equals(te1)) {
+	public boolean hasMachine( TEMachineBase te ) {
+		for (TEMachineBase te1 : machineArray.keySet()) {
+			if (te == te1 && machineArray.get(te1) == 2) {
 				return true;
 			}
 		}
@@ -464,6 +462,13 @@ public class GridPower {
 					((TEZoroController) te1).breakController();
 				}
 			}
+			
+			if (te1 instanceof TEMachineBase) {
+				TEMachineBase machine = (TEMachineBase) te1;
+				if (!hasMachine(machine) && machine.canInteractWith(te)) {
+					addMachine(machine);
+				}
+			}
 		}
 
 	}
@@ -518,12 +523,14 @@ public class GridPower {
 		masterController = null;
 		reactorArray.clear();
 
-		System.out.println("grid was removed!");
+		//System.out.println("grid was removed!");
 	}
 
-	public void removeMachine( TEPoweredBase te ) {
-		machineArray.remove(te);
-		cleanupneeded();
+	public void removeMachine( TEMachineBase te ) {
+		if(machineArray.containsKey(te) && machineArray.get(te).intValue() == 2){
+			machineArray.put(te, 1);
+			System.out.println("removed Machine!");
+		}
 	}
 
 	public void removeStorage( TEPoweredBase te ) {
@@ -532,21 +539,25 @@ public class GridPower {
 		for (TEZoroChest te1 : storageArray) {
 			te1.gridindex = -1;
 		}
-
-		cleanupneeded();
 	}
 
 	public void setController( TEZoroController te ) {
-		removeGrid();
+		//removeGrid();
 		masterController = te;
 		te.gridindex = gridIndex;
 	}
 
 	public void setEnergyStored( float power ) {
+		
+		System.out.println("set power-"+power);
 		Power = power;
 		
 		if (Power > this.getMaxEnergy()) {
 			Power = this.getMaxEnergy();
+		}
+		
+		if(masterController!=null){
+			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
 	}
 
@@ -560,6 +571,10 @@ public class GridPower {
 
 		if (Power < 0.0F) {
 			Power = 0.0F;
+		}
+		
+		if(masterController!=null){
+			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
 	}
 

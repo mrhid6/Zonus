@@ -32,6 +32,7 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 	public ItemStack[] processInv;
 
 	public boolean wasActive;
+	private boolean update = false;
 
 	public TEMachineBase() {
 
@@ -147,5 +148,13 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 		data.setShort("facing", facing);
 		data.setFloat("process.cur", processCur);
 		data.setFloat("process.end", processEnd);
+	}
+	
+	public boolean isUpdate() {
+		return update;
+	}
+
+	public void setUpdate( boolean update ) {
+		this.update = update;
 	}
 }

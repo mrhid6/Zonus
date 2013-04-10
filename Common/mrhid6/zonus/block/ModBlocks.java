@@ -39,6 +39,7 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.liquids.LiquidContainerData;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
@@ -79,13 +80,13 @@ public class ModBlocks {
 
 	public static void init() {
 
-		zoroCable = new BlockZoroCable(BlockIds.getID("zoroCable"), "zorocable", true);
+		zoroCable = new BlockZoroCable(BlockIds.getID("zoroCable"), "zorocable", false);
 		LanguageRegistry.addName(zoroCable, "Zoro Cable");
 		GameRegistry.registerBlock(zoroCable, zoroCable.getUnlocalizedName());
 
 		GameRegistry.registerTileEntity(TECableBase.class, "te" + zoroCable.getUnlocalizedName());
 
-		triniumCable = new BlockTriniumCable(BlockIds.getID("triniumCable"), "triniumcable", true);
+		triniumCable = new BlockTriniumCable(BlockIds.getID("triniumCable"), "triniumcable", false);
 		LanguageRegistry.addName(triniumCable, "Trinium Cable");
 		GameRegistry.registerBlock(triniumCable, triniumCable.getUnlocalizedName());
 
@@ -145,8 +146,6 @@ public class ModBlocks {
 		GameRegistry.registerBlock(stearilliumReactor, stearilliumReactor.getUnlocalizedName());
 		GameRegistry.registerTileEntity(TEStearilliumReactor.class, "te" + stearilliumReactor.getUnlocalizedName());
 
-		// GameRegistry.registerTileEntity(TEStearilliumEnergyCube.class, "te" +
-		// stearilliumEnergyBlock.getUnlocalizedName());
 
 		// fancy blocks
 
@@ -211,8 +210,8 @@ public class ModBlocks {
 		LanguageRegistry.addName(winterbirchLeaves, "Winter Birch Leaves");
 		GameRegistry.registerBlock(winterbirchLeaves, winterbirchLeaves.getUnlocalizedName());
 
-		OreDictionary.registerOre("logWood", new ItemStack(hazelspringLog, 1));
-		OreDictionary.registerOre("logWood", new ItemStack(winterbirchLog, 1));
+		OreDictionary.registerOre("logWood", new ItemStack(hazelspringLog, 1,-1));
+		OreDictionary.registerOre("logWood", new ItemStack(winterbirchLog, 1,-1));
 
 		// Liquids
 

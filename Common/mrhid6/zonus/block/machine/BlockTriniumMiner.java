@@ -18,7 +18,7 @@ public class BlockTriniumMiner extends BlockMachine {
 
 		this.setResistance(6.0F);
 		this.setHardness(6.0F);
-		icons = new Icon[4];
+		icons = new Icon[3];
 	}
 
 	@Override
@@ -31,10 +31,9 @@ public class BlockTriniumMiner extends BlockMachine {
 		if (blockSide == 1) {
 			return icons[0];
 		} else if (blockSide == 0) {
-			return icons[3];
+			return icons[2];
 		} else {
-			int var6 = par1IBlockAccess.getBlockMetadata(x, y, z);
-			return blockSide != var6 ? icons[1] : icons[2];
+			return icons[1];
 		}
 	}
 
@@ -45,8 +44,6 @@ public class BlockTriniumMiner extends BlockMachine {
 		if (side == 1) {
 			return icons[0];
 		} else if (side == 0) {
-			return icons[3];
-		} else if (side == 3) {
 			return icons[2];
 		} else {
 			return icons[1];
@@ -58,7 +55,6 @@ public class BlockTriniumMiner extends BlockMachine {
 		icons[0] = iconRegister.registerIcon(Zonus.Modname + textureName + "_top");
 		icons[1] = iconRegister.registerIcon(Zonus.Modname + textureName + "_side");
 		icons[2] = iconRegister.registerIcon(Zonus.Modname + textureName + "_front");
-		icons[3] = iconRegister.registerIcon(Zonus.Modname + textureName + "_bottom");
 	}
 
 }

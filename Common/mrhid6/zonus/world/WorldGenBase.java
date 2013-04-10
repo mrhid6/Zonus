@@ -123,11 +123,11 @@ public class WorldGenBase implements IWorldGenerator {
 	}
 	
 	private void genNoxiteOre( World world, Random rand, int chunkX, int chunkZ ) {
-		for (int k = 0; k < 10; k++) {
+		for (int k = 0; k < 8; k++) {
 			int firstBlockXCoord = chunkX + rand.nextInt(16);
 			int firstBlockYCoord = rand.nextInt(20);
 			int firstBlockZCoord = chunkZ + rand.nextInt(16);
-			(new WorldGenMinable(ModBlocks.zoroOre.blockID, 2)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+			(new WorldGenMinable(ModBlocks.noxiteOre.blockID, 4)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	}
 }

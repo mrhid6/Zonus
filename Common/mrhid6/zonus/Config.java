@@ -72,6 +72,7 @@ public class Config extends Configuration {
 		ItemIds.addItemID(config, "zoroIngot");
 		ItemIds.addItemID(config, "zoroBucket");
 		ItemIds.addItemID(config, "zoroCable");
+		ItemIds.addItemID(config, "triniumCable");
 		ItemIds.addItemID(config, "zoroStaff");
 		ItemIds.addItemID(config, "stearilliumOre");
 		ItemIds.addItemID(config, "noxiteCrystal");

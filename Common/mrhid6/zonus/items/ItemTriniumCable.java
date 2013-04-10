@@ -6,9 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ItemZoroCable extends ItemTexturedBase {
+public class ItemTriniumCable extends ItemTexturedBase {
 
-	public ItemZoroCable( int id, int maxStackSize, String name ) {
+	public ItemTriniumCable( int id, int maxStackSize, String name ) {
 		super(id, 1, name);
 	}
 
@@ -59,10 +59,10 @@ public class ItemZoroCable extends ItemTexturedBase {
         }
         else
         {
-            if (ModBlocks.zoroCable.canPlaceBlockAt(par3World, par4, par5, par6))
+            if (ModBlocks.triniumCable.canPlaceBlockAt(par3World, par4, par5, par6))
             {
                 --par1ItemStack.stackSize;
-                par3World.setBlock(par4, par5, par6, ModBlocks.zoroCable.blockID);
+                par3World.setBlock(par4, par5, par6, ModBlocks.triniumCable.blockID);
             }
 
             return true;

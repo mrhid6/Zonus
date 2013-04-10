@@ -45,13 +45,13 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj {
 	public void invalidate() {
 		super.invalidate();
 
-		System.out.println("invalidate");
+		//System.out.println("invalidate");
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
-		System.out.println("validate");
+		//System.out.println("validate");
 	}
 
 	public void breakBlock() {
@@ -203,16 +203,13 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj {
 
 		if (gridindex < 0 || GridManager.getGrid(gridindex) == null) {
 
-			System.out.println("grid is null creating new one!");
 			myGrid = new GridPower();
 
 			myGrid.setController(this);
 
-			// System.out.println(energyToStore);
 			myGrid.setEnergyStored(energyToStore);
 			
 			sendUpdatePacket(Side.CLIENT);
-			GridManager.sendUpdatePacket(Side.CLIENT, worldObj, xCoord, yCoord, zCoord, myGrid.gridIndex);
 
 		} else if (getGrid() != null && !getGrid().isController(worldObj, xCoord, yCoord, zCoord)) {
 
@@ -250,12 +247,15 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj {
 
 		gridindex = data.getInteger("grid.index");
 
-		System.out.println(gridindex);
 		if (getGrid() != null) {
+			energyToStore = data.getFloat("grid.power");
 			getGrid().setEnergyStored(data.getFloat("grid.power"));
+
 		} else {
 			energyToStore = data.getFloat("grid.power");
 		}
+		
+		System.out.println(energyToStore);
 
 	}
 
@@ -275,6 +275,9 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj {
 	public void updateEntity() {
 		super.updateEntity();
 
+		if(!isLoaded)
+			return;
+		
 		if (Utils.isClientWorld()) {
 			if ((particaltick % 3) == 0) {
 				double x = xCoord +0.5F+(Math.random()*0.3)-0.15;
@@ -301,7 +304,7 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj {
 		if ((TickSinceUpdate % 3) == 0) {
 
 			if (getGrid() != null) {
-				//getGrid().addEnergy(500F);
+				getGrid().addEnergy(500F);
 				update = true;
 			}
 		}

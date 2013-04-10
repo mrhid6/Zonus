@@ -21,6 +21,7 @@ public class ModItems {
 	public static Item triniumPlate;
 	public static Item zoroBucket;
 	public static Item zoroCable;
+	public static Item triniumCable;
 	public static Item zoroIngot;
 
 	public static Item zoroStaff;
@@ -30,8 +31,11 @@ public class ModItems {
 		zoroIngot = new ItemTexturedBase(ItemIds.getID("zoroIngot"), 64, "zoroIngot");
 		LanguageRegistry.addName(zoroIngot, "Zoro Ingot");
 
-		zoroCable = new ItemTexturedBase(ItemIds.getID("zoroCable"), 64, "zoroCable");
+		zoroCable = new ItemZoroCable(ItemIds.getID("zoroCable"), 64, "zoroCable");
 		LanguageRegistry.addName(zoroCable, "Zoro Cable");
+		
+		triniumCable = new ItemTriniumCable(ItemIds.getID("triniumCable"), 64, "triniumCable");
+		LanguageRegistry.addName(triniumCable, "Trinium Cable");
 
 		zoroBucket = new ItemZoroBucket(ItemIds.getID("zoroBucket"), BlockIds.getID("zoroFlowing"), "zorobucket");
 		LanguageRegistry.addName(zoroBucket, "Volatile Zoro");

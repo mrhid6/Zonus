@@ -31,6 +31,16 @@ public class GuiZoroFurnace extends GuiMain {
 			if (l > 0) {
 				drawTexturedModalRect(x + 42, y + 61, 0, 166, l, 10);
 			}
+			
+			l = this.container.tileEntity.getScaledProgress(24);
+			if (l > 0) {
+				drawTexturedModalRect(x + 79, y + 33, 176, 16, l, 16);
+			}
+			
+			if (this.container.tileEntity.isActive)
+			{
+				drawTexturedModalRect(x + 56, y + 42, 176, 0, 16, 16);
+			}
 		}
 	}
 

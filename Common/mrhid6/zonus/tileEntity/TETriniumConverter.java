@@ -14,7 +14,6 @@ import cpw.mods.fml.relauncher.Side;
 public class TETriniumConverter extends TEMachineBase implements IConverterObj, ISidedBlock {
 
 	public boolean[] connections = new boolean[6];
-	private boolean update = false;
 
 	public TETriniumConverter() {
 		inventory = new ItemStack[0];
@@ -152,14 +151,6 @@ public class TETriniumConverter extends TEMachineBase implements IConverterObj, 
 		}
 
 		updateConnections();
-	}
-	
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public void setUpdate( boolean update ) {
-		this.update = update;
 	}
 
 }

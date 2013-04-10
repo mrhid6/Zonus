@@ -59,7 +59,16 @@ public abstract class TEBlock extends TEPoweredBase implements IInventory {
 
 	@Override
 	public ItemStack getStackInSlotOnClosing( int slot ) {
-		return inventory[slot];
+		 if (this.inventory[slot] != null)
+	        {
+	            ItemStack itemstack = this.inventory[slot];
+	            this.inventory[slot] = null;
+	            return itemstack;
+	        }
+	        else
+	        {
+	            return null;
+	        }
 	}
 
 	@Override

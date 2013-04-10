@@ -14,7 +14,7 @@ public class VersionControll implements Runnable{
 	public static Properties props = new Properties();
 	
 	private static String remoteVer;
-	private static String updateLocation;
+	public static String updateLocation;
 	
 	public static String currentVersion = "0";
 

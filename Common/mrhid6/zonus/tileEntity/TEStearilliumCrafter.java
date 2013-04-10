@@ -213,7 +213,7 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 	public boolean foundController() {
 
 		if (getGrid() != null) {
-			return getGrid().hasMachine(this);
+			return getGrid().hasMachine(this) && getGrid().canDiscoverObj(this);
 		}
 
 		return false;

@@ -45,7 +45,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	public boolean foundController() {
 
 		if (getGrid() != null) {
-			return getGrid().hasMachine(this);
+			return getGrid().hasMachine(this)  && getGrid().canDiscoverObj(this);
 		}
 		return false;
 	}
@@ -224,9 +224,10 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 
 		if ((TickSinceUpdate % 1) == 0) {
 
-			if (getGrid() != null && getGrid().getEnergyStored() >= 30) {
-				mineLevel();
-			}
+			
+		}
+		if (getGrid() != null && getGrid().getEnergyStored() >= 30) {
+			mineLevel();
 		}
 
 		if (!foundController()) {

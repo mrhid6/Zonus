@@ -80,7 +80,7 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 			return;
 
 		checkForExplode();
-		if(TickSinceUpdate%5 == 0){
+		if(TickSinceUpdate%2 == 0){
 
 
 
@@ -96,7 +96,7 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 				
 				
 				if(getGrid()!=null){
-					getGrid().addEnergy(0.66F*cablesConnected);
+					getGrid().addEnergy(0.337F*cablesConnected);
 				}
 			}
 			

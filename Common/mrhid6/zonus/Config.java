@@ -13,6 +13,8 @@ public class Config extends Configuration {
 	private static Configuration config;
 
 	public static CreativeTabXor creativeTabXor;
+	
+	public static final String Version = "1.0.0";
 
 	static HashMap<String, Integer> renderIds = new HashMap<String, Integer>();
 
@@ -78,8 +80,27 @@ public class Config extends Configuration {
 		ItemIds.addItemID(config, "triniumLegs");
 		ItemIds.addItemID(config, "triniumBoots");
 		ItemIds.addItemID(config, "debugTool");
+		
+		VersionControll.currentVersion = config.get(CATEGORY_GENERAL, "lastKwnVer", "0").getString();
+		
 		config.save();
 	}
+	
+	public static void setLastKnownVersion(String version){
+		
+		set(Configuration.CATEGORY_GENERAL, "lastKwnVer", version);
+	}
+	
+	public static void set(String categoryName, String propertyName, String newValue) {
+
+        config.load();
+        if (config.getCategoryNames().contains(categoryName)) {
+            if (config.getCategory(categoryName).containsKey(propertyName)) {
+                config.getCategory(categoryName).get(propertyName).set(newValue);
+            }
+        }
+        config.save();
+    }
 
 	public static int[] spiralArray( int dimension ) {
 

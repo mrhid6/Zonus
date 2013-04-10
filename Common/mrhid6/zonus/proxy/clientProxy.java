@@ -1,6 +1,7 @@
 package mrhid6.zonus.proxy;
 
 import java.util.EnumSet;
+import mrhid6.zonus.VersionControll;
 import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.models.ModelTitan;
 import mrhid6.zonus.network.PacketHandler;
@@ -19,6 +20,7 @@ import mrhid6.zonus.tileEntity.TEZoroController;
 import mrhid6.zonus.tileEntity.TEZoroFurnace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.ITickHandler;
@@ -33,6 +35,7 @@ public class clientProxy extends commonProxy implements ITickHandler {
 
 	String[] capeUsers = { "mrhid6", "tommo1590", "danzo1997", "Wolfyart", "GreatCannonba11", "Blackout656" };
 	private int playerCounter;
+	private boolean shownMessage = false;
 
 	public clientProxy() {
 		TickRegistry.registerTickHandler(this, Side.CLIENT);
@@ -81,8 +84,22 @@ public class clientProxy extends commonProxy implements ITickHandler {
 
 	@Override
 	public void tickEnd( EnumSet<TickType> type, Object... tickData ) {
-		// TODO Auto-generated method stub
+		if (!shownMessage) {
+            for (TickType tickType : type) {
+                if (tickType == TickType.CLIENT) {
+                    if (FMLClientHandler.instance().getClient().currentScreen == null) {
+                        if (VersionControll.getResult() != 0 || VersionControll.getResult() != 3) {
 
+                        	shownMessage = true;
+
+                            if (VersionControll.getResult() == 2) {
+                                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage("outdated");
+                            }
+                        }
+                    }
+                }
+            }
+        }
 	}
 
 	@Override

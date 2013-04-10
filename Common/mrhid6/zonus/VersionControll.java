@@ -10,16 +10,15 @@ public class VersionControll implements Runnable{
 	private static VersionControll instance = new VersionControll();
 	private static byte res = 0;
 
-	private static final String urlString = "http://";
+	private static final String urlString = "https://raw.github.com/mrhid6/Zonus/master/version.xml";
 	public static Properties props = new Properties();
 	
 	private static String remoteVer;
 	private static String updateLocation;
 	
+	public static String currentVersion = "0";
 
 	public static void checkVersion(){
-
-
 		InputStream inStream = null;
 		res = 0;
 
@@ -42,6 +41,16 @@ public class VersionControll implements Runnable{
 				
 				if(remoteVer!=null){
 					
+					if(!currentVersion.equalsIgnoreCase(remoteVer)){
+						Config.setLastKnownVersion(remoteVer);
+					}
+					
+					if(Config.Version.equals(remoteVer)){
+						res = 1;
+					}else{
+						res = 2;
+					}
+					
 				}
 			}
 			
@@ -63,10 +72,13 @@ public class VersionControll implements Runnable{
 		}
 	}
 
+	public static byte getResult(){
+		return res;
+	}
 
 	@Override
 	public void run() {
-
+		checkVersion();
 	}
 
 	public static void Execute(){

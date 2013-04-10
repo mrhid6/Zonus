@@ -24,7 +24,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "zonus", name = "Zonus", version = "1.0.0")
+@Mod(modid = "zonus", name = "Zonus", version = Config.Version)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false, channels = { "Zonus" }, packetHandler = PacketHandler.class)
 public class Zonus {
 
@@ -80,5 +80,6 @@ public class Zonus {
 	@PreInit
 	public void preInit( FMLPreInitializationEvent event ) {
 		Config.init(event.getSuggestedConfigurationFile());
+		VersionControll.Execute();
 	}
 }

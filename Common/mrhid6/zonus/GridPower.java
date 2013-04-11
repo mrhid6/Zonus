@@ -2,6 +2,8 @@ package mrhid6.zonus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import mrhid6.zonus.network.PacketGrid;
 import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.tileEntity.TECableBase;
@@ -52,7 +54,7 @@ public class GridPower {
 
 	public TEZoroChest getFirstChest(){
 		for (TEZoroChest te1 : chestArray.keySet()) {
-			
+
 			if(chestArray.get(te1) == 2){
 				return te1;
 			}
@@ -72,7 +74,7 @@ public class GridPower {
 
 	public void addConverter( TETriniumConverter te,int i) {
 
-		if(!hasConverter(te) && ((TETriniumConverter) te).canConnectOnSide(i)){
+		if(!hasConverter(te) && te.canConnectOnSide(i)){
 			converterArray.put(te, 2);
 			te.gridindex = gridIndex;
 			te.setUpdate(true);
@@ -229,7 +231,7 @@ public class GridPower {
 
 			if (cablesArray.get(cable) == 1) {
 				//System.out.println("cable is marked for removal!");
-						continue;
+				continue;
 			}
 
 			for (int i = 0; i < 6; i++) {
@@ -316,15 +318,25 @@ public class GridPower {
 
 		pathFinder(x1, y1, z1, masterController.worldObj,cab,con);
 
-		for(TECableBase cable : cablesArray.keySet()){
-			if(!cab.contains(cable)){
-				removeCable(cable);
+
+		//TODO fix this!
+
+		Entry<TECableBase, Integer> entry;
+		Entry<TETriniumConverter, Integer> entry2;
+
+		Iterator<Entry<TECableBase, Integer>>it = cablesArray.entrySet().iterator();
+		Iterator<Entry<TETriniumConverter, Integer>>it2 = converterArray.entrySet().iterator();
+		while (it.hasNext()){
+			entry = it.next();
+			if(!cab.contains(entry.getKey())){
+				removeCable(entry.getKey());
 			}
 		}
 		
-		for(TETriniumConverter converter : converterArray.keySet()){
-			if(!con.contains(converter)){
-				removeConverter(converter);
+		while (it2.hasNext()){
+			entry2 = it2.next();
+			if(!con.contains(entry2.getKey())){
+				removeConverter(entry2.getKey());
 			}
 		}
 
@@ -365,15 +377,15 @@ public class GridPower {
 		energystorage = packet.payload.intPayload[1];
 
 		setEnergyStored(packet.payload.floatPayload[0]);
-		// ClientMaxPower = packet.payload.floatPayload[1];
+		ClientMaxPower = packet.payload.floatPayload[1];
 
 		if (Utils.isClientWorld()) {
 			gridIndex = packet.payload.intPayload[0];
 			energystorage = packet.payload.intPayload[1];
 			//setEnergyStored(packet.payload.floatPayload[0]);
-			// ClientMaxPower = packet.payload.floatPayload[1];
+			ClientMaxPower = packet.payload.floatPayload[1];
 		}
-		WorkOutMaxPower();
+		//WorkOutMaxPower();
 	}
 
 	public boolean hasCable( TECableBase te ) {
@@ -453,7 +465,7 @@ public class GridPower {
 		return false;
 	}
 
-	public void pathFinder( int x, int y, int z, World w,ArrayList cab,ArrayList con ) {
+	public void pathFinder( int x, int y, int z, World w,ArrayList<TECableBase> cab,ArrayList<TETriniumConverter> con ) {
 		for (int i = 0; i < 6; i++) {
 
 			int x1 = x + Config.SIDE_COORD_MOD[i][0];
@@ -478,7 +490,7 @@ public class GridPower {
 			if (te1 instanceof TETriniumConverter) {
 
 				TETriniumConverter converter = (TETriniumConverter)te1;
-				if(!con.contains(converter)){
+				if(!con.contains(converter) && converter.canInteractWith(te)){
 
 					addConverter(converter,i);
 					con.add(converter);
@@ -502,7 +514,7 @@ public class GridPower {
 					continue;
 				}
 			}
-			
+
 			if (te1 instanceof TEZoroChest) {
 				TEZoroChest chest = (TEZoroChest) te1;
 				if (!hasChest(chest) && chest.canInteractWith(te)) {
@@ -531,7 +543,7 @@ public class GridPower {
 	public void removeCable( TECableBase te ) {
 		if(cablesArray.containsKey(te) && cablesArray.get(te).intValue() == 2){
 			cablesArray.put(te, 1);
-			System.out.println("remove cable!");
+			//System.out.println("remove cable!");
 		}
 	}
 
@@ -544,10 +556,9 @@ public class GridPower {
 	}
 
 	public void removeConverter( TETriniumConverter te ) {
-		converterArray.remove(te);
 		if(converterArray.containsKey(te) && converterArray.get(te).intValue() == 2){
 			converterArray.put(te, 1);
-			System.out.println("removed converter!");
+			//System.out.println("removed converter!");
 		}
 	}
 
@@ -556,7 +567,7 @@ public class GridPower {
 		if(energyCubeArray.containsKey(te) && energyCubeArray.get(te).intValue() == 2){
 			energyCubeArray.put(te, 1);
 			energystorage--;
-			System.out.println("removed cube!");
+			//System.out.println("removed cube!");
 		}
 	}
 
@@ -564,7 +575,7 @@ public class GridPower {
 
 		if(reactorArray.containsKey(te) && reactorArray.get(te).intValue() == 2){
 			reactorArray.put(te, 1);
-			System.out.println("removed reactor!");
+			//System.out.println("removed reactor!");
 		}
 	}
 
@@ -584,14 +595,14 @@ public class GridPower {
 	public void removeMachine( TEMachineBase te ) {
 		if(machineArray.containsKey(te) && machineArray.get(te).intValue() == 2){
 			machineArray.put(te, 1);
-			System.out.println("removed Machine!");
+			//System.out.println("removed Machine!");
 		}
 	}
 
 	public void removeChest( TEZoroChest te ) {
 		if(chestArray.containsKey(te) && chestArray.get(te).intValue() == 2){
 			chestArray.put(te, 1);
-			System.out.println("removed Chest!");
+			//System.out.println("removed Chest!");
 		}
 	}
 

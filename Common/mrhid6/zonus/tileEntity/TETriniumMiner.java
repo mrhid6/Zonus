@@ -237,9 +237,14 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		if (!foundController()) {
 			if (getGrid() != null) {
 				getGrid().removeMachine(this);
+				setUpdate(true);
 			}
 			gridindex = -1;
+		}
+		
+		if(isUpdate()){
 			sendUpdatePacket(Side.CLIENT);
+			this.setUpdate(false);
 		}
 
 		TickSinceUpdate++;
@@ -255,7 +260,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	}
 	
 	private ItemStack addToNetworkedInventory(ItemStack stack) {
-		ItemStack added = InventoryUtils.copyStack(stack, stack.stackSize);
+		ItemStack added = InventoryUtils.copyStack(stack,0);
 		
 		if(getGrid()!=null){
 			

@@ -321,6 +321,12 @@ public class GridPower {
 				removeCable(cable);
 			}
 		}
+		
+		for(TETriniumConverter converter : converterArray.keySet()){
+			if(!con.contains(converter)){
+				removeConverter(converter);
+			}
+		}
 
 	}
 

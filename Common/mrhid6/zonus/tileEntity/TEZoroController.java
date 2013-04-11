@@ -48,8 +48,10 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 		inventory = new ItemStack[0];
 		
-		pp = new PowerMJProxy();
-	    pp.configure(0, 1, 320, 8, 640);
+		if(Reference.useBuildCraft){
+			pp = new PowerMJProxy();
+			pp.configure(0, 1, 320, 8, 640);
+		}
 	}
 
 	@Override

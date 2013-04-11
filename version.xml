@@ -2,5 +2,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties version="1.0">
 	<comment>Version Controll For Zonus</comment>
-	<entry key="current">1.0.0|http://adf.ly/MUxCO</entry>
+	<entry key="old">1.0.0|http://adf.ly/MUxCO</entry>
+	<entry key="current">1.0.1|http://adf.ly/MUxCO</entry>
 </properties>

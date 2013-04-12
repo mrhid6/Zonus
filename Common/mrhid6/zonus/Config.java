@@ -14,7 +14,7 @@ public class Config extends Configuration {
 
 	public static CreativeTabXor creativeTabXor;
 	
-	public static final String Version = "1.0.11";
+	public static final String Version = "1.0.15";
 
 	static HashMap<String, Integer> renderIds = new HashMap<String, Integer>();
 

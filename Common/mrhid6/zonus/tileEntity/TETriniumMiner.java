@@ -264,7 +264,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		
 		if(getGrid()!=null){
 			
-			TEZoroChest chest = getGrid().getFirstChest();
+			TEZoroChest chest = getGrid().getFirstChestForRecive();
 			if(chest!=null){
 				int injected = 0;
 	

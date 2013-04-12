@@ -70,6 +70,7 @@ public class Config extends Configuration {
 		BlockIds.addBlockID(config, "noxiteOre");
 
 		ItemIds.addItemID(config, "zoroIngot");
+		ItemIds.addItemID(config, "triniumIngot");
 		ItemIds.addItemID(config, "zoroBucket");
 		ItemIds.addItemID(config, "zoroCable");
 		ItemIds.addItemID(config, "triniumCable");
@@ -80,6 +81,7 @@ public class Config extends Configuration {
 		ItemIds.addItemID(config, "triniumPlate");
 		ItemIds.addItemID(config, "triniumLegs");
 		ItemIds.addItemID(config, "triniumBoots");
+		ItemIds.addItemID(config, "triniumSludge");
 		ItemIds.addItemID(config, "debugTool");
 		
 		VersionControll.currentVersion = config.get(CATEGORY_GENERAL, "lastKwnVer", "0").getString();

@@ -67,48 +67,37 @@ public class ContainerStearilliumCrafter extends ContainerXorbo {
 		}
 	}
 
-	@Override
-	public ItemStack transferStackInSlot( EntityPlayer player, int i ) {
-		ItemStack itemstack = null;
-		Slot slot = (Slot) inventorySlots.get(i);
+	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int slotIndex)
+	{
+		ItemStack transferredStack = null;
+		Slot slot = (Slot)this.inventorySlots.get(slotIndex);
 
-		int invTile = tileEntity.inventory.length;
-		int invPlayer = invTile + 27;
-		int invFull = invTile + 36;
+		if ((slot != null) && (slot.getHasStack()))
+		{
+			ItemStack stack = slot.getStack();
+			transferredStack = stack.copy();
 
-		if ((slot != null) && (slot.getHasStack())) {
-			ItemStack stackInSlot = slot.getStack();
-			itemstack = stackInSlot.copy();
-
-			if (i == 1) {
-				if (!mergeItemStack(stackInSlot, invTile, invFull, true)) {
-					return null;
-				}
-			} else if (i != 0) {
-				if ((i >= invTile) && (i < invPlayer)) {
-					if (!mergeItemStack(stackInSlot, invPlayer, invFull, false)) {
-						return null;
-					}
-				} else if ((i >= invPlayer) && (i < invFull) && (!mergeItemStack(stackInSlot, invTile, invPlayer, false))) {
-					return null;
-				}
-			} else if (!mergeItemStack(stackInSlot, invTile, invFull, false)) {
+			if (!doMergeStackAreas(slotIndex, stack)) {
 				return null;
 			}
-
-			if (stackInSlot.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
+			if (stack.stackSize == 0)
+				slot.putStack(null);
+			else {
 				slot.onSlotChanged();
 			}
-
-			if (stackInSlot.stackSize == itemstack.stackSize) {
-				return null;
-			}
-			slot.onPickupFromSlot(player, stackInSlot);
 		}
-		return itemstack;
+		return transferredStack;
 	}
+
+	public boolean doMergeStackAreas(int slotIndex, ItemStack stack)
+	{
+		if (slotIndex < 19) {
+			return mergeItemStack(stack, 19, 55, true);
+		}
+		return mergeItemStack(stack, 10, 19, false);
+	}
+
+
 
 	@Override
 	@SideOnly(Side.CLIENT)

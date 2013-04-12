@@ -20,7 +20,7 @@ public class BlockZoroFurnace extends BlockMachine {
 
 		this.setResistance(2.0F);
 		this.setHardness(2.0F);
-		icons = new Icon[3];
+		icons = new Icon[5];
 	}
 
 	@Override
@@ -42,13 +42,23 @@ public class BlockZoroFurnace extends BlockMachine {
 
 	@Override
 	public Icon getBlockTexture( IBlockAccess par1IBlockAccess, int x, int y, int z, int blockSide ) {
+		
+		TileEntity te = par1IBlockAccess.getBlockTileEntity(x, y, z);
+		
+		boolean connected = false;
+		if(te instanceof TEZoroFurnace){
+			if( ((TEZoroFurnace)te).getGrid()!=null){
+				connected = true;
+			}
+		}
+		
 		if (blockSide == 1) {
 			return icons[0];
 		} else if (blockSide == 0) {
 			return icons[0];
 		} else {
 			int var6 = par1IBlockAccess.getBlockMetadata(x, y, z);
-			return blockSide != var6 ? icons[1] : icons[2];
+			return blockSide != var6 ? (!connected)?icons[1]:icons[2] : (!connected)?icons[3]:icons[4];
 		}
 	}
 
@@ -60,7 +70,7 @@ public class BlockZoroFurnace extends BlockMachine {
 		} else if (side == 0) {
 			return icons[0];
 		} else if (side == 3) {
-			return icons[2];
+			return icons[3];
 		} else {
 			return icons[1];
 		}
@@ -68,8 +78,10 @@ public class BlockZoroFurnace extends BlockMachine {
 
 	@Override
 	public void registerIcons( IconRegister iconRegister ) {
-		icons[0] = iconRegister.registerIcon(Zonus.Modname + "machine");
-		icons[1] = iconRegister.registerIcon(Zonus.Modname + textureName + "_side");
-		icons[2] = iconRegister.registerIcon(Zonus.Modname + textureName + "_front");
+		icons[0] = iconRegister.registerIcon(Zonus.Modname + textureName + "_top");
+		icons[1] = iconRegister.registerIcon(Zonus.Modname + textureName + "_side_off");
+		icons[2] = iconRegister.registerIcon(Zonus.Modname + textureName + "_side_on");
+		icons[3] = iconRegister.registerIcon(Zonus.Modname + textureName + "_front_off");
+		icons[4] = iconRegister.registerIcon(Zonus.Modname + textureName + "_front_on");
 	}
 }

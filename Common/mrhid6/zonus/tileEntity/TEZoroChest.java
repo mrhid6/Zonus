@@ -13,8 +13,11 @@ import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -31,15 +34,16 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	public float prevLidAngle;
 
 	private int ticksSinceSync;
-
+	private int mode = 0;
+	private int colour = 0;
+	
 	public TEZoroChest() {
 		inventory = new ItemStack[getSizeInventory()];
 	}
 
 	public void breakBlock() {
-
+		dropContent(0);
 		if (getGrid() != null) {
-			dropContent(0);
 			getGrid().removeChest(this);
 		}
 	}
@@ -89,6 +93,62 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 			return null;
 		}
 	}
+	
+	public void alterMode(){
+		mode++;
+		mode%=4;
+		
+		sendUpdatePacket(Side.SERVER);
+	}
+	
+	public void alterModeBack(){
+		mode--;
+		if(mode < 0){
+			mode = 3;
+		}
+		
+		sendUpdatePacket(Side.SERVER);
+	}
+	
+	public void alterColour(){
+		colour++;
+		colour%=17;
+		
+		sendUpdatePacket(Side.SERVER);
+	}
+	public void alterColourBack(){
+		colour--;
+		
+		if(colour < 0){
+			colour = 16;
+		}
+		
+		sendUpdatePacket(Side.SERVER);
+	}
+	
+	public int getMode(){
+		return mode;
+	}
+	
+	public int getColour(){
+		return colour;
+	}
+	
+	public String getModeText(){
+		
+		switch(getMode()){
+		case 0:
+			return "Send And Recive Items";
+		case 1:
+			return "Send Items Only";
+		case 2:
+			return "Recive Items Only";
+		case 3:
+			return "Disabled";
+		}
+		
+		return "";
+	}
 
 	@Override
 	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
@@ -102,7 +162,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 	@Override
 	public Packet getDescriptionPacket() {
-		Payload payload = new Payload(0, 1, 2, 2, 0);
+		Payload payload = new Payload(0, 1, 4, 2, 0);
 
 		// System.out.println(gridindex);
 
@@ -113,6 +173,8 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 		payload.intPayload[0] = numUsingPlayers;
 		payload.intPayload[1] = gridindex;
+		payload.intPayload[2] = mode;
+		payload.intPayload[3] = colour;
 
 		PacketTile packet = new PacketTile(descPacketId, xCoord, yCoord, zCoord, payload);
 		return packet.getPacket();
@@ -133,7 +195,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	}
 
 	public int getRowCount() {
-		return 9;
+		return 8;
 	}
 
 	public int getRowLength() {
@@ -142,7 +204,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 	@Override
 	public int getSizeInventory() {
-		return 180;
+		return getRowCount()*getRowLength();
 	}
 
 	@Override
@@ -176,6 +238,8 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 		numUsingPlayers = packet.payload.intPayload[0];
 		gridindex = packet.payload.intPayload[1];
+		mode = packet.payload.intPayload[2];
+		colour = packet.payload.intPayload[3];
 
 		if (Utils.isClientWorld()) {
 			facing = packet.payload.bytePayload[0];
@@ -184,6 +248,9 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 			prevLidAngle = packet.payload.floatPayload[1];
 
 			numUsingPlayers = packet.payload.intPayload[0];
+			gridindex = packet.payload.intPayload[1];
+			mode = packet.payload.intPayload[2];
+			colour = packet.payload.intPayload[3];
 
 			// System.out.println("hadlepacket"+gridindex);
 		}
@@ -195,6 +262,23 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 			PacketUtils.sendToPlayers(getDescriptionPacket(), worldObj, xCoord, yCoord, zCoord, 192);
 		}
 
+	}
+
+	@Override
+	public void readFromNBT( NBTTagCompound data ) {
+		super.readFromNBT(data);
+		
+		facing = data.getByte("facing");
+		mode = data.getInteger("mode");
+		colour = data.getInteger("colour");
+	}
+
+	@Override
+	public void writeToNBT( NBTTagCompound data ) {
+		super.writeToNBT(data);
+		data.setByte("facing", facing);
+		data.setInteger("mode", mode);
+		data.setInteger("colour", colour);
 	}
 
 	@Override
@@ -350,5 +434,22 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		}
 
 		return false;
+	}
+	
+	public void sendGuiNetworkData( Container container, ICrafting iCrafting ) {
+		if (((iCrafting instanceof EntityPlayer)) && (Utils.isServerWorld())) {
+			PacketUtils.sendToPlayer((EntityPlayer) iCrafting, getDescriptionPacket());
+		}
+	}
+	
+	public void receiveGuiNetworkData( int i, int j ) {
+	}
+
+	public String getColourText() {
+		if(colour == 0){
+			return "Colour Not Set";
+		}
+		
+		return Utils.ColourName[colour-1];
 	}
 }

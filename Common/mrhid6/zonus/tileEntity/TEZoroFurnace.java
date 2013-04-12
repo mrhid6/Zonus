@@ -35,6 +35,8 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 		invName = "xor.furnace";
 		
 		recipes.put(ModBlocks.zoroOre.blockID, new ItemStack(ModItems.zoroIngot,2));
+		recipes.put(ModBlocks.triniumOre.blockID, new ItemStack(ModItems.triniumSludge,2));
+		recipes.put(ModItems.triniumSludge.itemID, new ItemStack(ModItems.triniumIngot,1));
 	}
 
 	public void breakBlock() {

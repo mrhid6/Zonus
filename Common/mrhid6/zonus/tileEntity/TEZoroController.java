@@ -299,8 +299,12 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 		}
 
 		gridindex = data.getInteger("grid.index");
+		
+		if(getGrid()!=null){
+			getGrid().energystorage = 0;
+		}
 
-		System.out.println("read nbt - "+energyToStore);
+		//System.out.println("read nbt - "+energyToStore);
 
 	}
 

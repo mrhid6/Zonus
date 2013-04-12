@@ -27,7 +27,7 @@ public class GridPower {
 	private HashMap<TETriniumConverter, Integer> converterArray;
 	private HashMap<TEStearilliumEnergyCube, Integer> energyCubeArray;
 	private HashMap<TEStearilliumReactor, Integer> reactorArray;
-	private int energystorage = 0;
+	public int energystorage = 0;
 	public int gridIndex;
 
 	private HashMap<TEMachineBase, Integer> machineArray;
@@ -48,19 +48,30 @@ public class GridPower {
 		reactorArray = new HashMap<TEStearilliumReactor, Integer>();
 		converterArray = new HashMap<TETriniumConverter, Integer>();
 		chestArray = new HashMap<TEZoroChest, Integer>();
-
+		energystorage = 0;
 		gridIndex = GridManager.addGridToManager(this);
 	}
 
-	public TEZoroChest getFirstChest(){
+	public TEZoroChest getFirstChestForRecive(){
 		for (TEZoroChest te1 : chestArray.keySet()) {
 
-			if(chestArray.get(te1) == 2){
+			if(chestArray.get(te1) == 2 && te1.getMode()==0 || te1.getMode()==2){
 				return te1;
 			}
 		}
 		return null;
 
+	}
+	
+	public TEZoroChest getFirstChestForSend(){
+		for (TEZoroChest te1 : chestArray.keySet()) {
+			
+			if(chestArray.get(te1) == 2 && te1.getMode()==0 || te1.getMode()==1){
+				return te1;
+			}
+		}
+		return null;
+		
 	}
 
 	public void addCable( TECableBase te ) {
@@ -95,11 +106,13 @@ public class GridPower {
 	}
 
 	public void addEnergyCube( TEStearilliumEnergyCube te ) {
-		energyCubeArray.put(te, 2);
-		energystorage++;
-		te.gridindex = gridIndex;
-		te.setUpdate(true);
-		//System.out.println("added cube");
+		if(!hasEnergyCube(te)){
+			energyCubeArray.put(te, 2);
+			energystorage++;
+			te.gridindex = gridIndex;
+			te.setUpdate(true);
+			System.out.println("added cube");
+		}
 		WorkOutMaxPower();
 
 	}
@@ -318,9 +331,6 @@ public class GridPower {
 
 		pathFinder(x1, y1, z1, masterController.worldObj,cab,con);
 
-
-		//TODO fix this!
-
 		Entry<TECableBase, Integer> entry;
 		Entry<TETriniumConverter, Integer> entry2;
 
@@ -332,7 +342,7 @@ public class GridPower {
 				removeCable(entry.getKey());
 			}
 		}
-		
+
 		while (it2.hasNext()){
 			entry2 = it2.next();
 			if(!con.contains(entry2.getKey())){
@@ -589,7 +599,7 @@ public class GridPower {
 		masterController = null;
 		reactorArray.clear();
 
-		//System.out.println("grid was removed!");
+		System.out.println("grid was removed!");
 	}
 
 	public void removeMachine( TEMachineBase te ) {
@@ -616,7 +626,9 @@ public class GridPower {
 		WorkOutMaxPower();
 
 		Power = power;
-
+		if(Power < 0){
+			Power=0;
+		}
 		if(masterController!=null){
 			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
@@ -640,9 +652,7 @@ public class GridPower {
 	}
 
 	public void update() {
-
 		discover();
-		energystorage = countEnergyCubes();
 		WorkOutMaxPower();
 	}
 
@@ -653,5 +663,6 @@ public class GridPower {
 	public void writeToNBT( NBTTagCompound data ) {
 
 		data.setFloat("grid.power", getEnergyStored());
+		data.setInteger("grid.energystorage", energystorage);
 	}
 }

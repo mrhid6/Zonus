@@ -5,6 +5,7 @@ import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.Reference;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -58,12 +59,15 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 	}
 
 	public boolean canCraft( ItemStack stack ) {
+		if(getGrid()==null)
+			return false;
+		
 		for (int i = 10; i < getSizeInventory(); i++) {
 			if (inventory[i] == null) {
 				return true;
 			}
 
-			if (inventory[i].itemID == stack.itemID) {
+			if (inventory[i].isItemEqual(stack)) {
 				ItemStack var2 = InventoryUtils.copyStack(inventory[i], inventory[i].stackSize);
 
 				if ((var2.stackSize + 1) <= var2.getMaxStackSize()) {
@@ -141,12 +145,16 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 							if (var1.stackSize >= var2.stackSize) {
 								this.decrStackSize(i, var2.stackSize);
 								ing[ia].stackSize = 0;
+								
 								onInventoryChanged();
-								// sendUpdatePacket(Side.CLIENT);
 							} else {
 								this.decrStackSize(i, 1);
 								ing[ia].stackSize -= var1.stackSize;
 								onInventoryChanged();
+							}
+							
+							if(getGrid()!=null){
+								getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.CRAFTER_USEAGE_MULITPLIER);
 							}
 
 						}

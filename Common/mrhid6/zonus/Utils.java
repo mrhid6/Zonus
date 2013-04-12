@@ -13,6 +13,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 public class Utils {
 
 	public static final int[][] SIDE_COORD_MOD = { { 0, -1, 0 }, { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 }, { -1, 0, 0 }, { 1, 0, 0 } };
+	
+	public static final String[] ColourName = {"White","Orange","Magenta","Light Blue","Yellow","Lime Green","Pink","Gray","Light Gray","Cyan","Purple","Blue","Brown","Green","Red","Black"}; 
 
 	public static int[] getAdjacentCoordinatesForSide( int x, int y, int z, int side ) {
 		return new int[] { x + SIDE_COORD_MOD[side][0], y + SIDE_COORD_MOD[side][1], z + SIDE_COORD_MOD[side][2] };

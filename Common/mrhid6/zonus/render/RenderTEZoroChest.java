@@ -1,7 +1,7 @@
 package mrhid6.zonus.render;
 
 import mrhid6.zonus.models.ModelZoroChest;
-import mrhid6.zonus.tileEntity.TEZoroChest;
+import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;

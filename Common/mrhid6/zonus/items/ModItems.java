@@ -1,8 +1,8 @@
 package mrhid6.zonus.items;
 
-import mrhid6.zonus.BlockIds;
-import mrhid6.zonus.ItemIds;
 import mrhid6.zonus.armour.TriniumArmour;
+import mrhid6.zonus.lib.BlockIds;
+import mrhid6.zonus.lib.ItemIds;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.EnumHelper;

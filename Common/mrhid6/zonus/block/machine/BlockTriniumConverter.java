@@ -3,7 +3,7 @@ package mrhid6.zonus.block.machine;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockTexturedBase;
 import mrhid6.zonus.render.BRTriniumConverter;
-import mrhid6.zonus.tileEntity.TETriniumConverter;
+import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;

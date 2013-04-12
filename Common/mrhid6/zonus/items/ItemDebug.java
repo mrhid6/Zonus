@@ -5,7 +5,7 @@ import java.util.Random;
 import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TEPoweredBase;
-import mrhid6.zonus.tileEntity.TEZoroController;
+import mrhid6.zonus.tileEntity.machine.TEZoroController;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

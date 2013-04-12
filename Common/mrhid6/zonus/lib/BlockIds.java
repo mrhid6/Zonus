@@ -1,15 +1,15 @@
-package mrhid6.zonus;
+package mrhid6.zonus.lib;
 
 import java.util.HashMap;
 import net.minecraftforge.common.Configuration;
 
-public class ItemIds {
+public class BlockIds {
 
 	private static HashMap<String, Integer> IDs = new HashMap<String, Integer>();
-	private static int lastId = 5000;
+	private static int lastId = 500;
 
-	public static void addItemID( Configuration config, String name ) {
-		IDs.put(name, Integer.valueOf(config.getItem(name, lastId).getInt()));
+	public static void addBlockID( Configuration config, String name ) {
+		IDs.put(name, Integer.valueOf(config.getBlock(name, lastId).getInt()));
 		lastId++;
 	}
 

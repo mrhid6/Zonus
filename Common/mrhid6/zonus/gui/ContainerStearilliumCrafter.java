@@ -1,6 +1,6 @@
 package mrhid6.zonus.gui;
 
-import mrhid6.zonus.tileEntity.TEStearilliumCrafter;
+import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;

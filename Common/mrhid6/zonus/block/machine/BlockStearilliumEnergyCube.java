@@ -3,7 +3,7 @@ package mrhid6.zonus.block.machine;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
 import mrhid6.zonus.tileEntity.TEMachineBase;
-import mrhid6.zonus.tileEntity.TEStearilliumEnergyCube;
+import mrhid6.zonus.tileEntity.machine.TEStearilliumEnergyCube;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;

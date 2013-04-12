@@ -1,6 +1,6 @@
 package mrhid6.zonus.tileEntity;
 
-import mrhid6.zonus.Utils;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketUtils;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;

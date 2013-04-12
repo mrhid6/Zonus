@@ -4,6 +4,7 @@ import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.lib.Reference;
+import mrhid6.zonus.lib.SpiralMatrix;
 import mrhid6.zonus.network.PacketHandler;
 import mrhid6.zonus.proxy.BuildcraftProxy;
 import mrhid6.zonus.proxy.commonProxy;

@@ -1,4 +1,4 @@
-package mrhid6.zonus;
+package mrhid6.zonus.lib;
 
 import java.util.List;
 import mrhid6.zonus.block.ModBlocks;

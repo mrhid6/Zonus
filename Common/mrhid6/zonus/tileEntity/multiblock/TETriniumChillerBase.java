@@ -1,8 +1,8 @@
 package mrhid6.zonus.tileEntity.multiblock;
 
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.interfaces.ITriniumObj;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 

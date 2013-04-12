@@ -1,9 +1,9 @@
 package mrhid6.zonus.items;
 
 import mrhid6.zonus.Config;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.fx.FXSparkle;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -183,20 +183,6 @@ public class ItemZoroStaff extends ItemTexturedBase {
 
 		if ((bi == ModBlocks.triniumBrick.blockID || bi == ModBlocks.stearilliumGlass.blockID) && result == false) {
 			result = createReactor(stack, player, world, x, y, z);
-		}
-		
-		if(Utils.isClientWorld()){
-			
-			int x1 = x + Config.SIDE_COORD_MOD[side][0];
-			int y1 = y + Config.SIDE_COORD_MOD[side][1];
-			int z1 = z + Config.SIDE_COORD_MOD[side][2];
-			
-			double x2 = x1 +0.5F+(Math.random()*0.3)-0.15;
-			double z2 = z1 +0.5F+(Math.random()*0.3)-0.15;
-			
-			FXSparkle beam = new FXSparkle(world, x2, y1+0.1F, z2);
-			Minecraft.getMinecraft().effectRenderer.addEffect(beam);
-			Minecraft.getMinecraft().effectRenderer.renderParticles(beam, 1);
 		}
 
 		return result;

@@ -2,7 +2,7 @@ package mrhid6.zonus.block.machine;
 
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockTexturedBase;
-import mrhid6.zonus.tileEntity.TEZoroController;
+import mrhid6.zonus.tileEntity.machine.TEZoroController;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

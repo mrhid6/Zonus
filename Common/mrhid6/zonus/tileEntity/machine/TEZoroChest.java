@@ -1,17 +1,18 @@
-package mrhid6.zonus.tileEntity;
+package mrhid6.zonus.tileEntity.machine;
 
 import java.util.Iterator;
 import java.util.List;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.gui.ContainerZoroChest;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.IPacketXorHandler;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
+import mrhid6.zonus.tileEntity.TEBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -26,19 +27,52 @@ import cpw.mods.fml.relauncher.Side;
 public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorHandler, IXorGridObj {
 
 	protected static int descPacketId;
+	private int colour = 0;
 	private byte facing = 3;
-	private boolean update = false;
 	public float lidAngle;
 
-	public int numUsingPlayers;
-	public float prevLidAngle;
-
-	private int ticksSinceSync;
 	private int mode = 0;
-	private int colour = 0;
-	
+	public int numUsingPlayers;
+
+	public float prevLidAngle;
+	private int ticksSinceSync;
+	private boolean update = false;
+
 	public TEZoroChest() {
 		inventory = new ItemStack[getSizeInventory()];
+	}
+
+	public void alterColour() {
+		colour++;
+		colour %= 17;
+
+		sendUpdatePacket(Side.SERVER);
+	}
+
+	public void alterColourBack() {
+		colour--;
+
+		if (colour < 0) {
+			colour = 16;
+		}
+
+		sendUpdatePacket(Side.SERVER);
+	}
+
+	public void alterMode() {
+		mode++;
+		mode %= 4;
+
+		sendUpdatePacket(Side.SERVER);
+	}
+
+	public void alterModeBack() {
+		mode--;
+		if (mode < 0) {
+			mode = 3;
+		}
+
+		sendUpdatePacket(Side.SERVER);
 	}
 
 	public void breakBlock() {
@@ -93,61 +127,14 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 			return null;
 		}
 	}
-	
-	public void alterMode(){
-		mode++;
-		mode%=4;
-		
-		sendUpdatePacket(Side.SERVER);
-	}
-	
-	public void alterModeBack(){
-		mode--;
-		if(mode < 0){
-			mode = 3;
+
+	public boolean foundController() {
+
+		if (getGrid() != null) {
+			return getGrid().hasChest(this) && getGrid().canDiscoverObj(this);
 		}
-		
-		sendUpdatePacket(Side.SERVER);
-	}
-	
-	public void alterColour(){
-		colour++;
-		colour%=17;
-		
-		sendUpdatePacket(Side.SERVER);
-	}
-	public void alterColourBack(){
-		colour--;
-		
-		if(colour < 0){
-			colour = 16;
-		}
-		
-		sendUpdatePacket(Side.SERVER);
-	}
-	
-	public int getMode(){
-		return mode;
-	}
-	
-	public int getColour(){
-		return colour;
-	}
-	
-	public String getModeText(){
-		
-		switch(getMode()){
-		case 0:
-			return "Send And Recive Items";
-		case 1:
-			return "Send Items Only";
-		case 2:
-			return "Recive Items Only";
-		case 3:
-			return "Disabled";
-		}
-		
-		return "";
+
+		return false;
 	}
 
 	@Override
@@ -158,6 +145,18 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	@Override
 	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
 		return false;
+	}
+
+	public int getColour() {
+		return colour;
+	}
+
+	public String getColourText() {
+		if (colour == 0) {
+			return "Colour Not Set";
+		}
+
+		return Utils.ColourName[colour - 1];
 	}
 
 	@Override
@@ -194,6 +193,26 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		return "xor.chest";
 	}
 
+	public int getMode() {
+		return mode;
+	}
+
+	public String getModeText() {
+
+		switch (getMode()) {
+		case 0:
+			return "Send And Recive Items";
+		case 1:
+			return "Send Items Only";
+		case 2:
+			return "Recive Items Only";
+		case 3:
+			return "Disabled";
+		}
+
+		return "";
+	}
+
 	public int getRowCount() {
 		return 8;
 	}
@@ -204,7 +223,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 	@Override
 	public int getSizeInventory() {
-		return getRowCount()*getRowLength();
+		return getRowCount() * getRowLength();
 	}
 
 	@Override
@@ -265,23 +284,6 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	}
 
 	@Override
-	public void readFromNBT( NBTTagCompound data ) {
-		super.readFromNBT(data);
-		
-		facing = data.getByte("facing");
-		mode = data.getInteger("mode");
-		colour = data.getInteger("colour");
-	}
-
-	@Override
-	public void writeToNBT( NBTTagCompound data ) {
-		super.writeToNBT(data);
-		data.setByte("facing", facing);
-		data.setInteger("mode", mode);
-		data.setInteger("colour", colour);
-	}
-
-	@Override
 	public void init() {
 	}
 
@@ -294,6 +296,10 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	public boolean isStackValidForSlot( int i, ItemStack itemstack ) {
 
 		return true;
+	}
+
+	public boolean isUpdate() {
+		return update;
 	}
 
 	@Override
@@ -318,6 +324,15 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	}
 
 	@Override
+	public void readFromNBT( NBTTagCompound data ) {
+		super.readFromNBT(data);
+
+		facing = data.getByte("facing");
+		mode = data.getInteger("mode");
+		colour = data.getInteger("colour");
+	}
+
+	@Override
 	public boolean receiveClientEvent( int i, int j ) {
 		if (i == 1) {
 			numUsingPlayers = j;
@@ -328,6 +343,15 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 			numUsingPlayers = (j & 0xF8) >> 3;
 		}
 		return true;
+	}
+
+	public void receiveGuiNetworkData( int i, int j ) {
+	}
+
+	public void sendGuiNetworkData( Container container, ICrafting iCrafting ) {
+		if (((iCrafting instanceof EntityPlayer)) && (Utils.isServerWorld())) {
+			PacketUtils.sendToPlayer((EntityPlayer) iCrafting, getDescriptionPacket());
+		}
 	}
 
 	public void setFacing( byte facing ) {
@@ -343,6 +367,10 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		}
 
 		this.onInventoryChanged();
+	}
+
+	public void setUpdate( boolean update ) {
+		this.update = update;
 	}
 
 	@Override
@@ -411,7 +439,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 			}
 		}
 
-		if(isUpdate()){
+		if (isUpdate()) {
 			sendUpdatePacket(Side.CLIENT);
 			this.setUpdate(false);
 		}
@@ -419,37 +447,11 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		TickSinceUpdate++;
 	}
 
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public void setUpdate( boolean update ) {
-		this.update = update;
-	}
-
-	public boolean foundController() {
-
-		if (getGrid() != null) {
-			return getGrid().hasChest(this) && getGrid().canDiscoverObj(this);
-		}
-
-		return false;
-	}
-	
-	public void sendGuiNetworkData( Container container, ICrafting iCrafting ) {
-		if (((iCrafting instanceof EntityPlayer)) && (Utils.isServerWorld())) {
-			PacketUtils.sendToPlayer((EntityPlayer) iCrafting, getDescriptionPacket());
-		}
-	}
-	
-	public void receiveGuiNetworkData( int i, int j ) {
-	}
-
-	public String getColourText() {
-		if(colour == 0){
-			return "Colour Not Set";
-		}
-		
-		return Utils.ColourName[colour-1];
+	@Override
+	public void writeToNBT( NBTTagCompound data ) {
+		super.writeToNBT(data);
+		data.setByte("facing", facing);
+		data.setInteger("mode", mode);
+		data.setInteger("colour", colour);
 	}
 }

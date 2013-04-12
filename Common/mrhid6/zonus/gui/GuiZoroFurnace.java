@@ -4,6 +4,7 @@ import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class GuiZoroFurnace extends GuiMain {
 
@@ -42,6 +43,12 @@ public class GuiZoroFurnace extends GuiMain {
 				drawTexturedModalRect(x + 56, y + 42, 176, 0, 16, 16);
 			}
 		}
+		
+		boolean hover = isHovering(10,26,16,32);
+		boolean hover2 = isHovering(10,26,34,50);
+		
+		drawIcon("/mods/zonus/textures/gui/icons.png",10+(container.tileEntity.getMode()*2),x+10,y+16,hover);
+		drawColouredIcon("/mods/zonus/textures/gui/icons.png",x+10,y+34,hover2,(container.tileEntity.getColour()-1));
 	}
 
 	@Override
@@ -59,10 +66,47 @@ public class GuiZoroFurnace extends GuiMain {
 		if (grid == null) {
 			return;
 		}
-
-		if ((mousex >= 42) && (mousex < 144) && (mousey >= 61) && (mousey < 71)) {
+		
+		if (isHovering(42,144,61,71)) {
 			drawToolTip(String.format(GridManager.GUISTRING, (int) grid.getEnergyStored(), (int) grid.getMaxEnergy()));
 		}
+		
+		if(isHovering(10,26,16,32)){
+			drawToolTip(container.tileEntity.getModeText());
+			
+		}else if(isHovering(10,26,34,50)){
+			drawToolTip(container.tileEntity.getColourText());
+		}
 
+	}
+	
+	@Override
+	protected void mouseClicked(int x, int y, int mouseButton) {
+		super.mouseClicked(x, y, mouseButton);
+		handleMouseClicked(this.mousex,this.mousey,mouseButton);
+	}
+
+	public boolean handleMouseClicked(int x, int y, int mouseButton){
+		
+		if(isHovering(10,26,16,32)){
+			
+			FMLClientHandler.instance().getClient().sndManager.playSoundFX("random.click", 1.0F, 0.6F);
+			
+			if(mouseButton==0)
+				container.tileEntity.alterMode();
+			if(mouseButton==1)
+				container.tileEntity.alterModeBack();
+		}
+		if(isHovering(10,26,34,50)){
+			
+			FMLClientHandler.instance().getClient().sndManager.playSoundFX("random.click", 1.0F, 0.6F);
+			if(mouseButton==0)
+				container.tileEntity.alterColour();
+			if(mouseButton==1)
+				container.tileEntity.alterColourBack();
+				
+		}
+
+		return true;
 	}
 }

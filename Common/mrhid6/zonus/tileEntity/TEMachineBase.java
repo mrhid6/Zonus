@@ -1,7 +1,7 @@
 package mrhid6.zonus.tileEntity;
 
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IPacketXorHandler;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
@@ -43,7 +43,10 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 	@Override
 	public void closeChest() {
 	}
-
+	
+	public void spawnParticles(){
+		
+	}
 	@Override
 	public Packet getDescriptionPacket() {
 		Payload payload = new Payload(2, 1, 1, 2, 0);

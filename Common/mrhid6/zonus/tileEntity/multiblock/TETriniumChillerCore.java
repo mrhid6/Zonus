@@ -1,6 +1,6 @@
 package mrhid6.zonus.tileEntity.multiblock;
 
-import mrhid6.zonus.Utils;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;

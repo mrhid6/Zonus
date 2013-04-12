@@ -3,8 +3,8 @@ package mrhid6.zonus.tileEntity;
 import mrhid6.zonus.Config;
 import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IGridInterface;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class TEPoweredBase extends TileRoot implements IGridInterface {

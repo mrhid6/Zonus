@@ -1,11 +1,12 @@
-package mrhid6.zonus.tileEntity;
+package mrhid6.zonus.tileEntity.machine;
 
 import java.util.HashMap;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ISidedBlock;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.tileEntity.TEMachineBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;

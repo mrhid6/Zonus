@@ -3,7 +3,7 @@ package mrhid6.zonus.render;
 import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
 import mrhid6.zonus.models.ModelTConverter;
-import mrhid6.zonus.tileEntity.TETriniumConverter;
+import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;

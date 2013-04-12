@@ -2,6 +2,7 @@ package mrhid6.zonus.tileEntity;
 
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
+import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import net.minecraft.tileentity.TileEntity;
 
 public class TETriniumCable extends TECableBase implements ITriniumObj {

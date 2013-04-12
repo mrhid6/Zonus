@@ -2,7 +2,7 @@ package mrhid6.zonus.render;
 
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.models.ModelMiner;
-import mrhid6.zonus.tileEntity.TETriniumMiner;
+import mrhid6.zonus.tileEntity.machine.TETriniumMiner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

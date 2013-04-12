@@ -1,4 +1,4 @@
-package mrhid6.zonus;
+package mrhid6.zonus.lib;
 
 import mrhid6.zonus.block.ModBlocks;
 import net.minecraft.creativetab.CreativeTabs;

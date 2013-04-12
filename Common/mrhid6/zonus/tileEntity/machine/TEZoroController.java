@@ -1,20 +1,23 @@
-package mrhid6.zonus.tileEntity;
+package mrhid6.zonus.tileEntity.machine;
 
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import mrhid6.zonus.Config;
 import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.fx.FXSparkle;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
 import mrhid6.zonus.lib.Reference;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.proxy.PowerMJProxy;
+import mrhid6.zonus.tileEntity.TECableBase;
+import mrhid6.zonus.tileEntity.TEMachineBase;
+import mrhid6.zonus.tileEntity.TEPoweredBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +29,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEZoroController extends TEMachineBase implements IXorGridObj, IPowerReceptor {
 
@@ -47,7 +51,7 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 	public TEZoroController() {
 
 		inventory = new ItemStack[0];
-		
+
 		if(Reference.useBuildCraft){
 			pp = new PowerMJProxy();
 			pp.configure(0, 1, 320, 8, 640);
@@ -249,8 +253,6 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 		// updateGrid();
 	}
-	
-	
 
 	@Override
 	public Packet getDescriptionPacket() {
@@ -271,14 +273,12 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 		PacketTile packet = new PacketTile(descPacketId, xCoord, yCoord, zCoord, payload);
 		return packet.getPacket();
 	}
-	
-	
 
 	@Override
 	public void handleTilePacket( PacketTile packet ) {
 		if(Reference.useBuildCraft){
 			pp.setEnergyStored(packet.payload.floatPayload[2]);
-			
+
 			if(Utils.isClientWorld()){
 				pp.setEnergyStored(packet.payload.floatPayload[2]);
 			}
@@ -299,7 +299,7 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 		}
 
 		gridindex = data.getInteger("grid.index");
-		
+
 		if(getGrid()!=null){
 			getGrid().energystorage = 0;
 		}
@@ -326,19 +326,9 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 		if(!isLoaded)
 			return;
-
-		if (Utils.isClientWorld()) {
-			if ((particaltick % 3) == 0) {
-				double x = xCoord +0.5F+(Math.random()*0.3)-0.15;
-				double z = zCoord +0.5F+(Math.random()*0.3)-0.15;
-
-				FXSparkle beam = new FXSparkle(worldObj, x, yCoord+0.9F, z);
-				Minecraft.getMinecraft().effectRenderer.addEffect(beam);
-				Minecraft.getMinecraft().effectRenderer.renderParticles(beam, 1);
-			}
-			particaltick++;
-		}
-
+		
+		spawnParticles();
+		
 		if (Utils.isClientWorld() || breakingblock) {
 			return;
 		}
@@ -398,6 +388,21 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 			return (int) (getGrid().getMaxEnergy() - getGrid().getEnergyStored()/3);
 		}
 		return 0;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void spawnParticles(){
+		if (Utils.isClientWorld()) {
+			if ((particaltick % 3) == 0) {
+				double x = xCoord +0.5F+(Math.random()*0.3)-0.15;
+				double z = zCoord +0.5F+(Math.random()*0.3)-0.15;
+
+				FXSparkle beam = new FXSparkle(worldObj, x, yCoord+0.9F, z);
+				Minecraft.getMinecraft().effectRenderer.addEffect(beam);
+				Minecraft.getMinecraft().effectRenderer.renderParticles(beam, 1);
+			}
+			particaltick++;
+		}
 	}
 
 }

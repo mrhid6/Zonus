@@ -1,11 +1,13 @@
-package mrhid6.zonus.tileEntity;
+package mrhid6.zonus.tileEntity.machine;
 
 import mrhid6.zonus.Config;
 import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ISidedBlock;
+import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.tileEntity.TECableBase;
+import mrhid6.zonus.tileEntity.TEMachineBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

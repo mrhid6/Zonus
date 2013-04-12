@@ -5,6 +5,7 @@ import mrhid6.zonus.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ZonRecipes {
@@ -19,6 +20,10 @@ public class ZonRecipes {
 
 		GameRegistry.addRecipe(new ItemStack(ModItems.zoroStaff, 1), new Object[] { "a  ", " b ", "  c", 'a', ModItems.zoroIngot, 'b', Item.stick, 'c', Block.cloth });
 
+		
+		FurnaceRecipes.smelting().addSmelting(ModBlocks.zoroOre.blockID, new ItemStack(ModItems.zoroIngot,1), 0.2f);
+		FurnaceRecipes.smelting().addSmelting(ModBlocks.triniumOre.blockID, new ItemStack(ModItems.triniumSludge,1), 0f);
+		
 	}
 	
 	

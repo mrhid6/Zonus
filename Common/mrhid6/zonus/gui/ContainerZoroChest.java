@@ -2,7 +2,7 @@ package mrhid6.zonus.gui;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mrhid6.zonus.tileEntity.TEZoroChest;
+import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;

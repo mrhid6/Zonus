@@ -1,7 +1,8 @@
-package mrhid6.zonus;
+package mrhid6.zonus.lib;
 
 import java.util.ArrayList;
 import java.util.List;
+import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,11 +18,59 @@ public class InventoryUtils {
 	}
 
 	public static ItemStack copyStack( ItemStack stack, int quanity ) {
-
+		
+		if(stack==null)
+			return null;
+		
 		stack = stack.copy();
 		stack.stackSize = quanity;
 
 		return stack;
+	}
+	
+	public static boolean canStoreInChest(TEZoroChest chest, ItemStack stack){
+		
+		int slot = -1;
+		while ((slot = InventoryUtils.getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0) {
+			return true;
+		}
+
+		slot = 0;
+		while ((slot = InventoryUtils.getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 ) {
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	public static int getEmptySlot(int startSlot, int endSlot, TEZoroChest chest) {
+		for (int i = startSlot; i < endSlot; i++)
+			if (chest.getStackInSlot(i) == null)
+				return i;
+
+		return -1;
+	}
+	
+	public static int getPartialSlot(ItemStack stack, int startSlot, int endSlot, TEZoroChest chest) {
+
+		for (int i = startSlot; i < endSlot; i++) {
+			if (chest.getStackInSlot(i) == null) {
+				continue;
+			}
+
+			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
+				continue;
+			}
+
+			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
+				continue;
+			}
+
+			return i;
+		}
+
+		return -1;
 	}
 
 	public static IRecipe findMatchingRecipe( InventoryCrafting par1InventoryCrafting, World par2World ) {

@@ -58,8 +58,6 @@ public class GuiZoroChest extends GuiMain {
 
 	public boolean handleMouseClicked(int x, int y, int mouseButton){
 		
-		System.out.println(mouseButton);
-		
 		if(isHovering(192,208,6,22)){
 			
 			FMLClientHandler.instance().getClient().sndManager.playSoundFX("random.click", 1.0F, 0.6F);

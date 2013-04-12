@@ -1,11 +1,12 @@
-package mrhid6.zonus.tileEntity;
+package mrhid6.zonus.tileEntity.machine;
 
-import mrhid6.zonus.InventoryUtils;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.InventoryUtils;
 import mrhid6.zonus.lib.Reference;
+import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.tileEntity.TEMachineBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;

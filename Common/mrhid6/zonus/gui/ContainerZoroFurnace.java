@@ -1,6 +1,6 @@
 package mrhid6.zonus.gui;
 
-import mrhid6.zonus.tileEntity.TEZoroFurnace;
+import mrhid6.zonus.tileEntity.machine.TEZoroFurnace;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;

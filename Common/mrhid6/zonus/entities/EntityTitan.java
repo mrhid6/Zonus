@@ -1,6 +1,6 @@
 package mrhid6.zonus.entities;
 
-import mrhid6.zonus.Utils;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

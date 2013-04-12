@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 import mrhid6.zonus.block.ModBlocks;
-import mrhid6.zonus.tileEntity.TEStearilliumCrafter;
+import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;

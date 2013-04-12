@@ -1,8 +1,8 @@
 package mrhid6.zonus.world;
 
 import java.util.Random;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.ModBlocks;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;

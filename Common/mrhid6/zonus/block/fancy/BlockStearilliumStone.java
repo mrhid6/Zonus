@@ -3,8 +3,8 @@ package mrhid6.zonus.block.fancy;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.BlockTexturedBase;
+import mrhid6.zonus.lib.Utils;
 
 public class BlockStearilliumStone extends BlockTexturedBase {
 

@@ -3,7 +3,7 @@ package mrhid6.zonus.block.machine;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
 import mrhid6.zonus.render.BRZoroChest;
-import mrhid6.zonus.tileEntity.TEZoroChest;
+import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;

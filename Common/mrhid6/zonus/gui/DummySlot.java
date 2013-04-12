@@ -1,6 +1,6 @@
 package mrhid6.zonus.gui;
 
-import mrhid6.zonus.InventoryUtils;
+import mrhid6.zonus.lib.InventoryUtils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;

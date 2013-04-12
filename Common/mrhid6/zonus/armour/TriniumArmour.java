@@ -1,9 +1,9 @@
 package mrhid6.zonus.armour;
 
 import mrhid6.zonus.Config;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.items.ModItems;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumArmorMaterial;

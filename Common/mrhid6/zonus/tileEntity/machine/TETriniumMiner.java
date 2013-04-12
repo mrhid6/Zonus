@@ -1,12 +1,16 @@
-package mrhid6.zonus.tileEntity;
+package mrhid6.zonus.tileEntity.machine;
 
 import java.util.List;
 import mrhid6.zonus.Config;
-import mrhid6.zonus.InventoryUtils;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.InventoryUtils;
+import mrhid6.zonus.lib.Reference;
+import mrhid6.zonus.lib.SpiralMatrix;
+import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.tileEntity.TEMachineBase;
+import mrhid6.zonus.tileEntity.TETriniumCable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -19,6 +23,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	private int depth;
 	private boolean doneMineing = false;
 	public int tempEng = 0;
+	private int colour = 0;
 
 	public TETriniumMiner() {
 		inventory = new ItemStack[2];
@@ -102,17 +107,18 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	}
 
 	public boolean minedLevel() {
-		int[][] coord_mod = { { -2, -2 }, { -1, -2 }, { 0, -2 }, { 1, -2 }, { 2, -2 }, { -2, -1 }, { -1, -1 }, { 0, -1 }, { 1, -1 }, { 2, -1 }, { -2, 0 }, { -1, 0 }, { 0, 0 }, { 1, 0 }, { 2, 0 }, { -2, 1 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { -2, 2 }, { -1, 2 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, };
-		int[] ar1 = Config.spiralArray(5);
+		
+		String[] coord_mod = SpiralMatrix.makeCoords(7);
+		int[] ar1 = SpiralMatrix.spiralArray(7);
 
 		for (int i = 0; i < ar1.length; i++) {
 
-			int coordid = -1 + ar1[i];
-			int[] coords = coord_mod[coordid];
+			int coordid =  -1+ar1[i];
+			String[] coords = coord_mod[coordid].split(",");
 			// System.out.println(ar1[i]);
-			// System.out.println("("+coords[0]+","+coords[1]+")");
-			int x = coords[0] + xCoord;
-			int z = coords[1] + zCoord;
+			//System.out.println("("+coords[0]+","+coords[1]+")");
+			int x = Integer.parseInt(coords[0]) + xCoord;
+			int z = Integer.parseInt(coords[1]) + zCoord;
 
 			if (shouldMineBlock(worldObj.getBlockId(x, depth, z))) {
 				return false;
@@ -125,29 +131,32 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 
 	public void mineLevel() {
 
+		float power = Reference.TMINER_USEAGE_MULITPLIER * Reference.POWER_GENERATION_RATE;
+		
 		if (minedLevel()) {
 			depth--;
 		}
 
-		int[][] coord_mod = { { -2, -2 }, { -1, -2 }, { 0, -2 }, { 1, -2 }, { 2, -2 }, { -2, -1 }, { -1, -1 }, { 0, -1 }, { 1, -1 }, { 2, -1 }, { -2, 0 }, { -1, 0 }, { 0, 0 }, { 1, 0 }, { 2, 0 }, { -2, 1 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { -2, 2 }, { -1, 2 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, };
-		int[] ar1 = Config.spiralArray(5);
-
+		String[] coord_mod = SpiralMatrix.makeCoords(7);
+		int[] ar1 = SpiralMatrix.spiralArray(7);
+	
 		for (int i = 0; i < ar1.length; i++) {
 
 			int coordid = -1 + ar1[i];
-			int[] coords = coord_mod[coordid];
-			// System.out.println(ar1[i]);
-			// System.out.println("("+coords[0]+","+coords[1]+")");
-			int x = coords[0] + xCoord;
-			int z = coords[1] + zCoord;
+			String[] coords = coord_mod[coordid].split(",");
+			//System.out.println(ar1[i]);
+			//System.out.println("("+coords[0]+","+coords[1]+")");
+			int x = Integer.parseInt(coords[0]) + xCoord;
+			int z = Integer.parseInt(coords[1]) + zCoord;
 
 			if (depth == 0) {
 				doneMineing = true;
 				return;
 			}
 			if (shouldMineBlock(worldObj.getBlockId(x, depth, z))) {
-				if (getGrid() != null && getGrid().getEnergyStored() >= 30) {
-					getGrid().subtractPower(30);
+				
+				if (getGrid() != null && getGrid().getEnergyStored() >= power) {
+					getGrid().subtractPower(power);
 					mineBlock(x, depth, z, worldObj.getBlockId(x, depth, z));
 				}
 
@@ -264,17 +273,17 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		
 		if(getGrid()!=null){
 			
-			TEZoroChest chest = getGrid().getFirstChestForRecive();
+			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour,stack);
 			if(chest!=null){
 				int injected = 0;
 	
 				int slot = -1;
-				while ((slot = getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
+				while ((slot = InventoryUtils.getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
 					injected += addToSlot(slot, stack, injected, true, chest);
 				}
 	
 				slot = 0;
-				while ((slot = getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
+				while ((slot = InventoryUtils.getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
 					injected += addToSlot(slot, stack, injected, true, chest);
 				}
 				chest.onInventoryChanged();
@@ -284,35 +293,6 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		}
 
 		return added;
-	}
-	
-	protected int getEmptySlot(int startSlot, int endSlot, TEZoroChest chest) {
-		for (int i = startSlot; i < endSlot; i++)
-			if (chest.getStackInSlot(i) == null)
-				return i;
-
-		return -1;
-	}
-	
-	protected int getPartialSlot(ItemStack stack, int startSlot, int endSlot, TEZoroChest chest) {
-
-		for (int i = startSlot; i < endSlot; i++) {
-			if (chest.getStackInSlot(i) == null) {
-				continue;
-			}
-
-			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
-				continue;
-			}
-
-			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
-				continue;
-			}
-
-			return i;
-		}
-
-		return -1;
 	}
 	
 	protected int addToSlot(int slot, ItemStack stack, int injected, boolean doAdd, TEZoroChest chest) {

@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import mrhid6.zonus.lib.InventoryUtils;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketGrid;
 import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TEMachineBase;
 import mrhid6.zonus.tileEntity.TEPoweredBase;
-import mrhid6.zonus.tileEntity.TEStearilliumEnergyCube;
-import mrhid6.zonus.tileEntity.TETriniumConverter;
-import mrhid6.zonus.tileEntity.TEZoroChest;
-import mrhid6.zonus.tileEntity.TEZoroController;
+import mrhid6.zonus.tileEntity.machine.TEStearilliumEnergyCube;
+import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
+import mrhid6.zonus.tileEntity.machine.TEZoroChest;
+import mrhid6.zonus.tileEntity.machine.TEZoroController;
 import mrhid6.zonus.tileEntity.multiblock.TEStearilliumReactor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
@@ -52,10 +55,11 @@ public class GridPower {
 		gridIndex = GridManager.addGridToManager(this);
 	}
 
-	public TEZoroChest getFirstChestForRecive(){
+	public TEZoroChest getFirstChestForReciveForItem(int colour,ItemStack stack){
 		for (TEZoroChest te1 : chestArray.keySet()) {
 
-			if(chestArray.get(te1) == 2 && te1.getMode()==0 || te1.getMode()==2){
+			if((chestArray.get(te1) == 2) && (te1.getMode()==0 || te1.getMode()==2) 
+					&& (te1.getColour()==0 || te1.getColour()==colour) && InventoryUtils.canStoreInChest(te1, stack)){
 				return te1;
 			}
 		}
@@ -113,7 +117,10 @@ public class GridPower {
 			te.setUpdate(true);
 			System.out.println("added cube");
 		}
-		WorkOutMaxPower();
+		
+		if(masterController!=null){
+			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
+		}
 
 	}
 
@@ -353,7 +360,6 @@ public class GridPower {
 	}
 
 	public Packet getDescriptionPacket() {
-		WorkOutMaxPower();
 		Payload payload = new Payload(0, 0, 2, 2, 0);
 
 		// System.out.println(gridindex);
@@ -577,7 +583,11 @@ public class GridPower {
 		if(energyCubeArray.containsKey(te) && energyCubeArray.get(te).intValue() == 2){
 			energyCubeArray.put(te, 1);
 			energystorage--;
-			//System.out.println("removed cube!");
+			System.out.println("removed cube!");
+		}
+		
+		if(masterController!=null){
+			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
 	}
 
@@ -623,7 +633,6 @@ public class GridPower {
 	}
 
 	public void setEnergyStored( float power ) {
-		WorkOutMaxPower();
 
 		Power = power;
 		if(Power < 0){
@@ -653,7 +662,7 @@ public class GridPower {
 
 	public void update() {
 		discover();
-		WorkOutMaxPower();
+		//WorkOutMaxPower();
 	}
 
 	public void WorkOutMaxPower() {

@@ -1,7 +1,7 @@
 package mrhid6.zonus.block.fancy;
 
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.block.BlockTexturedBase;
+import mrhid6.zonus.lib.Utils;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

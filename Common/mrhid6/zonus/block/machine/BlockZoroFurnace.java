@@ -2,7 +2,7 @@ package mrhid6.zonus.block.machine;
 
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
-import mrhid6.zonus.tileEntity.TEZoroFurnace;
+import mrhid6.zonus.tileEntity.machine.TEZoroFurnace;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
@@ -58,7 +58,7 @@ public class BlockZoroFurnace extends BlockMachine {
 			return icons[0];
 		} else {
 			int var6 = par1IBlockAccess.getBlockMetadata(x, y, z);
-			return blockSide != var6 ? (!connected)?icons[1]:icons[2] : (!connected)?icons[3]:icons[4];
+			return blockSide != var6 ? ((!connected)?icons[1]:icons[2]) : (!connected)?icons[3]:icons[4];
 		}
 	}
 

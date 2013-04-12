@@ -2,6 +2,9 @@ package mrhid6.zonus;
 
 import java.io.File;
 import java.util.HashMap;
+import mrhid6.zonus.lib.BlockIds;
+import mrhid6.zonus.lib.CreativeTabXor;
+import mrhid6.zonus.lib.ItemIds;
 import mrhid6.zonus.render.BRTriniumConverter;
 import mrhid6.zonus.render.BRZoroChest;
 import mrhid6.zonus.render.RenderBlockCable;
@@ -14,7 +17,7 @@ public class Config extends Configuration {
 
 	public static CreativeTabXor creativeTabXor;
 	
-	public static final String Version = "1.0.15";
+	public static final String Version = "1.0.18";
 
 	static HashMap<String, Integer> renderIds = new HashMap<String, Integer>();
 
@@ -104,38 +107,5 @@ public class Config extends Configuration {
         }
         config.save();
     }
-
-	public static int[] spiralArray( int dimension ) {
-
-		int numberOfItem = dimension * dimension;
-		int[] spiralArr = new int[numberOfItem];
-		byte toggle = 0;
-		int ds = dimension;
-		int cnt = dimension - 1;
-		int cntStart = dimension - 1;
-		for (int i = 1; i <= dimension; i++) {
-			spiralArr[numberOfItem - i] = i;
-		}
-
-		for (int i = numberOfItem - dimension; i > 0; i--) {
-			spiralArr[i - 1] = spiralArr[i] + ds;
-			cnt = cnt - 1;
-			if (cnt == 0) {
-				ds = (int) (ds * turnFactor(toggle, dimension));
-				cntStart = cntStart - toggle;
-				cnt = cntStart;
-				toggle = (byte) (toggle ^ 1);
-			}
-		}
-		return spiralArr;
-	}
-
-	private static float turnFactor( int arg, float n ) {
-		if (arg == 0) {
-			return -1 / n;
-		} else {
-			return n;
-		}
-	}
 
 }

@@ -1,12 +1,13 @@
 package mrhid6.zonus;
 
 import java.util.ArrayList;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketGrid;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TEPoweredBase;
-import mrhid6.zonus.tileEntity.TETriniumConverter;
-import mrhid6.zonus.tileEntity.TEZoroController;
+import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
+import mrhid6.zonus.tileEntity.machine.TEZoroController;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;

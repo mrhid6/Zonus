@@ -2,7 +2,7 @@ package mrhid6.zonus.block.machine;
 
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
-import mrhid6.zonus.tileEntity.TEStearilliumCrafter;
+import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;

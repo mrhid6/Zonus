@@ -2,16 +2,17 @@ package mrhid6.zonus.tileEntity;
 
 import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
-import mrhid6.zonus.Utils;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.IGridInterface;
 import mrhid6.zonus.interfaces.IPacketXorHandler;
 import mrhid6.zonus.interfaces.ISidedBlock;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
+import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;

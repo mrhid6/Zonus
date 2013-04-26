@@ -67,37 +67,33 @@ public class ContainerStearilliumCrafter extends ContainerXorbo {
 		}
 	}
 
-	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int slotIndex)
-	{
-		ItemStack transferredStack = null;
-		Slot slot = (Slot)this.inventorySlots.get(slotIndex);
-
-		if ((slot != null) && (slot.getHasStack()))
-		{
-			ItemStack stack = slot.getStack();
-			transferredStack = stack.copy();
-
-			if (!doMergeStackAreas(slotIndex, stack)) {
-				return null;
-			}
-			if (stack.stackSize == 0)
-				slot.putStack(null);
-			else {
-				slot.onSlotChanged();
-			}
-		}
-		return transferredStack;
-	}
-
-	public boolean doMergeStackAreas(int slotIndex, ItemStack stack)
-	{
+	public boolean doMergeStackAreas( int slotIndex, ItemStack stack ) {
 		if (slotIndex < 19) {
 			return mergeItemStack(stack, 19, 55, true);
 		}
 		return mergeItemStack(stack, 10, 19, false);
 	}
 
+	@Override
+	public ItemStack transferStackInSlot( EntityPlayer par1EntityPlayer, int slotIndex ) {
+		ItemStack transferredStack = null;
+		Slot slot = (Slot) inventorySlots.get(slotIndex);
 
+		if ((slot != null) && (slot.getHasStack())) {
+			ItemStack stack = slot.getStack();
+			transferredStack = stack.copy();
+
+			if (!doMergeStackAreas(slotIndex, stack)) {
+				return null;
+			}
+			if (stack.stackSize == 0) {
+				slot.putStack(null);
+			} else {
+				slot.onSlotChanged();
+			}
+		}
+		return transferredStack;
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)

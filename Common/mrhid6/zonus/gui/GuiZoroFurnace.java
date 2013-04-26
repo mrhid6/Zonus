@@ -32,23 +32,22 @@ public class GuiZoroFurnace extends GuiMain {
 			if (l > 0) {
 				drawTexturedModalRect(x + 42, y + 61, 0, 166, l, 10);
 			}
-			
-			l = this.container.tileEntity.getScaledProgress(24);
+
+			l = container.tileEntity.getScaledProgress(24);
 			if (l > 0) {
 				drawTexturedModalRect(x + 79, y + 33, 176, 16, l, 16);
 			}
-			
-			if (this.container.tileEntity.isActive)
-			{
+
+			if (container.tileEntity.isActive) {
 				drawTexturedModalRect(x + 56, y + 42, 176, 0, 16, 16);
 			}
 		}
-		
-		boolean hover = isHovering(10,26,16,32);
-		boolean hover2 = isHovering(10,26,34,50);
-		
-		drawIcon("/mods/zonus/textures/gui/icons.png",10+(container.tileEntity.getMode()*2),x+10,y+16,hover);
-		drawColouredIcon("/mods/zonus/textures/gui/icons.png",x+10,y+34,hover2,(container.tileEntity.getColour()-1));
+
+		boolean hover = isHovering(10, 26, 16, 32);
+		boolean hover2 = isHovering(10, 26, 34, 50);
+
+		drawIcon("/mods/zonus/textures/gui/icons.png", 10 + (container.tileEntity.getMode() * 2), x + 10, y + 16, hover);
+		drawColouredIcon("/mods/zonus/textures/gui/icons.png", x + 10, y + 34, hover2, (container.tileEntity.getColour() - 1));
 	}
 
 	@Override
@@ -66,47 +65,51 @@ public class GuiZoroFurnace extends GuiMain {
 		if (grid == null) {
 			return;
 		}
-		
-		if (isHovering(42,144,61,71)) {
+
+		if (isHovering(42, 144, 61, 71)) {
 			drawToolTip(String.format(GridManager.GUISTRING, (int) grid.getEnergyStored(), (int) grid.getMaxEnergy()));
 		}
-		
-		if(isHovering(10,26,16,32)){
+
+		if (isHovering(10, 26, 16, 32)) {
 			drawToolTip(container.tileEntity.getModeText());
-			
-		}else if(isHovering(10,26,34,50)){
+
+		} else if (isHovering(10, 26, 34, 50)) {
 			drawToolTip(container.tileEntity.getColourText());
 		}
 
 	}
-	
-	@Override
-	protected void mouseClicked(int x, int y, int mouseButton) {
-		super.mouseClicked(x, y, mouseButton);
-		handleMouseClicked(this.mousex,this.mousey,mouseButton);
-	}
 
-	public boolean handleMouseClicked(int x, int y, int mouseButton){
-		
-		if(isHovering(10,26,16,32)){
-			
+	public boolean handleMouseClicked( int x, int y, int mouseButton ) {
+
+		if (isHovering(10, 26, 16, 32)) {
+
 			FMLClientHandler.instance().getClient().sndManager.playSoundFX("random.click", 1.0F, 0.6F);
-			
-			if(mouseButton==0)
-				container.tileEntity.alterMode();
-			if(mouseButton==1)
-				container.tileEntity.alterModeBack();
+
+			if (mouseButton == 0) {
+				container.tileEntity.alterModeUp();
+			}
+			if (mouseButton == 1) {
+				container.tileEntity.alterModeDown();
+			}
 		}
-		if(isHovering(10,26,34,50)){
-			
+		if (isHovering(10, 26, 34, 50)) {
+
 			FMLClientHandler.instance().getClient().sndManager.playSoundFX("random.click", 1.0F, 0.6F);
-			if(mouseButton==0)
+			if (mouseButton == 0) {
 				container.tileEntity.alterColour();
-			if(mouseButton==1)
+			}
+			if (mouseButton == 1) {
 				container.tileEntity.alterColourBack();
-				
+			}
+
 		}
 
 		return true;
+	}
+
+	@Override
+	protected void mouseClicked( int x, int y, int mouseButton ) {
+		super.mouseClicked(x, y, mouseButton);
+		handleMouseClicked(mousex, mousey, mouseButton);
 	}
 }

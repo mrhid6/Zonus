@@ -8,7 +8,6 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-
 public class BlockNoxiteOre extends BlockTexturedBase {
 
 	public BlockNoxiteOre( int id, String name ) {
@@ -25,7 +24,7 @@ public class BlockNoxiteOre extends BlockTexturedBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int par1, int par2 ) {
+	public Icon getIcon( int par1, int par2 ) {
 		return blockIcon;
 	}
 

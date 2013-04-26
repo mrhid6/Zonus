@@ -1,15 +1,10 @@
 package mrhid6.zonus.block.multiblock;
 
 import java.util.Random;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.tileEntity.multiblock.TEStearilliumReactor;
-import mrhid6.zonus.tileEntity.multiblock.TETriniumChillerBase;
-import mrhid6.zonus.tileEntity.multiblock.TETriniumChillerCore;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
@@ -17,6 +12,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStearilliumReactor extends BlockMachine {
 
@@ -26,6 +23,21 @@ public class BlockStearilliumReactor extends BlockMachine {
 
 		icons = new Icon[80];
 		setBlockUnbreakable();
+	}
+
+	@Override
+	public void breakBlock( World par1World, int par2, int par3, int par4, int par5, int par6 ) {
+
+		restoreBlocks(par1World, par2, par3, par4);
+
+		for (int yy = -3; yy <= 3; yy++) {
+			for (int xx = -3; xx <= 3; xx++) {
+				for (int zz = -3; zz <= 3; zz++) {
+					par1World.notifyBlocksOfNeighborChange(par2 + xx, par3 + yy, par4 + zz, blockID);
+				}
+			}
+		}
+		super.breakBlock(par1World, par2, par3, par4, par5, par6);
 	}
 
 	public int calculateLevel( IBlockAccess world, int x, int y, int z ) {
@@ -49,25 +61,7 @@ public class BlockStearilliumReactor extends BlockMachine {
 
 		return diff * 4 - 4;
 	}
-	
-	
-	
-	@Override
-	public void breakBlock( World par1World, int par2, int par3, int par4, int par5, int par6 ) {
-		
-		restoreBlocks(par1World, par2, par3, par4);
 
-
-		for (int yy = -3; yy <= 3; yy++) {
-			for (int xx = -3; xx <= 3; xx++) {
-				for (int zz = -3; zz <= 3; zz++) {
-					par1World.notifyBlocksOfNeighborChange(par2 + xx, par3 + yy, par4 + zz, blockID);
-				}
-			}
-		}
-		super.breakBlock(par1World, par2, par3, par4, par5, par6);
-	}
-	
 	@Override
 	public TileEntity createNewTileEntity( World var1 ) {
 		return null;
@@ -77,44 +71,6 @@ public class BlockStearilliumReactor extends BlockMachine {
 	public TileEntity createTileEntity( World world, int metadata ) {
 
 		return new TEStearilliumReactor();
-	}
-	
-	private void restoreBlocks( World par1World, int par2, int par3, int par4 ) {
-		
-		TEStearilliumReactor core = null;
-		for (int yy = -3; yy <= 3; yy++) {
-			for (int xx = -3; xx <= 3; xx++) {
-				for (int zz = -3; zz <= 3; zz++) {
-					int block = par1World.getBlockId(par2 + xx, par3 + yy, par4 + zz);
-					int md = par1World.getBlockMetadata(par2 + xx, par3 + yy, par4 + zz);
-					if (block == blockID) {
-						
-						TEStearilliumReactor te = (TEStearilliumReactor)par1World.getBlockTileEntity(par2 + xx, par3 + yy, par4 + zz);
-						
-						if(te!=null){
-							core=te.getCoreBlock();
-							
-							if(core!=null){
-								core.setCauseExplosion(true);
-								core.blockBreak();
-							}
-						}
-						par1World.setBlock(par2+xx, par3+yy, par4+zz, 0);
-					}
-				}
-			}
-		}
-	}
-	
-	@Override
-	public int idDropped( int meta, Random par2Random, int par3 ) {
-		return ModBlocks.triniumBrick.blockID;
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int par1, int par2 ) {
-		return icons[0];
 	}
 
 	@Override
@@ -212,6 +168,17 @@ public class BlockStearilliumReactor extends BlockMachine {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon( int par1, int par2 ) {
+		return icons[0];
+	}
+
+	@Override
+	public int idDropped( int meta, Random par2Random, int par3 ) {
+		return ModBlocks.triniumBrick.blockID;
+	}
+
+	@Override
 	public void onBlockAdded( World par1World, int par2, int par3, int par4 ) {
 	}
 
@@ -226,6 +193,38 @@ public class BlockStearilliumReactor extends BlockMachine {
 		int i = 0;
 		for (; i < 16; i++) {
 			icons[i] = iconRegister.registerIcon(Zonus.Modname + "ser" + i);
+		}
+	}
+
+	private void restoreBlocks( World par1World, int par2, int par3, int par4 ) {
+
+		TEStearilliumReactor core = null;
+		for (int yy = -3; yy <= 3; yy++) {
+			for (int xx = -3; xx <= 3; xx++) {
+				for (int zz = -3; zz <= 3; zz++) {
+					int block = par1World.getBlockId(par2 + xx, par3 + yy, par4 + zz);
+					par1World.getBlockMetadata(par2 + xx, par3 + yy, par4 + zz);
+					if (block == blockID) {
+
+						TEStearilliumReactor te = (TEStearilliumReactor) par1World.getBlockTileEntity(par2 + xx, par3 + yy, par4 + zz);
+
+						if (te != null) {
+							core = te.getCoreBlock();
+
+							if (core != null) {
+								System.out.println("not null");
+								core.setCauseExplosion(true);
+								core.blockBreak();
+							} else {
+								System.out.println("null");
+								te.setCauseExplosion(true);
+								te.blockBreak();
+							}
+						}
+						par1World.setBlock(par2 + xx, par3 + yy, par4 + zz, 0);
+					}
+				}
+			}
 		}
 	}
 }

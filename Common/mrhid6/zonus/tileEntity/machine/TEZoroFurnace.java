@@ -3,6 +3,7 @@ package mrhid6.zonus.tileEntity.machine;
 import java.util.HashMap;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.interfaces.IConverterObj;
+import mrhid6.zonus.interfaces.ILogisticsMachine;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
 import mrhid6.zonus.items.ModItems;
@@ -18,7 +19,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 
-public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
+public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogisticsMachine {
 
 	public static int guiPacketId;
 	protected static final HashMap<Integer, ItemStack> recipes = new HashMap<Integer, ItemStack>();
@@ -47,6 +48,68 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 		recipes.put(ModItems.triniumSludge.itemID, new ItemStack(ModItems.triniumIngot, 1));
 	}
 
+	private ItemStack addToNetworkedInventory( ItemStack stack ) {
+		ItemStack added = InventoryUtils.copyStack(stack, 0);
+
+		if (getGrid() != null) {
+
+			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour, stack);
+			if (chest != null) {
+				int injected = 0;
+
+				int slot = -1;
+				while ((slot = getPartialSlot(stack, slot + 1, chest.getSizeInventory(), chest)) >= 0 && injected < stack.stackSize) {
+					injected += addToSlot(slot, stack, injected, true, chest);
+				}
+
+				slot = 0;
+				while ((slot = getEmptySlot(0, chest.getSizeInventory(), chest)) >= 0 && injected < stack.stackSize) {
+					injected += addToSlot(slot, stack, injected, true, chest);
+				}
+				chest.onInventoryChanged();
+
+				added.stackSize = injected;
+			}
+		}
+
+		return added;
+	}
+
+	protected int addToSlot( int slot, ItemStack stack, int injected, boolean doAdd, TEZoroChest chest ) {
+		int available = stack.stackSize - injected;
+		int max = Math.min(stack.getMaxStackSize(), chest.getInventoryStackLimit());
+
+		ItemStack stackInSlot = chest.getStackInSlot(slot);
+		if (stackInSlot == null) {
+			int wanted = Math.min(available, max);
+			if (doAdd) {
+				stackInSlot = stack.copy();
+				stackInSlot.stackSize = wanted;
+				chest.setInventorySlotContents(slot, stackInSlot);
+			}
+			return wanted;
+		}
+
+		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack)) {
+			return 0;
+		}
+
+		int wanted = max - stackInSlot.stackSize;
+		if (wanted <= 0) {
+			return 0;
+		}
+
+		if (wanted > available) {
+			wanted = available;
+		}
+
+		if (doAdd) {
+			stackInSlot.stackSize += wanted;
+			chest.setInventorySlotContents(slot, stackInSlot);
+		}
+		return wanted;
+	}
+
 	public void alterColour() {
 		colour++;
 		colour %= 17;
@@ -64,18 +127,20 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 		sendUpdatePacket(Side.SERVER);
 	}
 
-	public void alterMode() {
-		mode++;
-		mode %= 2;
-
-		sendUpdatePacket(Side.SERVER);
-	}
-
-	public void alterModeBack() {
+	@Override
+	public void alterModeDown() {
 		mode--;
 		if (mode < 0) {
 			mode = 1;
 		}
+
+		sendUpdatePacket(Side.SERVER);
+	}
+
+	@Override
+	public void alterModeUp() {
+		mode++;
+		mode %= 2;
 
 		sendUpdatePacket(Side.SERVER);
 	}
@@ -133,7 +198,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 			return false;
 		}
 
-		if (getGrid().getEnergyStored()<(Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER)) {
+		if (getGrid().getEnergyStored() < (Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER)) {
 			return false;
 		}
 
@@ -153,6 +218,19 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 
 		int result = Integer.valueOf(inventory[1].stackSize) + Integer.valueOf(output.stackSize);
 		return (result <= output.getMaxStackSize());
+	}
+
+	public void ejectItemsToNetwork() {
+
+		if (mode == 0 || inventory[1] == null) {
+			return;
+		}
+
+		ItemStack added = addToNetworkedInventory(inventory[1]);
+		inventory[1].stackSize -= added.stackSize;
+		if (inventory[1].stackSize <= 0) {
+			inventory[1] = null;
+		}
 	}
 
 	public boolean foundController() {
@@ -206,6 +284,17 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 		return packet.getPacket();
 	}
 
+	protected int getEmptySlot( int startSlot, int endSlot, TEZoroChest chest ) {
+		for (int i = startSlot; i < endSlot; i++) {
+			if (chest.getStackInSlot(i) == null) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	@Override
 	public int getMode() {
 		return mode;
 	}
@@ -220,6 +309,27 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 		}
 
 		return "";
+	}
+
+	protected int getPartialSlot( ItemStack stack, int startSlot, int endSlot, TEZoroChest chest ) {
+
+		for (int i = startSlot; i < endSlot; i++) {
+			if (chest.getStackInSlot(i) == null) {
+				continue;
+			}
+
+			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
+				continue;
+			}
+
+			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
+				continue;
+			}
+
+			return i;
+		}
+
+		return -1;
 	}
 
 	public ItemStack getResultFor( ItemStack itemstack ) {
@@ -306,6 +416,10 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 	}
 
 	@Override
+	public void setMode( int mode ) {
+	}
+
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
@@ -325,10 +439,10 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 
 		if (isActive) {
 			if (processCur < processEnd) {
-				
+
 				if (getGrid() != null) {
-					
-					if(getGrid().getEnergyStored()>=(Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER)){
+
+					if (getGrid().getEnergyStored() >= (Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER)) {
 						processCur++;
 						getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER);
 					}
@@ -355,7 +469,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 				isActive = true;
 			}
 		}
-		
+
 		ejectItemsToNetwork();
 
 		if (isUpdate()) {
@@ -372,106 +486,5 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj {
 		super.writeToNBT(data);
 		data.setInteger("mode", mode);
 		data.setInteger("colour", colour);
-	}
-	
-	
-	public void ejectItemsToNetwork(){
-		
-		if(mode==0 || inventory[1]==null)
-			return;
-		
-		ItemStack added = addToNetworkedInventory(inventory[1]);
-		inventory[1].stackSize -= added.stackSize;
-		if(inventory[1].stackSize <=0){
-			inventory[1]=null;
-		}
-	}
-	
-	private ItemStack addToNetworkedInventory(ItemStack stack) {
-		ItemStack added = InventoryUtils.copyStack(stack,0);
-		
-		if(getGrid()!=null){
-			
-			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour,stack);
-			if(chest!=null){
-				int injected = 0;
-	
-				int slot = -1;
-				while ((slot = getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
-					injected += addToSlot(slot, stack, injected, true, chest);
-				}
-	
-				slot = 0;
-				while ((slot = getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
-					injected += addToSlot(slot, stack, injected, true, chest);
-				}
-				chest.onInventoryChanged();
-	
-				added.stackSize=injected;
-			}
-		}
-
-		return added;
-	}
-	
-	protected int getEmptySlot(int startSlot, int endSlot, TEZoroChest chest) {
-		for (int i = startSlot; i < endSlot; i++)
-			if (chest.getStackInSlot(i) == null)
-				return i;
-
-		return -1;
-	}
-	
-	protected int getPartialSlot(ItemStack stack, int startSlot, int endSlot, TEZoroChest chest) {
-
-		for (int i = startSlot; i < endSlot; i++) {
-			if (chest.getStackInSlot(i) == null) {
-				continue;
-			}
-
-			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
-				continue;
-			}
-
-			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
-				continue;
-			}
-
-			return i;
-		}
-
-		return -1;
-	}
-	
-	protected int addToSlot(int slot, ItemStack stack, int injected, boolean doAdd, TEZoroChest chest) {
-		int available = stack.stackSize - injected;
-		int max = Math.min(stack.getMaxStackSize(), chest.getInventoryStackLimit());
-
-		ItemStack stackInSlot = chest.getStackInSlot(slot);
-		if (stackInSlot == null) {
-			int wanted = Math.min(available, max);
-			if (doAdd) {
-				stackInSlot = stack.copy();
-				stackInSlot.stackSize = wanted;
-				chest.setInventorySlotContents(slot, stackInSlot);
-			}
-			return wanted;
-		}
-
-		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack))
-			return 0;
-
-		int wanted = max - stackInSlot.stackSize;
-		if (wanted <= 0)
-			return 0;
-
-		if (wanted > available)
-			wanted = available;
-
-		if (doAdd) {
-			stackInSlot.stackSize += wanted;
-			chest.setInventorySlotContents(slot, stackInSlot);
-		}
-		return wanted;
 	}
 }

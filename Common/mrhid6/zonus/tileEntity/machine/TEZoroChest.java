@@ -5,6 +5,7 @@ import java.util.List;
 import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.gui.ContainerZoroChest;
 import mrhid6.zonus.interfaces.IConverterObj;
+import mrhid6.zonus.interfaces.ILogisticsMachine;
 import mrhid6.zonus.interfaces.IPacketXorHandler;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
@@ -24,7 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 
-public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorHandler, IXorGridObj {
+public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorHandler, IXorGridObj, ILogisticsMachine {
 
 	protected static int descPacketId;
 	private int colour = 0;
@@ -59,18 +60,20 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		sendUpdatePacket(Side.SERVER);
 	}
 
-	public void alterMode() {
-		mode++;
-		mode %= 4;
-
-		sendUpdatePacket(Side.SERVER);
-	}
-
-	public void alterModeBack() {
+	@Override
+	public void alterModeDown() {
 		mode--;
 		if (mode < 0) {
 			mode = 3;
 		}
+
+		sendUpdatePacket(Side.SERVER);
+	}
+
+	@Override
+	public void alterModeUp() {
+		mode++;
+		mode %= 4;
 
 		sendUpdatePacket(Side.SERVER);
 	}
@@ -193,6 +196,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		return "xor.chest";
 	}
 
+	@Override
 	public int getMode() {
 		return mode;
 	}
@@ -367,6 +371,10 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		}
 
 		this.onInventoryChanged();
+	}
+
+	@Override
+	public void setMode( int mode ) {
 	}
 
 	public void setUpdate( boolean update ) {

@@ -27,7 +27,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class RenderTEZoroController extends TileEntitySpecialRenderer {
@@ -60,7 +59,7 @@ public class RenderTEZoroController extends TileEntitySpecialRenderer {
 		if (te == null || !(te instanceof TEZoroController)) {
 			return;
 		}
-		
+
 		if (te.worldObj == null) {
 			bindTextureByName("/mods/zonus/textures/models/TriniumConverterOff.png");
 			GL11.glPushMatrix();
@@ -85,7 +84,7 @@ public class RenderTEZoroController extends TileEntitySpecialRenderer {
 			}
 			renderBlocks = new RenderBlocks(tpb.worldObj);
 		}
-		
+
 		if (tpb.worldObj.getBlockId(tpb.xCoord, tpb.yCoord + 1, tpb.zCoord) == 0 && tpb.worldObj.getClosestPlayer(tpb.xCoord, tpb.yCoord, tpb.zCoord, 15) != null && !mc.isGamePaused) {
 
 			EntityPlayer p = mc.thePlayer;
@@ -104,8 +103,6 @@ public class RenderTEZoroController extends TileEntitySpecialRenderer {
 
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 170F, 170F);
 				glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-				float rotational = (Minecraft.getSystemTime()) / (3000.0F) * 300.0F;
 
 				if (!ei.getEntityItem().equals(stack)) {
 					return;
@@ -132,12 +129,12 @@ public class RenderTEZoroController extends TileEntitySpecialRenderer {
 						float f1 = icon.getMaxU();
 						float f2 = icon.getMinV();
 						float f3 = icon.getMaxV();
-						//GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+						// GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 						// GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 						GL11.glTranslatef(-0.5F, -0.5F, 1 / 32.0F);
 						ItemRenderer.renderItemIn2D(tessellator, f1, f2, fa, f3, icon.getSheetWidth(), icon.getSheetHeight(), 0.0625F);
 
-						//renderItems.doRenderItem(ei, 0, 0, 0, 0, 0);*/
+						// renderItems.doRenderItem(ei, 0, 0, 0, 0, 0);*/
 					}
 					glPopMatrix();
 				}
@@ -145,7 +142,7 @@ public class RenderTEZoroController extends TileEntitySpecialRenderer {
 			}
 			glPopMatrix();
 			glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			
+
 		}
 
 	}

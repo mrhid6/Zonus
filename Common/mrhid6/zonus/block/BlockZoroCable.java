@@ -28,7 +28,7 @@ public class BlockZoroCable extends BlockCableBase {
 	public TileEntity createNewTileEntity( World world ) {
 		return new TECableBase();
 	}
-	
+
 	@Override
 	public int idDropped( int par1, Random par2Random, int par3 ) {
 		return ModItems.zoroCable.itemID;

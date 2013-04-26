@@ -1,7 +1,6 @@
 package mrhid6.zonus.tileEntity.machine;
 
 import java.util.List;
-import mrhid6.zonus.Config;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
@@ -9,26 +8,158 @@ import mrhid6.zonus.lib.InventoryUtils;
 import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.lib.SpiralMatrix;
 import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.network.PacketTile;
+import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.tileEntity.TEMachineBase;
 import mrhid6.zonus.tileEntity.TETriniumCable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 
 public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITriniumObj {
 
-	private int depth;
-	private boolean doneMineing = false;
+	protected int colour = 0;
+	protected int inputmode = 0;
+	protected int outputmode = 0;
+	public int depth;
+	public int depthLimit = 0;
+	public boolean doneMineing = false;
+	public int radius = 7;
 	public int tempEng = 0;
-	private int colour = 0;
 
 	public TETriniumMiner() {
 		inventory = new ItemStack[2];
 
 		invName = "xor.furnace";
+	}
+
+	private ItemStack addToNetworkedInventory( ItemStack stack ) {
+		ItemStack added = InventoryUtils.copyStack(stack, 0);
+
+		if (getGrid() != null) {
+
+			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour, stack);
+			if (chest != null) {
+				int injected = 0;
+
+				int slot = -1;
+				while ((slot = InventoryUtils.getPartialChestSlot(stack, slot + 1, chest.getSizeInventory(), chest)) >= 0 && injected < stack.stackSize) {
+					injected += addToChestSlot(slot, stack, injected, true, chest);
+				}
+
+				slot = 0;
+				while ((slot = InventoryUtils.getEmptyChestSlot(0, chest.getSizeInventory(), chest)) >= 0 && injected < stack.stackSize) {
+					injected += addToChestSlot(slot, stack, injected, true, chest);
+				}
+				chest.onInventoryChanged();
+
+				added.stackSize = injected;
+			}
+		}
+
+		return added;
+	}
+	
+	public void breakBlock() {
+		dropContent(0);
+		if (getGrid() != null) {
+			getGrid().removeMachine(this);
+		}
+	}
+	
+	private ItemStack addToInventory( ItemStack stack ) {
+		ItemStack added = InventoryUtils.copyStack(stack, 0);
+
+			int injected = 0;
+
+			int slot = -1;
+			while ((slot = InventoryUtils.getPartialSlot(stack, slot + 1, getSizeInventory(), this)) >= 0 && injected < stack.stackSize) {
+				injected += addToSlot(slot, stack, injected, true);
+			}
+
+			slot = 0;
+			while ((slot = InventoryUtils.getEmptySlot(0, getSizeInventory(), this)) >= 0 && injected < stack.stackSize) {
+				injected += addToSlot(slot, stack, injected, true);
+			}
+			onInventoryChanged();
+
+			added.stackSize = injected;
+
+		return added;
+	}
+
+	protected int addToChestSlot( int slot, ItemStack stack, int injected, boolean doAdd, TEZoroChest chest ) {
+		int available = stack.stackSize - injected;
+		int max = Math.min(stack.getMaxStackSize(), chest.getInventoryStackLimit());
+
+		ItemStack stackInSlot = chest.getStackInSlot(slot);
+		if (stackInSlot == null) {
+			int wanted = Math.min(available, max);
+			if (doAdd) {
+				stackInSlot = stack.copy();
+				stackInSlot.stackSize = wanted;
+				chest.setInventorySlotContents(slot, stackInSlot);
+			}
+			return wanted;
+		}
+
+		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack)) {
+			return 0;
+		}
+
+		int wanted = max - stackInSlot.stackSize;
+		if (wanted <= 0) {
+			return 0;
+		}
+
+		if (wanted > available) {
+			wanted = available;
+		}
+
+		if (doAdd) {
+			stackInSlot.stackSize += wanted;
+			chest.setInventorySlotContents(slot, stackInSlot);
+		}
+		return wanted;
+	}
+	
+	protected int addToSlot( int slot, ItemStack stack, int injected, boolean doAdd) {
+		int available = stack.stackSize - injected;
+		int max = Math.min(stack.getMaxStackSize(), getInventoryStackLimit());
+		
+		ItemStack stackInSlot = getStackInSlot(slot);
+		if (stackInSlot == null) {
+			int wanted = Math.min(available, max);
+			if (doAdd) {
+				stackInSlot = stack.copy();
+				stackInSlot.stackSize = wanted;
+				setInventorySlotContents(slot, stackInSlot);
+			}
+			return wanted;
+		}
+		
+		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack)) {
+			return 0;
+		}
+		
+		int wanted = max - stackInSlot.stackSize;
+		if (wanted <= 0) {
+			return 0;
+		}
+		
+		if (wanted > available) {
+			wanted = available;
+		}
+		
+		if (doAdd) {
+			stackInSlot.stackSize += wanted;
+			setInventorySlotContents(slot, stackInSlot);
+		}
+		return wanted;
 	}
 
 	@Override
@@ -51,7 +182,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	public boolean foundController() {
 
 		if (getGrid() != null) {
-			return getGrid().hasMachine(this)  && getGrid().canDiscoverObj(this);
+			return getGrid().hasMachine(this) && getGrid().canDiscoverObj(this);
 		}
 		return false;
 	}
@@ -69,9 +200,55 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	}
 
 	@Override
+	public Packet getDescriptionPacket() {
+		Payload payload = new Payload(3, 1, 5, 2, 0);
+
+		payload.boolPayload[0] = isActive;
+		payload.boolPayload[1] = transmitpower;
+		payload.boolPayload[2] = doneMineing;
+
+		payload.intPayload[0] = gridindex;
+		payload.intPayload[1] = colour;
+		payload.intPayload[2] = depth;
+		payload.intPayload[3] = depthLimit;
+		payload.intPayload[4] = radius;
+
+		payload.floatPayload[0] = processCur;
+		payload.floatPayload[1] = processEnd;
+
+		payload.bytePayload[0] = (byte) getFacing();
+
+		PacketTile packet = new PacketTile(descPacketId, xCoord, yCoord, zCoord, payload);
+		return packet.getPacket();
+	}
+
+	public float getPower() {
+		return Reference.TMINER_USEAGE_MULITPLIER * Reference.POWER_GENERATION_RATE;
+	}
+
+	@Override
 	public int[] getSizeInventorySide( int var1 ) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void handleTilePacket( PacketTile packet ) {
+
+		doneMineing = packet.payload.boolPayload[2];
+		colour = packet.payload.intPayload[1];
+		depth = packet.payload.intPayload[2];
+		depthLimit = packet.payload.intPayload[3];
+		radius = packet.payload.intPayload[4];
+
+		if (Utils.isClientWorld()) {
+			doneMineing = packet.payload.boolPayload[2];
+			colour = packet.payload.intPayload[1];
+			depth = packet.payload.intPayload[2];
+			depthLimit = packet.payload.intPayload[3];
+			radius = packet.payload.intPayload[4];
+		}
+		super.handleTilePacket(packet);
 	}
 
 	@Override
@@ -107,16 +284,16 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	}
 
 	public boolean minedLevel() {
-		
-		String[] coord_mod = SpiralMatrix.makeCoords(7);
-		int[] ar1 = SpiralMatrix.spiralArray(7);
+
+		String[] coord_mod = SpiralMatrix.makeCoords(radius);
+		int[] ar1 = SpiralMatrix.spiralArray(radius);
 
 		for (int i = 0; i < ar1.length; i++) {
 
-			int coordid =  -1+ar1[i];
+			int coordid = -1 + ar1[i];
 			String[] coords = coord_mod[coordid].split(",");
 			// System.out.println(ar1[i]);
-			//System.out.println("("+coords[0]+","+coords[1]+")");
+			// System.out.println("("+coords[0]+","+coords[1]+")");
 			int x = Integer.parseInt(coords[0]) + xCoord;
 			int z = Integer.parseInt(coords[1]) + zCoord;
 
@@ -131,32 +308,30 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 
 	public void mineLevel() {
 
-		float power = Reference.TMINER_USEAGE_MULITPLIER * Reference.POWER_GENERATION_RATE;
-		
 		if (minedLevel()) {
 			depth--;
 		}
 
-		String[] coord_mod = SpiralMatrix.makeCoords(7);
-		int[] ar1 = SpiralMatrix.spiralArray(7);
-	
+		String[] coord_mod = SpiralMatrix.makeCoords(radius);
+		int[] ar1 = SpiralMatrix.spiralArray(radius);
+
 		for (int i = 0; i < ar1.length; i++) {
 
 			int coordid = -1 + ar1[i];
 			String[] coords = coord_mod[coordid].split(",");
-			//System.out.println(ar1[i]);
-			//System.out.println("("+coords[0]+","+coords[1]+")");
+			// System.out.println(ar1[i]);
+			// System.out.println("("+coords[0]+","+coords[1]+")");
 			int x = Integer.parseInt(coords[0]) + xCoord;
 			int z = Integer.parseInt(coords[1]) + zCoord;
 
-			if (depth == 0) {
+			if (depth == depthLimit) {
 				doneMineing = true;
 				return;
 			}
 			if (shouldMineBlock(worldObj.getBlockId(x, depth, z))) {
-				
-				if (getGrid() != null && getGrid().getEnergyStored() >= power) {
-					getGrid().subtractPower(power);
+
+				if (getGrid() != null && getGrid().getEnergyStored() >= getPower()) {
+					getGrid().subtractPower(getPower());
 					mineBlock(x, depth, z, worldObj.getBlockId(x, depth, z));
 				}
 
@@ -166,11 +341,24 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		}
 	}
 
+	public boolean useLogistics(){
+
+		if(outputmode == 1)
+			return true;
+
+		return false;
+	}
+
 	private void mineStack( ItemStack stack ) {
-		
-		ItemStack added = addToNetworkedInventory(stack);
-		stack.stackSize -= added.stackSize;
-		
+
+		if(useLogistics()){
+			ItemStack added = addToNetworkedInventory(stack);
+			stack.stackSize -= added.stackSize;
+		}else{
+			ItemStack added = addToInventory(stack);
+			stack.stackSize -= added.stackSize;
+		}
+
 		if (stack.stackSize > 0) {
 			float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 			float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
@@ -194,6 +382,11 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		super.readFromNBT(data);
 
 		depth = data.getInteger("depth");
+		depthLimit = data.getInteger("depthLimit");
+		radius = data.getInteger("radius");
+		colour = data.getInteger("colour");
+		outputmode = data.getInteger("outputmode");
+		inputmode = data.getInteger("inputmode");
 		doneMineing = data.getBoolean("donemining");
 
 	}
@@ -237,7 +430,6 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 
 		if ((TickSinceUpdate % 1) == 0) {
 
-			
 		}
 		if (getGrid() != null && getGrid().getEnergyStored() >= 30) {
 			mineLevel();
@@ -250,8 +442,8 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 			}
 			gridindex = -1;
 		}
-		
-		if(isUpdate()){
+
+		if (isUpdate()) {
 			sendUpdatePacket(Side.CLIENT);
 			this.setUpdate(false);
 		}
@@ -264,67 +456,13 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 		super.writeToNBT(data);
 
 		data.setInteger("depth", depth);
+		data.setInteger("depthLimit", depthLimit);
+		data.setInteger("radius", radius);
+		data.setInteger("colour", colour);
+		data.setInteger("outputmode", outputmode);
+		data.setInteger("inputmode", inputmode);
 
 		data.setBoolean("donemining", doneMineing);
-	}
-	
-	private ItemStack addToNetworkedInventory(ItemStack stack) {
-		ItemStack added = InventoryUtils.copyStack(stack,0);
-		
-		if(getGrid()!=null){
-			
-			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour,stack);
-			if(chest!=null){
-				int injected = 0;
-	
-				int slot = -1;
-				while ((slot = InventoryUtils.getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
-					injected += addToSlot(slot, stack, injected, true, chest);
-				}
-	
-				slot = 0;
-				while ((slot = InventoryUtils.getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 && injected < stack.stackSize) {
-					injected += addToSlot(slot, stack, injected, true, chest);
-				}
-				chest.onInventoryChanged();
-	
-				added.stackSize=injected;
-			}
-		}
-
-		return added;
-	}
-	
-	protected int addToSlot(int slot, ItemStack stack, int injected, boolean doAdd, TEZoroChest chest) {
-		int available = stack.stackSize - injected;
-		int max = Math.min(stack.getMaxStackSize(), chest.getInventoryStackLimit());
-
-		ItemStack stackInSlot = chest.getStackInSlot(slot);
-		if (stackInSlot == null) {
-			int wanted = Math.min(available, max);
-			if (doAdd) {
-				stackInSlot = stack.copy();
-				stackInSlot.stackSize = wanted;
-				chest.setInventorySlotContents(slot, stackInSlot);
-			}
-			return wanted;
-		}
-
-		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack))
-			return 0;
-
-		int wanted = max - stackInSlot.stackSize;
-		if (wanted <= 0)
-			return 0;
-
-		if (wanted > available)
-			wanted = available;
-
-		if (doAdd) {
-			stackInSlot.stackSize += wanted;
-			chest.setInventorySlotContents(slot, stackInSlot);
-		}
-		return wanted;
 	}
 
 }

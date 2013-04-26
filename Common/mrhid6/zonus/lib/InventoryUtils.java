@@ -3,6 +3,7 @@ package mrhid6.zonus.lib;
 import java.util.ArrayList;
 import java.util.List;
 import mrhid6.zonus.tileEntity.machine.TEZoroChest;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,60 +18,53 @@ public class InventoryUtils {
 		return stack1 == null || stack2 == null || (stack1.itemID == stack2.itemID && (!stack2.getHasSubtypes() || stack2.getItemDamage() == stack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(stack2, stack1));
 	}
 
+	public static boolean canStoreInChest( TEZoroChest chest, ItemStack stack ) {
+
+		int slot = -1;
+		while ((slot = InventoryUtils.getPartialSlot(stack, slot + 1, chest.getSizeInventory(), chest)) >= 0) {
+			return true;
+		}
+
+		slot = 0;
+		while ((slot = InventoryUtils.getEmptySlot(0, chest.getSizeInventory(), chest)) >= 0) {
+			return true;
+		}
+
+		return false;
+
+	}
+
 	public static ItemStack copyStack( ItemStack stack, int quanity ) {
-		
-		if(stack==null)
+
+		if (stack == null) {
 			return null;
-		
+		}
+
 		stack = stack.copy();
 		stack.stackSize = quanity;
 
 		return stack;
 	}
-	
-	public static boolean canStoreInChest(TEZoroChest chest, ItemStack stack){
-		
-		int slot = -1;
-		while ((slot = InventoryUtils.getPartialSlot(stack, slot + 1,chest.getSizeInventory(),chest)) >= 0) {
-			return true;
-		}
 
-		slot = 0;
-		while ((slot = InventoryUtils.getEmptySlot(0,chest.getSizeInventory(),chest)) >= 0 ) {
-			return true;
-		}
-		
-		return false;
-		
-	}
-	
-	public static int getEmptySlot(int startSlot, int endSlot, TEZoroChest chest) {
-		for (int i = startSlot; i < endSlot; i++)
-			if (chest.getStackInSlot(i) == null)
-				return i;
+	public static ItemStack decrStackSize( IInventory inv, int slot, int size ) {
+		ItemStack item = inv.getStackInSlot(slot);
 
-		return -1;
-	}
-	
-	public static int getPartialSlot(ItemStack stack, int startSlot, int endSlot, TEZoroChest chest) {
-
-		for (int i = startSlot; i < endSlot; i++) {
-			if (chest.getStackInSlot(i) == null) {
-				continue;
+		if (item != null) {
+			if (item.stackSize <= size) {
+				ItemStack itemstack = item;
+				inv.setInventorySlotContents(slot, null);
+				inv.onInventoryChanged();
+				return itemstack;
 			}
-
-			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
-				continue;
+			ItemStack itemstack1 = item.splitStack(size);
+			if (item.stackSize == 0) {
+				inv.setInventorySlotContents(slot, null);
 			}
-
-			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
-				continue;
-			}
-
-			return i;
+			inv.onInventoryChanged();
+			return itemstack1;
+		} else {
+			return null;
 		}
-
-		return -1;
 	}
 
 	public static IRecipe findMatchingRecipe( InventoryCrafting par1InventoryCrafting, World par2World ) {
@@ -122,6 +116,68 @@ public class InventoryUtils {
 
 			return null;
 		}
+	}
+
+	public static int getEmptyChestSlot( int startSlot, int endSlot, TEZoroChest chest ) {
+		for (int i = startSlot; i < endSlot; i++) {
+			if (chest.getStackInSlot(i) == null) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	public static int getPartialChestSlot( ItemStack stack, int startSlot, int endSlot, TEZoroChest chest ) {
+
+		for (int i = startSlot; i < endSlot; i++) {
+			if (chest.getStackInSlot(i) == null) {
+				continue;
+			}
+
+			if (!chest.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(chest.getStackInSlot(i), stack)) {
+				continue;
+			}
+
+			if (chest.getStackInSlot(i).stackSize >= chest.getStackInSlot(i).getMaxStackSize()) {
+				continue;
+			}
+
+			return i;
+		}
+
+		return -1;
+	}
+	
+	public static int getEmptySlot( int startSlot, int endSlot, IInventory inv) {
+		for (int i = startSlot; i < endSlot; i++) {
+			if (inv.getStackInSlot(i) == null) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	public static int getPartialSlot( ItemStack stack, int startSlot, int endSlot, IInventory inv) {
+		
+		for (int i = startSlot; i < endSlot; i++) {
+			if (inv.getStackInSlot(i) == null) {
+				continue;
+			}
+			
+			if (!inv.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(inv.getStackInSlot(i), stack)) {
+				continue;
+			}
+			
+			if (inv.getStackInSlot(i).stackSize >= inv.getStackInSlot(i).getMaxStackSize()) {
+				continue;
+			}
+			
+			return i;
+		}
+		
+		return -1;
 	}
 
 	public static int incrStackSize( ItemStack base, int addition ) {

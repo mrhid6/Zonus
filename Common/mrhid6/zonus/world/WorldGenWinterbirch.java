@@ -66,7 +66,7 @@ public class WorldGenWinterbirch {
 
 		boolean outdent = false;
 		int outdentCount = 0;
-		int width = 0;
+		int radius = 0;
 
 		int treeTop = y + height + 1;
 
@@ -75,28 +75,27 @@ public class WorldGenWinterbirch {
 		for (int y1 = y + 2; (y1 <= treeTop); y1++) {
 
 			if (outdentCount >= 1 && (y1 < treeTop && y1 < (treeTop - 1))) {
-				width = 2;
+				radius = 2;
 				outdent = !outdent;
 				outdentCount = 0;
 			} else {
-				width = 1;
+				radius = 1;
 				outdentCount++;
 			}
 			if (y1 < treeTop) {
-				for (int x1 = x - width; x1 <= x + width; x1++) {
-					for (int z1 = z - width; z1 <= z + width; z1++) {
+				for (int x1 = -radius; x1 <= radius; x1++) {
+					for (int z1 = -radius; z1 <= radius; z1++) {
 
-						if (world.getBlockId(x1, y1, z1) == 0) {
-							world.setBlock(x1, y1, z1, ModBlocks.winterbirchLeaves.blockID);
+						if (Math.sqrt((x1 * x1) + (z1 * z1)) <= radius) {
+
+							if (world.getBlockId(x1 + x, y1, z1 + z) == 0) {
+								world.setBlock(x1 + x, y1, z1 + z, ModBlocks.winterbirchLeaves.blockID);
+							}
 						}
 					}
 				}
 			} else {
 				world.setBlock(x, y1, z, ModBlocks.winterbirchLeaves.blockID);
-				world.setBlock(x - 1, y1, z, ModBlocks.winterbirchLeaves.blockID);
-				world.setBlock(x + 1, y1, z, ModBlocks.winterbirchLeaves.blockID);
-				world.setBlock(x, y1, z + 1, ModBlocks.winterbirchLeaves.blockID);
-				world.setBlock(x, y1, z - 1, ModBlocks.winterbirchLeaves.blockID);
 			}
 
 		}

@@ -1,7 +1,25 @@
 package mrhid6.zonus.lib;
 
-public class SpiralMatrix
-{
+public class SpiralMatrix {
+
+	public static String[] makeCoords( int size ) {
+		String res = "";
+
+		for (int i = -(size / 2); i <= size / 2; i++) {
+			for (int j = -(size / 2); j <= size / 2; j++) {
+				if (res.equals("")) {
+					res = i + "," + j;
+				} else {
+					res += "#" + i + "," + j;
+				}
+			}
+		}
+
+		String[] data = res.split("#");
+
+		return data;
+
+	}
 
 	public static int[] spiralArray( int dimension ) {
 
@@ -34,25 +52,6 @@ public class SpiralMatrix
 		} else {
 			return n;
 		}
-	}
-
-	public static String[] makeCoords(int size){
-		String res = "";
-		
-		for(int i=-(size/2); i<=size/2; i++){
-			for(int j=-(size/2); j<=size/2; j++){
-				if(res.equals("")){
-					res=i+","+j;
-				}else{
-					res+="#"+i+","+j;
-				}
-			}
-		}
-
-		String [] data = res.split("#");
-		
-		return data;
-
 	}
 
 }

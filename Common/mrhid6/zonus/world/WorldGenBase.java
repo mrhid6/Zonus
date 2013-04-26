@@ -38,6 +38,15 @@ public class WorldGenBase implements IWorldGenerator {
 		}
 	}
 
+	private void genNoxiteOre( World world, Random rand, int chunkX, int chunkZ ) {
+		for (int k = 0; k < 8; k++) {
+			int firstBlockXCoord = chunkX + rand.nextInt(16);
+			int firstBlockYCoord = rand.nextInt(20);
+			int firstBlockZCoord = chunkZ + rand.nextInt(16);
+			(new WorldGenMinable(ModBlocks.noxiteOre.blockID, 4)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+		}
+	}
+
 	private void genPonds( World world, Random random, int chunkX, int chunkZ ) {
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(chunkX * 16 + 16, chunkZ * 16 + 16);
 		int count = 0;
@@ -64,7 +73,7 @@ public class WorldGenBase implements IWorldGenerator {
 
 	public void genTrees1( World world, Random random, int chunkX, int chunkZ ) {
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(chunkX * 16 + 16, chunkZ * 16 + 16);
-		int trees = 0;
+		int trees = 10;
 
 		if (biomegenbase.biomeName.toLowerCase().equals("taiga")) {
 			trees += random.nextInt(5) + 3;
@@ -119,15 +128,6 @@ public class WorldGenBase implements IWorldGenerator {
 			int firstBlockYCoord = rand.nextInt(64);
 			int firstBlockZCoord = chunkZ + rand.nextInt(16);
 			(new WorldGenMinable(ModBlocks.zoroOre.blockID, 6)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
-		}
-	}
-	
-	private void genNoxiteOre( World world, Random rand, int chunkX, int chunkZ ) {
-		for (int k = 0; k < 8; k++) {
-			int firstBlockXCoord = chunkX + rand.nextInt(16);
-			int firstBlockYCoord = rand.nextInt(20);
-			int firstBlockZCoord = chunkZ + rand.nextInt(16);
-			(new WorldGenMinable(ModBlocks.noxiteOre.blockID, 4)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	}
 }

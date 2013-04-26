@@ -52,7 +52,7 @@ public class BlockStearilliumEnergyCube extends BlockMachine {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 
 		if (side == 3) {
 			return icons[1];

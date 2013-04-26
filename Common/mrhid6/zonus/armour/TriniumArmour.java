@@ -20,6 +20,7 @@ public class TriniumArmour extends ItemArmor implements IArmorTextureProvider {
 	public TriniumArmour( int id, EnumArmorMaterial enumMaterial, int par3, int par4 ) {
 		super(id, enumMaterial, par3, par4);
 		setCreativeTab(Config.creativeTabXor);
+
 	}
 
 	@Override
@@ -33,37 +34,36 @@ public class TriniumArmour extends ItemArmor implements IArmorTextureProvider {
 
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void updateIcons( IconRegister iconRegister ) {
+	@ForgeSubscribe
+	public void onEntityLivingFallEvent( LivingFallEvent event ) {
+		System.out.println("fall event was called!");
+		if (Utils.isServerWorld() && event.entity instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.entity;
+			ItemStack armor = player.inventory.armorInventory[0];
 
-		switch (armorType) {
-		case 0:
-			iconIndex = iconRegister.registerIcon(Zonus.Modname + "triniumhelm");
-			break;
-		case 1:
-			iconIndex = iconRegister.registerIcon(Zonus.Modname + "triniumplate");
-			break;
-		case 2:
-			iconIndex = iconRegister.registerIcon(Zonus.Modname + "triniumlegs");
-			break;
-		case 3:
-			iconIndex = iconRegister.registerIcon(Zonus.Modname + "triniumboots");
-			break;
+			if ((armor != null) && (armor.itemID == itemID)) {
+				event.setCanceled(true);
+			}
 		}
 	}
 
-	@ForgeSubscribe
-	public void onEntityLivingFallEvent(LivingFallEvent event)
-	{
-		System.out.println("fall event was called!");
-		if (Utils.isServerWorld() && event.entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer)event.entity;
-			ItemStack armor = player.inventory.armorInventory[0];
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons( IconRegister iconRegister ) {
 
-			if ((armor != null) && (armor.itemID == this.itemID)) {
-				event.setCanceled(true);
-			}
+		switch (armorType) {
+		case 0:
+			itemIcon = iconRegister.registerIcon(Zonus.Modname + "triniumhelm");
+			break;
+		case 1:
+			itemIcon = iconRegister.registerIcon(Zonus.Modname + "triniumplate");
+			break;
+		case 2:
+			itemIcon = iconRegister.registerIcon(Zonus.Modname + "triniumlegs");
+			break;
+		case 3:
+			itemIcon = iconRegister.registerIcon(Zonus.Modname + "triniumboots");
+			break;
 		}
 	}
 

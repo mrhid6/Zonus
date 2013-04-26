@@ -84,12 +84,6 @@ public class BlockTriniumChiller extends BlockMachine {
 		return (index == -1) ? icons[6] : icons[getBlockTextureInt(world, x, y, z, side)];
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int par1, int par2 ) {
-		return icons[20];
-	}
-
 	public int getBlockTextureInt( IBlockAccess world, int x, int y, int z, int side ) {
 
 		// return this.blockIcon;
@@ -192,6 +186,12 @@ public class BlockTriniumChiller extends BlockMachine {
 		}
 
 		return add == 0 ? 7 : 6;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon( int par1, int par2 ) {
+		return icons[20];
 	}
 
 	@Override

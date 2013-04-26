@@ -33,17 +33,15 @@ public class BlockTriniumCable extends BlockCableBase {
 	}
 
 	@Override
+	public int idDropped( int par1, Random par2Random, int par3 ) {
+		return ModItems.triniumCable.itemID;
+	}
+
+	@Override
 	public void registerIcons( IconRegister iconRegister ) {
 		blockIcon = iconRegister.registerIcon(Zonus.Modname + "triniumcableOff");
 		icons[0] = iconRegister.registerIcon(Zonus.Modname + "triniumcableOff");
 		icons[1] = iconRegister.registerIcon(Zonus.Modname + "triniumcableOn");
 	}
-
-	@Override
-	public int idDropped( int par1, Random par2Random, int par3 ) {
-		return ModItems.triniumCable.itemID;
-	}
-	
-	
 
 }

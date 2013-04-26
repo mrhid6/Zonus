@@ -31,11 +31,11 @@ public class BlockWinterbirchLog extends BlockTexturedBase {
 	@SideOnly(Side.CLIENT)
 	public Icon getBlockTexture( IBlockAccess par1iBlockAccess, int x, int y, int z, int blockSide ) {
 
-		return getBlockTextureFromSideAndMetadata(blockSide, 0);
+		return getIcon(blockSide, 0);
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 		if (side == 1 || side == 0) {
 			return icons[0];
 		}

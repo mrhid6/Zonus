@@ -31,8 +31,8 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 	protected float processEnd;
 	public ItemStack[] processInv;
 
-	public boolean wasActive;
 	private boolean update = false;
+	public boolean wasActive;
 
 	public TEMachineBase() {
 
@@ -43,10 +43,7 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 	@Override
 	public void closeChest() {
 	}
-	
-	public void spawnParticles(){
-		
-	}
+
 	@Override
 	public Packet getDescriptionPacket() {
 		Payload payload = new Payload(2, 1, 1, 2, 0);
@@ -110,6 +107,10 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 
 	}
 
+	public boolean isUpdate() {
+		return update;
+	}
+
 	@Override
 	public boolean isUseableByPlayer( EntityPlayer var1 ) {
 		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
@@ -145,19 +146,18 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 		this.facing = facing;
 	}
 
+	public void setUpdate( boolean update ) {
+		this.update = update;
+	}
+
+	public void spawnParticles() {
+	}
+
 	@Override
 	public void writeToNBT( NBTTagCompound data ) {
 		super.writeToNBT(data);
 		data.setShort("facing", facing);
 		data.setFloat("process.cur", processCur);
 		data.setFloat("process.end", processEnd);
-	}
-	
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public void setUpdate( boolean update ) {
-		this.update = update;
 	}
 }

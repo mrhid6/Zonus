@@ -26,10 +26,12 @@ public class BlockStearilliumCrafter extends BlockMachine {
 	@Override
 	public void breakBlock( World world, int x, int y, int z, int par5, int par6 ) {
 
-		TEStearilliumCrafter tile = (TEStearilliumCrafter) world.getBlockTileEntity(x, y, z);
+		if (world.getBlockTileEntity(x, y, z) instanceof TEStearilliumCrafter) {
+			TEStearilliumCrafter tile = (TEStearilliumCrafter) world.getBlockTileEntity(x, y, z);
 
-		if (tile != null) {
-			tile.breakBlock();
+			if (tile != null) {
+				tile.breakBlock();
+			}
 		}
 
 		super.breakBlock(world, x, y, z, par5, par6);
@@ -54,7 +56,7 @@ public class BlockStearilliumCrafter extends BlockMachine {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 		if (side == 1) {
 			return icons[0];
 		} else if (side == 0) {

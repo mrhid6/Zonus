@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -45,10 +44,9 @@ public class BlockZoroChest extends BlockMachine {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 		return blockIcon;
 	}
-
 
 	@Override
 	public int getRenderType() {

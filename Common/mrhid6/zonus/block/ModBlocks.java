@@ -1,17 +1,21 @@
 package mrhid6.zonus.block;
 
 import mrhid6.zonus.block.fancy.BlockHazelspringLog;
+import mrhid6.zonus.block.fancy.BlockNoxiteTurret;
 import mrhid6.zonus.block.fancy.BlockStearilliumGlass;
 import mrhid6.zonus.block.fancy.BlockStearilliumStone;
 import mrhid6.zonus.block.fancy.BlockTriniumBrick;
+import mrhid6.zonus.block.fancy.BlockWinterBirchSapling;
 import mrhid6.zonus.block.fancy.BlockWinterbirchLog;
 import mrhid6.zonus.block.fancy.BlockZoroGrass;
 import mrhid6.zonus.block.fancy.HazelspringLeaves;
 import mrhid6.zonus.block.fancy.WinterbirchLeaves;
+import mrhid6.zonus.block.machine.BlockNoxiteLogger;
 import mrhid6.zonus.block.machine.BlockStearilliumCrafter;
 import mrhid6.zonus.block.machine.BlockStearilliumEnergyCube;
 import mrhid6.zonus.block.machine.BlockTriniumConverter;
 import mrhid6.zonus.block.machine.BlockTriniumMiner;
+import mrhid6.zonus.block.machine.BlockTriniumPlanter;
 import mrhid6.zonus.block.machine.BlockZoroChest;
 import mrhid6.zonus.block.machine.BlockZoroController;
 import mrhid6.zonus.block.machine.BlockZoroFurnace;
@@ -24,11 +28,14 @@ import mrhid6.zonus.block.multiblock.BlockTriniumChiller;
 import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.tileEntity.TECableBase;
+import mrhid6.zonus.tileEntity.TENoxiteTurret;
 import mrhid6.zonus.tileEntity.TETriniumCable;
+import mrhid6.zonus.tileEntity.machine.TENoxiteLogger;
 import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import mrhid6.zonus.tileEntity.machine.TEStearilliumEnergyCube;
 import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import mrhid6.zonus.tileEntity.machine.TETriniumMiner;
+import mrhid6.zonus.tileEntity.machine.TETriniumPlanter;
 import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import mrhid6.zonus.tileEntity.machine.TEZoroController;
 import mrhid6.zonus.tileEntity.machine.TEZoroFurnace;
@@ -40,7 +47,9 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.liquids.LiquidContainerData;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
@@ -54,11 +63,15 @@ public class ModBlocks {
 
 	public static BlockLeaves hazelspringLeaves;
 	public static Block hazelspringLog;
+	public static Block noxiteLogger;
+	public static Block noxiteOre;
+	public static Block noxiteTurret;
 	public static Block stearilliumCrafter;
 	public static Block stearilliumEnergyBlock;
 	public static Block stearilliumGlass;
 	public static Block stearilliumOre;
 	public static Block stearilliumReactor;
+	public static Block stearilliumReactorCore;
 	public static Block stearilliumStone;
 	public static Block triniumBrick;
 	public static Block triniumCable;
@@ -66,9 +79,10 @@ public class ModBlocks {
 	public static Block triniumConverter;
 	public static Block triniumMiner;
 	public static Block triniumOre;
-	public static Block noxiteOre;
+	public static Block triniumPlanter;
 	public static BlockLeaves winterbirchLeaves;
 	public static Block winterbirchLog;
+	public static BlockWinterBirchSapling winterbirchSapling;
 	public static Block zoroBrick;
 	public static Block zoroCable;
 	public static Block zoroChest;
@@ -117,6 +131,12 @@ public class ModBlocks {
 
 		GameRegistry.registerTileEntity(TETriniumMiner.class, "te" + triniumMiner.getUnlocalizedName());
 
+		triniumPlanter = new BlockTriniumPlanter(BlockIds.getID("triniumPlanter"), "triniumPlanter");
+		LanguageRegistry.addName(triniumPlanter, "Trinium Planter");
+		GameRegistry.registerBlock(triniumPlanter, triniumPlanter.getUnlocalizedName());
+
+		GameRegistry.registerTileEntity(TETriniumPlanter.class, "te" + triniumPlanter.getUnlocalizedName());
+
 		triniumChiller = new BlockTriniumChiller(BlockIds.getID("triniumChiller"), "triniumChiller");
 		LanguageRegistry.addName(triniumChiller, "Trinium Chiller");
 		GameRegistry.registerBlock(triniumChiller, "triniumchiller");
@@ -147,6 +167,15 @@ public class ModBlocks {
 		GameRegistry.registerBlock(stearilliumReactor, stearilliumReactor.getUnlocalizedName());
 		GameRegistry.registerTileEntity(TEStearilliumReactor.class, "te" + stearilliumReactor.getUnlocalizedName());
 
+		noxiteLogger = new BlockNoxiteLogger(BlockIds.getID("noxiteLogger"), "noxitelogger");
+		LanguageRegistry.addName(noxiteLogger, "Noxite Logger");
+		GameRegistry.registerBlock(noxiteLogger, noxiteLogger.getUnlocalizedName());
+		GameRegistry.registerTileEntity(TENoxiteLogger.class, "te" + noxiteLogger.getUnlocalizedName());
+
+		noxiteTurret = new BlockNoxiteTurret(BlockIds.getID("noxiteTurret"), "noxiteTurret");
+		LanguageRegistry.addName(noxiteTurret, "Noxite Turret");
+		GameRegistry.registerBlock(noxiteTurret, noxiteTurret.getUnlocalizedName());
+		GameRegistry.registerTileEntity(TENoxiteTurret.class, "te" + noxiteTurret.getUnlocalizedName());
 
 		// fancy blocks
 
@@ -154,7 +183,11 @@ public class ModBlocks {
 		LanguageRegistry.addName(zoroGrass, "Zoro Grass");
 		GameRegistry.registerBlock(zoroGrass, zoroGrass.getUnlocalizedName());
 
-		zoroBrick = new BlockTriniumBrick(BlockIds.getID("zoroBrick"), "zoroBrick");
+		zoroBrick = new BlockTriniumBrick(BlockIds.getID("zoroBrick"), "zoroBrick"){
+			public boolean canSustainPlant(World world, int x, int y, int z, ForgeDirection direction, IPlantable plant) {
+				return true;
+			}
+		};
 		LanguageRegistry.addName(zoroBrick, "Zoro Brick");
 		GameRegistry.registerBlock(zoroBrick, zoroBrick.getUnlocalizedName());
 
@@ -169,6 +202,10 @@ public class ModBlocks {
 		stearilliumGlass = new BlockStearilliumGlass(BlockIds.getID("stearilliumGlass"), "stearilliumGlass");
 		LanguageRegistry.addName(stearilliumGlass, "Stearillium Glass");
 		GameRegistry.registerBlock(stearilliumGlass, stearilliumGlass.getUnlocalizedName());
+
+		stearilliumReactorCore = new BlockStearilliumGlass(BlockIds.getID("stearilliumReactorCore"), "stearilliumReactorCore");
+		LanguageRegistry.addName(stearilliumReactorCore, "Stearillium Reactor Core");
+		GameRegistry.registerBlock(stearilliumReactorCore, stearilliumReactorCore.getUnlocalizedName());
 
 		// Ores
 
@@ -186,8 +223,7 @@ public class ModBlocks {
 		LanguageRegistry.addName(triniumOre, "Trinium Ore");
 		GameRegistry.registerBlock(triniumOre, triniumOre.getUnlocalizedName());
 		MinecraftForge.setBlockHarvestLevel(triniumOre, "pickaxe", 3);
-		
-		
+
 		noxiteOre = new BlockNoxiteOre(BlockIds.getID("noxiteOre"), "noxiteore");
 		LanguageRegistry.addName(noxiteOre, "Noxite Ore");
 		GameRegistry.registerBlock(noxiteOre, noxiteOre.getUnlocalizedName());
@@ -211,8 +247,14 @@ public class ModBlocks {
 		LanguageRegistry.addName(winterbirchLeaves, "Winter Birch Leaves");
 		GameRegistry.registerBlock(winterbirchLeaves, winterbirchLeaves.getUnlocalizedName());
 
-		OreDictionary.registerOre("logWood", new ItemStack(hazelspringLog, 1,-1));
-		OreDictionary.registerOre("logWood", new ItemStack(winterbirchLog, 1,-1));
+		winterbirchSapling = new BlockWinterBirchSapling(BlockIds.getID("winterbirchSapling"), "winterbirchsapling");
+		LanguageRegistry.addName(winterbirchSapling, "Winter Birch Sapling");
+		GameRegistry.registerBlock(winterbirchSapling, winterbirchSapling.getUnlocalizedName());
+
+		OreDictionary.registerOre("logWood", new ItemStack(hazelspringLog, 1, 0));
+		OreDictionary.registerOre("logWood", new ItemStack(winterbirchLog, 1, 0));
+		OreDictionary.registerOre("treeLeaves", new ItemStack(winterbirchLeaves, 1, 0));
+		OreDictionary.registerOre("treeSapling", new ItemStack(winterbirchSapling, 1, 0));
 
 		// Liquids
 

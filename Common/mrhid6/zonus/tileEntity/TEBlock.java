@@ -18,43 +18,6 @@ public abstract class TEBlock extends TEPoweredBase implements IInventory {
 	@Override
 	public void closeChest() {
 	}
-	
-	public void dropContent(int newSize)
-	{
-
-		Random random = new Random();
-		for (int l = newSize; l < getSizeInventory(); l++)
-		{
-			ItemStack itemstack = getStackInSlot(l);
-			if (itemstack == null)
-			{
-				continue;
-			}
-			float f = random.nextFloat() * 0.8F + 0.1F;
-			float f1 = random.nextFloat() * 0.8F + 0.1F;
-			float f2 = random.nextFloat() * 0.8F + 0.1F;
-			while (itemstack.stackSize > 0)
-			{
-				int i1 = random.nextInt(21) + 10;
-				if (i1 > itemstack.stackSize)
-				{
-					i1 = itemstack.stackSize;
-				}
-				itemstack.stackSize -= i1;
-				EntityItem entityitem = new EntityItem(worldObj, (float) xCoord + f, (float) yCoord + (newSize > 0 ? 1 : 0) + f1, (float) zCoord + f2,
-						new ItemStack(itemstack.itemID, i1, itemstack.getItemDamage()));
-				float f3 = 0.05F;
-				entityitem.motionX = (float) random.nextGaussian() * f3;
-				entityitem.motionY = (float) random.nextGaussian() * f3 + 0.2F;
-				entityitem.motionZ = (float) random.nextGaussian() * f3;
-				if (itemstack.hasTagCompound())
-				{
-					entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
-				}
-				worldObj.spawnEntityInWorld(entityitem);
-			}
-		}
-	}
 
 	@Override
 	public ItemStack decrStackSize( int i, int amt ) {
@@ -75,6 +38,36 @@ public abstract class TEBlock extends TEPoweredBase implements IInventory {
 		}
 
 		return null;
+	}
+
+	public void dropContent( int newSize ) {
+
+		Random random = new Random();
+		for (int l = newSize; l < getSizeInventory(); l++) {
+			ItemStack itemstack = getStackInSlot(l);
+			if (itemstack == null) {
+				continue;
+			}
+			float f = random.nextFloat() * 0.8F + 0.1F;
+			float f1 = random.nextFloat() * 0.8F + 0.1F;
+			float f2 = random.nextFloat() * 0.8F + 0.1F;
+			while (itemstack.stackSize > 0) {
+				int i1 = random.nextInt(21) + 10;
+				if (i1 > itemstack.stackSize) {
+					i1 = itemstack.stackSize;
+				}
+				itemstack.stackSize -= i1;
+				EntityItem entityitem = new EntityItem(worldObj, xCoord + f, (float) yCoord + (newSize > 0 ? 1 : 0) + f1, zCoord + f2, new ItemStack(itemstack.itemID, i1, itemstack.getItemDamage()));
+				float f3 = 0.05F;
+				entityitem.motionX = (float) random.nextGaussian() * f3;
+				entityitem.motionY = (float) random.nextGaussian() * f3 + 0.2F;
+				entityitem.motionZ = (float) random.nextGaussian() * f3;
+				if (itemstack.hasTagCompound()) {
+					entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
+				}
+				worldObj.spawnEntityInWorld(entityitem);
+			}
+		}
 	}
 
 	public boolean getActive() {
@@ -98,16 +91,13 @@ public abstract class TEBlock extends TEPoweredBase implements IInventory {
 
 	@Override
 	public ItemStack getStackInSlotOnClosing( int slot ) {
-		 if (this.inventory[slot] != null)
-	        {
-	            ItemStack itemstack = this.inventory[slot];
-	            this.inventory[slot] = null;
-	            return itemstack;
-	        }
-	        else
-	        {
-	            return null;
-	        }
+		if (inventory[slot] != null) {
+			ItemStack itemstack = inventory[slot];
+			inventory[slot] = null;
+			return itemstack;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

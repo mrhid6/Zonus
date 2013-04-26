@@ -44,7 +44,9 @@ public class TETriniumConverter extends TEMachineBase implements IConverterObj, 
 
 	@Override
 	public boolean canInteractWith( TileEntity te ) {
-		if(te instanceof TECableBase)return true;
+		if (te instanceof TECableBase) {
+			return true;
+		}
 		return false;
 	}
 
@@ -146,8 +148,8 @@ public class TETriniumConverter extends TEMachineBase implements IConverterObj, 
 			gridindex = -1;
 			this.setUpdate(true);
 		}
-		
-		if(isUpdate()){
+
+		if (isUpdate()) {
 			sendUpdatePacket(Side.CLIENT);
 			this.setUpdate(false);
 		}

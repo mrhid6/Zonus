@@ -23,13 +23,13 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 	protected static int descPacketId;
 	public int gridindex = -1;
 
+	public boolean init = false;
 	public double maxPower = 5.0D;
 	public double tempPower = 0.0D;
 	public int ticks = 0;
+
 	public int type = 0;
 
-	public boolean init = false;
-	
 	private boolean update = false;
 
 	public TECableBase() {
@@ -139,22 +139,6 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 	}
 
 	@Override
-	public void readFromNBT( NBTTagCompound data ) {
-		super.readFromNBT(data);
-
-		gridindex = data.getInteger("grid.index");
-
-	}
-
-	@Override
-	public void writeToNBT( NBTTagCompound data ) {
-		super.writeToNBT(data);
-
-		data.setInteger("grid.index", gridindex);
-
-	}
-
-	@Override
 	public void handleTilePacket( PacketTile packet ) {
 
 		gridindex = packet.payload.intPayload[0];
@@ -173,9 +157,21 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 
 	}
 
+	public boolean isUpdate() {
+		return update;
+	}
+
 	public void onNeighborBlockChange() {
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public void readFromNBT( NBTTagCompound data ) {
+		super.readFromNBT(data);
+
+		gridindex = data.getInteger("grid.index");
+
 	}
 
 	public void sendUpdatePacket( Side side ) {
@@ -188,8 +184,10 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 			PacketUtils.sendToServer(getDescriptionPacket());
 		}
 	}
-	
-	
+
+	public void setUpdate( boolean update ) {
+		this.update = update;
+	}
 
 	@Override
 	public String toString() {
@@ -211,8 +209,8 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 				gridindex = -1;
 				setUpdate(true);
 			}
-			
-			if(isUpdate()){
+
+			if (isUpdate()) {
 				sendUpdatePacket(Side.CLIENT);
 				this.setUpdate(false);
 			}
@@ -221,11 +219,11 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 		ticks++;
 	}
 
-	public boolean isUpdate() {
-		return update;
-	}
+	@Override
+	public void writeToNBT( NBTTagCompound data ) {
+		super.writeToNBT(data);
 
-	public void setUpdate( boolean update ) {
-		this.update = update;
+		data.setInteger("grid.index", gridindex);
+
 	}
 }

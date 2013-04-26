@@ -3,8 +3,11 @@ package mrhid6.zonus.proxy;
 import java.util.EnumSet;
 import mrhid6.zonus.VersionControll;
 import mrhid6.zonus.entities.EntityTitan;
+import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.models.ModelTitan;
 import mrhid6.zonus.network.PacketHandler;
+import mrhid6.zonus.render.RenderItemNoxiteTurret;
+import mrhid6.zonus.render.RenderTENoxiteTurret;
 import mrhid6.zonus.render.RenderTEStearilliumCrafter;
 import mrhid6.zonus.render.RenderTETriniumConverter;
 import mrhid6.zonus.render.RenderTETriniumMiner;
@@ -12,6 +15,7 @@ import mrhid6.zonus.render.RenderTEZoroChest;
 import mrhid6.zonus.render.RenderTEZoroController;
 import mrhid6.zonus.render.RenderTitan;
 import mrhid6.zonus.tileEntity.TEMachineBase;
+import mrhid6.zonus.tileEntity.TENoxiteTurret;
 import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import mrhid6.zonus.tileEntity.machine.TETriniumMiner;
@@ -20,6 +24,7 @@ import mrhid6.zonus.tileEntity.machine.TEZoroController;
 import mrhid6.zonus.tileEntity.machine.TEZoroFurnace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -75,31 +80,34 @@ public class clientProxy extends commonProxy implements ITickHandler {
 		RenderingRegistry.registerEntityRenderingHandler(EntityTitan.class, new RenderTitan(new ModelTitan(), 0.3F));
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TEZoroController.class, new RenderTEZoroController());
+		ClientRegistry.bindTileEntitySpecialRenderer(TENoxiteTurret.class, new RenderTENoxiteTurret());
 		ClientRegistry.bindTileEntitySpecialRenderer(TEStearilliumCrafter.class, new RenderTEStearilliumCrafter());
 		ClientRegistry.bindTileEntitySpecialRenderer(TETriniumMiner.class, new RenderTETriniumMiner());
 		ClientRegistry.bindTileEntitySpecialRenderer(TETriniumConverter.class, new RenderTETriniumConverter());
 		ClientRegistry.bindTileEntitySpecialRenderer(TEZoroChest.class, new RenderTEZoroChest());
+
+		MinecraftForgeClient.registerItemRenderer(BlockIds.getID("noxiteTurret"), new RenderItemNoxiteTurret());
 
 	}
 
 	@Override
 	public void tickEnd( EnumSet<TickType> type, Object... tickData ) {
 		if (!shownMessage) {
-            for (TickType tickType : type) {
-                if (tickType == TickType.CLIENT) {
-                    if (FMLClientHandler.instance().getClient().currentScreen == null) {
-                        if (VersionControll.getResult() != 0 || VersionControll.getResult() != 3) {
+			for (TickType tickType : type) {
+				if (tickType == TickType.CLIENT) {
+					if (FMLClientHandler.instance().getClient().currentScreen == null) {
+						if (VersionControll.getResult() != 0 || VersionControll.getResult() != 3) {
 
-                        	shownMessage = true;
+							shownMessage = true;
 
-                            if (VersionControll.getResult() == 2) {
-                                FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage("The current version of Zonus is outdated. A newer version is available at "+VersionControll.updateLocation);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+							if (VersionControll.getResult() == 2) {
+								FMLClientHandler.instance().getClient().ingameGUI.getChatGUI().printChatMessage("The current version of Zonus is outdated. A newer version is available at " + VersionControll.updateLocation);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override

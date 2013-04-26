@@ -59,12 +59,12 @@ public class BlockZoroGrass extends BlockTexturedBase {
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 		if (side == 1) {
 			return icons[0];
 		}
 		if (side == 0) {
-			return Block.dirt.getBlockTextureFromSideAndMetadata(side, meta);
+			return Block.dirt.getIcon(side, meta);
 		}
 
 		return icons[1];

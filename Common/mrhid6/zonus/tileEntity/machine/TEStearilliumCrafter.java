@@ -60,9 +60,10 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 	}
 
 	public boolean canCraft( ItemStack stack ) {
-		if(getGrid()==null)
+		if (getGrid() == null) {
 			return false;
-		
+		}
+
 		for (int i = 10; i < getSizeInventory(); i++) {
 			if (inventory[i] == null) {
 				return true;
@@ -146,15 +147,15 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 							if (var1.stackSize >= var2.stackSize) {
 								this.decrStackSize(i, var2.stackSize);
 								ing[ia].stackSize = 0;
-								
+
 								onInventoryChanged();
 							} else {
 								this.decrStackSize(i, 1);
 								ing[ia].stackSize -= var1.stackSize;
 								onInventoryChanged();
 							}
-							
-							if(getGrid()!=null){
+
+							if (getGrid() != null) {
 								getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.CRAFTER_USEAGE_MULITPLIER);
 							}
 
@@ -355,8 +356,8 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 
 		}
 		instataCraft();
-		
-		if(isUpdate()){
+
+		if (isUpdate()) {
 			sendUpdatePacket(Side.CLIENT);
 			this.setUpdate(false);
 		}

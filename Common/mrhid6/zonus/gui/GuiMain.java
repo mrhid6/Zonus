@@ -2,7 +2,6 @@ package mrhid6.zonus.gui;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
-import net.minecraftforge.client.ForgeHooksClient;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -13,6 +12,11 @@ public abstract class GuiMain extends GuiContainer {
 
 	public GuiMain( Container par1Container ) {
 		super(par1Container);
+	}
+
+	public void drawColouredIcon( String texture, int x, int y, boolean hover, int color ) {
+		drawIcon(texture, 0, x, y, hover);
+		drawIcon(texture, 240 + color, x, y, false);
 	}
 
 	@Override
@@ -34,29 +38,21 @@ public abstract class GuiMain extends GuiContainer {
 	}
 
 	public void drawIcon( String texture, int iconIndex, int x, int y, boolean hover ) {
-		if(hover)
+		if (hover) {
 			iconIndex++;
-		
+		}
+
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		
+
 		mc.renderEngine.bindTexture(texture);
 		int textureRow = iconIndex >> 4;
 		int textureColumn = iconIndex - 16 * textureRow;
 
 		drawTexturedModalRect(x, y, 16 * textureColumn, 16 * textureRow, 16, 16);
 	}
-	
-	public void drawColouredIcon(String texture, int x, int y, boolean hover, int color ){
-		drawIcon(texture,0,x,y,hover);
-		drawIcon(texture,240+color,x,y,false);
-	}
 
 	public void drawToolTip( String text ) {
 		drawCreativeTabHoveringText(text, mousex, mousey);
-	}
-	
-	public boolean isHovering(int minX,int maxX,int minY,int maxY){
-		return (this.mousex>minX && this.mousex<maxX && this.mousey>minY && this.mousey<maxY);
 	}
 
 	protected abstract void drawTooltips();
@@ -71,6 +67,10 @@ public abstract class GuiMain extends GuiContainer {
 		mousey = (y - (height - ySize) / 2);
 
 		super.handleMouseInput();
+	}
+
+	public boolean isHovering( int minX, int maxX, int minY, int maxY ) {
+		return (mousex > minX && mousex < maxX && mousey > minY && mousey < maxY);
 	}
 
 }

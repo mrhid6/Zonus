@@ -4,7 +4,7 @@ import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.lib.Reference;
-import mrhid6.zonus.lib.SpiralMatrix;
+import mrhid6.zonus.lib.ZonExplosion;
 import mrhid6.zonus.network.PacketHandler;
 import mrhid6.zonus.proxy.BuildcraftProxy;
 import mrhid6.zonus.proxy.commonProxy;
@@ -12,6 +12,7 @@ import mrhid6.zonus.world.WorldGenBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -59,6 +60,13 @@ public class Zonus {
 		EntityList.IDtoClassMapping.put(id, entity);
 		EntityList.entityEggs.put(id, new EntityEggInfo(id, primaryColor, secondaryColor));
 
+	}
+
+	public static void spawnExplosion( World w, int x, int y, int z, int radius, boolean drops ) {
+
+		ZonExplosion exp = new ZonExplosion(w, x, y, z, radius);
+		exp.doDrops = drops;
+		exp.doExplosion();
 	}
 
 	@Init

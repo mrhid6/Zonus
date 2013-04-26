@@ -21,8 +21,8 @@ public class ItemZoroBucket extends ItemBucket {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons( IconRegister iconRegister ) {
-		iconIndex = iconRegister.registerIcon(Zonus.Modname + "zorobucket");
+	public void registerIcons( IconRegister iconRegister ) {
+		itemIcon = iconRegister.registerIcon(Zonus.Modname + "zorobucket");
 	}
 
 }

@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 public class FXSparkle extends EntityFX {
 
-	int particle = (int) (Math.random() * 4 + 16);
+	int particle = (int) (Math.random() * 4 + 48);
 
 	public FXSparkle( World par1World, double x, double y, double z ) {
 		super(par1World, x, y, z, 0, 0, 0);
@@ -44,7 +44,7 @@ public class FXSparkle extends EntityFX {
 		{
 			GL11.glDepthMask(false);
 			GL11.glEnable(3042);
-			 GL11.glBlendFunc(770, 1);
+			GL11.glBlendFunc(770, 1);
 
 			GL11.glBindTexture(3553, ModLoader.getMinecraftInstance().renderEngine.getTexture("/mods/zonus/textures/particles/particles.png"));
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 170F, 170F);

@@ -39,7 +39,7 @@ public class BlockTriniumMiner extends BlockMachine {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 
 		if (side == 1) {
 			return icons[0];

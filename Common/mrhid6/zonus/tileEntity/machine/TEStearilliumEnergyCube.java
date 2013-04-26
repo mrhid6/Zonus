@@ -14,9 +14,9 @@ import cpw.mods.fml.relauncher.Side;
 public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridObj, ISidedBlock {
 
 	protected static final HashMap recipes = new HashMap();
-	private boolean update = false;
-
 	public int tempEng = 0;
+
+	private boolean update = false;
 
 	public TEStearilliumEnergyCube() {
 		inventory = new ItemStack[0];
@@ -31,7 +31,7 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 
 	@Override
 	public boolean canConnectOnSide( int side ) {
-		return (side==getFacing());
+		return (side == getFacing());
 
 	}
 
@@ -102,6 +102,16 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 	}
 
 	@Override
+	public boolean isUpdate() {
+		return update;
+	}
+
+	@Override
+	public void setUpdate( boolean update ) {
+		this.update = update;
+	}
+
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
@@ -116,20 +126,12 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 			}
 			gridindex = -1;
 		}
-		
-		if(isUpdate()){
+
+		if (isUpdate()) {
 			sendUpdatePacket(Side.CLIENT);
 			this.setUpdate(false);
 		}
 
 		TickSinceUpdate++;
-	}
-	
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public void setUpdate( boolean update ) {
-		this.update = update;
 	}
 }

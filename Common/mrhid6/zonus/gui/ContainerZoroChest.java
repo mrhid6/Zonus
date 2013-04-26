@@ -1,12 +1,12 @@
 package mrhid6.zonus.gui;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerZoroChest extends ContainerXorbo {
 
@@ -42,6 +42,17 @@ public class ContainerZoroChest extends ContainerXorbo {
 	}
 
 	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+
+		for (int i = 0; i < crafters.size(); i++) {
+			ICrafting icrafting = (ICrafting) crafters.get(i);
+
+			tileEntity.sendGuiNetworkData(this, icrafting);
+		}
+	}
+
+	@Override
 	public void onCraftGuiClosed( EntityPlayer entityplayer ) {
 		super.onCraftGuiClosed(entityplayer);
 		tileEntity.closeChest();
@@ -69,17 +80,7 @@ public class ContainerZoroChest extends ContainerXorbo {
 		}
 		return itemstack;
 	}
-	
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
 
-		for (int i = 0; i < crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) crafters.get(i);
-
-			tileEntity.sendGuiNetworkData(this, icrafting);
-		}
-	}
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar( int i, int j ) {

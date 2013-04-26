@@ -42,29 +42,29 @@ public class BlockZoroFurnace extends BlockMachine {
 
 	@Override
 	public Icon getBlockTexture( IBlockAccess par1IBlockAccess, int x, int y, int z, int blockSide ) {
-		
+
 		TileEntity te = par1IBlockAccess.getBlockTileEntity(x, y, z);
-		
+
 		boolean connected = false;
-		if(te instanceof TEZoroFurnace){
-			if( ((TEZoroFurnace)te).getGrid()!=null){
+		if (te instanceof TEZoroFurnace) {
+			if (((TEZoroFurnace) te).getGrid() != null) {
 				connected = true;
 			}
 		}
-		
+
 		if (blockSide == 1) {
 			return icons[0];
 		} else if (blockSide == 0) {
 			return icons[0];
 		} else {
 			int var6 = par1IBlockAccess.getBlockMetadata(x, y, z);
-			return blockSide != var6 ? ((!connected)?icons[1]:icons[2]) : (!connected)?icons[3]:icons[4];
+			return blockSide != var6 ? ((!connected) ? icons[1] : icons[2]) : (!connected) ? icons[3] : icons[4];
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int side, int meta ) {
+	public Icon getIcon( int side, int meta ) {
 		if (side == 1) {
 			return icons[0];
 		} else if (side == 0) {

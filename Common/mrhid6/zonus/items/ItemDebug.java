@@ -99,25 +99,24 @@ public class ItemDebug extends ItemTexturedBase {
 	@Override
 	public boolean onItemUseFirst( ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ ) {
 
-		Random rand = new Random();
+		new Random();
 
 		if (!world.blockExists(x, y, z) || world.isAirBlock(x, y, z)) {
-			return false; }
-
+			return false;
+		}
 
 		TileEntity te = world.getBlockTileEntity(x, y, z);
 
 		if (te instanceof TEZoroController) {
 
-			System.out.println(((TEZoroController) te).gridindex); } 
-		else if (te instanceof TECableBase) { 
-			System.out.println(((TECableBase)te).gridindex);
+			System.out.println(((TEZoroController) te).gridindex);
+		} else if (te instanceof TECableBase) {
+			System.out.println(((TECableBase) te).gridindex);
 
 		} else if (te instanceof TEPoweredBase) {
 			System.out.println(((TEPoweredBase) te).gridindex);
 
 		}
-
 
 		return true;
 	}

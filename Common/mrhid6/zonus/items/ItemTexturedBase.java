@@ -23,7 +23,7 @@ public class ItemTexturedBase extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons( IconRegister iconRegister ) {
-		iconIndex = iconRegister.registerIcon(Zonus.Modname + texturename);
+	public void registerIcons( IconRegister iconRegister ) {
+		itemIcon = iconRegister.registerIcon(Zonus.Modname + texturename);
 	}
 }

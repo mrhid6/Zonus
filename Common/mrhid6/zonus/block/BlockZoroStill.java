@@ -3,8 +3,7 @@ package mrhid6.zonus.block;
 import java.util.Random;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.fx.FXSparkle;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockStationary;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -15,12 +14,13 @@ import net.minecraftforge.liquids.ILiquid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockZoroStill extends BlockFluid implements ILiquid {
+public class BlockZoroStill extends BlockStationary implements ILiquid {
 
 	protected BlockZoroStill( int par1, String name ) {
 		super(par1, Material.water);
 		this.setTickRandomly(false);
 		this.setUnlocalizedName(name);
+		setLightOpacity(3);
 	}
 
 	@Override
@@ -29,35 +29,13 @@ public class BlockZoroStill extends BlockFluid implements ILiquid {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata( int par1, int par2 ) {
-		return blockIcon;
-	}
-
-	/**
-	 * Checks to see if the block is flammable.
-	 */
-	private boolean isFlammable( World par1World, int par2, int par3, int par4 ) {
-		return par1World.getBlockMaterial(par2, par3, par4).getCanBurn();
+	public boolean isBlockReplaceable( World world, int i, int j, int k ) {
+		return true;
 	}
 
 	@Override
 	public boolean isMetaSensitive() {
 		return false;
-	}
-
-	/**
-	 * Lets the block know when one of its neighbor changes. Doesn't know which
-	 * neighbor changed (coordinates passed are their own) Args: x, y, z,
-	 * neighbor blockID
-	 */
-	@Override
-	public void onNeighborBlockChange( World par1World, int par2, int par3, int par4, int par5 ) {
-		super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
-
-		if (par1World.getBlockId(par2, par3, par4) == blockID) {
-			this.setNotStationary(par1World, par2, par3, par4);
-		}
 	}
 
 	@Override
@@ -79,16 +57,7 @@ public class BlockZoroStill extends BlockFluid implements ILiquid {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons( IconRegister iconRegister ) {
-		blockIcon = iconRegister.registerIcon(Zonus.Modname + "zoroStill");
-	}
-
-	/**
-	 * Changes the block ID to that of an updating fluid.
-	 */
-	private void setNotStationary( World par1World, int par2, int par3, int par4 ) {
-		int l = par1World.getBlockMetadata(par2, par3, par4);
-		par1World.setBlock(par2, par3, par4, ModBlocks.zoroFlowing.blockID, l, 2);
-		par1World.scheduleBlockUpdate(par2, par3, par4, ModBlocks.zoroFlowing.blockID, this.tickRate(par1World));
+		theIcon = new Icon[] { iconRegister.registerIcon(Zonus.Modname + "zoroStill"), iconRegister.registerIcon(Zonus.Modname + "zoroFlowing") };
 	}
 
 	@Override
@@ -99,48 +68,6 @@ public class BlockZoroStill extends BlockFluid implements ILiquid {
 	@Override
 	public int stillLiquidMeta() {
 		return 0;
-	}
-
-	/**
-	 * Ticks the block if it's been scheduled
-	 */
-	@Override
-	public void updateTick( World par1World, int par2, int par3, int par4, Random par5Random ) {
-		if (blockMaterial == Material.lava) {
-			int l = par5Random.nextInt(3);
-			int i1;
-			int j1;
-
-			for (i1 = 0; i1 < l; ++i1) {
-				par2 += par5Random.nextInt(3) - 1;
-				++par3;
-				par4 += par5Random.nextInt(3) - 1;
-				j1 = par1World.getBlockId(par2, par3, par4);
-
-				if (j1 == 0) {
-					if (this.isFlammable(par1World, par2 - 1, par3, par4) || this.isFlammable(par1World, par2 + 1, par3, par4) || this.isFlammable(par1World, par2, par3, par4 - 1) || this.isFlammable(par1World, par2, par3, par4 + 1) || this.isFlammable(par1World, par2, par3 - 1, par4) || this.isFlammable(par1World, par2, par3 + 1, par4)) {
-						par1World.setBlock(par2, par3, par4, Block.fire.blockID);
-						return;
-					}
-				} else if (Block.blocksList[j1].blockMaterial.blocksMovement()) {
-					return;
-				}
-			}
-
-			if (l == 0) {
-				i1 = par2;
-				j1 = par4;
-
-				for (int k1 = 0; k1 < 3; ++k1) {
-					par2 = i1 + par5Random.nextInt(3) - 1;
-					par4 = j1 + par5Random.nextInt(3) - 1;
-
-					if (par1World.isAirBlock(par2, par3 + 1, par4) && this.isFlammable(par1World, par2, par3, par4)) {
-						par1World.setBlock(par2, par3 + 1, par4, Block.fire.blockID);
-					}
-				}
-			}
-		}
 	}
 
 }

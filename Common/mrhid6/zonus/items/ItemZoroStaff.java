@@ -1,11 +1,8 @@
 package mrhid6.zonus.items;
 
-import mrhid6.zonus.Config;
 import mrhid6.zonus.block.ModBlocks;
-import mrhid6.zonus.fx.FXSparkle;
 import mrhid6.zonus.lib.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -53,7 +50,7 @@ public class ItemZoroStaff extends ItemTexturedBase {
 
 					int blockid = world.getBlockId(x + xx, y + yy, z + zz);
 
-					if (blockid == ModBlocks.stearilliumStone.blockID) {
+					if (blockid == ModBlocks.stearilliumReactorCore.blockID) {
 						md = 15;
 					}
 
@@ -74,7 +71,7 @@ public class ItemZoroStaff extends ItemTexturedBase {
 	public ItemZoroStaff( int id, String name ) {
 		super(id, 1, name);
 
-		this.setMaxDamage(20);
+		setMaxDamage(2000);
 	}
 
 	public boolean createChiller( ItemStack itemstack, EntityPlayer player, World world, int x, int y, int z ) {
@@ -98,27 +95,6 @@ public class ItemZoroStaff extends ItemTexturedBase {
 				}
 			}
 		}
-		return false;
-	}
-
-	public boolean createReactor( ItemStack itemstack, EntityPlayer player, World world, int x, int y, int z ) {
-		for (int xx = x - 3; xx <= x; xx++) {
-			for (int yy = y - 3; yy <= y; yy++) {
-				for (int zz = z - 3; zz <= z; zz++) {
-
-					if (fitReactor(world, xx, yy, zz)) {
-						if (Utils.isServerWorld()) {
-
-							System.out.println("ok");
-							replaceReactor(world, xx, yy, zz);
-
-							return true;
-						}
-					}
-				}
-			}
-		}
-
 		return false;
 	}
 
@@ -148,25 +124,6 @@ public class ItemZoroStaff extends ItemTexturedBase {
 		return fencefound;
 	}
 
-	public boolean fitReactor( World world, int x, int y, int z ) {
-		int ss = ModBlocks.stearilliumStone.blockID;
-		int tb = ModBlocks.triniumBrick.blockID;
-		int gl = ModBlocks.stearilliumGlass.blockID;
-
-		int[][][] blueprint = { { { tb, tb, tb, tb }, { tb, tb, tb, tb }, { tb, tb, tb, tb }, { tb, tb, tb, tb } }, { { tb, gl, gl, tb }, { gl, ss, ss, gl }, { gl, ss, ss, gl }, { tb, gl, gl, tb } }, { { tb, gl, gl, tb }, { gl, ss, ss, gl }, { gl, ss, ss, gl }, { tb, gl, gl, tb } }, { { tb, tb, tb, tb }, { tb, tb, tb, tb }, { tb, tb, tb, tb }, { tb, tb, tb, tb } } };
-		for (int yy = 0; yy < 4; yy++) {
-			for (int xx = 0; xx < 4; xx++) {
-				for (int zz = 0; zz < 4; zz++) {
-					int block = world.getBlockId(x + xx, y - yy + 3, z + zz);
-					if (block != blueprint[yy][xx][zz]) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
 	@Override
 	public boolean onItemUseFirst( ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ ) {
 		int bi = world.getBlockId(x, y, z);
@@ -182,7 +139,7 @@ public class ItemZoroStaff extends ItemTexturedBase {
 		}
 
 		if ((bi == ModBlocks.triniumBrick.blockID || bi == ModBlocks.stearilliumGlass.blockID) && result == false) {
-			result = createReactor(stack, player, world, x, y, z);
+			result = Utils.createReactor(stack, player, world, x, y, z);
 		}
 
 		return result;

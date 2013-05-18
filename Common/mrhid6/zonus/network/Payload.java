@@ -16,6 +16,13 @@ public class Payload {
 	public Payload() {
 	}
 
+	/**
+	 * @param Bools
+	 * @param bytes
+	 * @param ints
+	 * @param floats
+	 * @param strings
+	 * */
 	public Payload( int boolSize, int byteSize, int intSize, int floatSize, int stringSize ) {
 		boolPayload = new boolean[boolSize];
 		bytePayload = new byte[byteSize];

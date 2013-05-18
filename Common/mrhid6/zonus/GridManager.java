@@ -74,16 +74,39 @@ public class GridManager {
 
 	public static void handleGridPacket( int id, PacketGrid packet ) {
 
-		GridPower grid = getGrid(id);
-		if (grid == null) {
-			System.out.println("grids was null so created!");
-			grids.add(new GridPower());
+		//System.out.println(packet.getPacketType());
+		if (packet.getPacketType() == 1) {
+			GridPower grid = getGrid(id);
+			if (grid == null) {
+				System.out.println("grids was null so created!");
+				grids.add(new GridPower());
+			}
+
+			grid = getGrid(id);
+
+			grid.handleTilePacket(packet);
+		} else if (packet.getPacketType() == 2) {
+
+			GridPower grid = getGrid(id);
+
+			if (grid != null) {
+				grid.removeGrid();
+				grids.remove(id);
+			}
 		}
 
-		grid = getGrid(id);
+	}
 
-		grid.handleTilePacket(packet);
+	public static void sendRemovalPacket( Side side, World worldObj, int xCoord, int yCoord, int zCoord, int id ) {
+		GridPower grid = getGrid(id);
+		if (grid != null) {
+			if ((Utils.isServerWorld()) && (side == Side.CLIENT)) {
+				PacketUtils.sendToPlayers(grid.getRemovalPacket(), worldObj, xCoord, yCoord, zCoord, 192);
 
+			} else if ((Utils.isClientWorld()) && (side == Side.SERVER)) {
+				PacketUtils.sendToServer(grid.getRemovalPacket());
+			}
+		}
 	}
 
 	public static void sendUpdatePacket( Side side, World worldObj, int xCoord, int yCoord, int zCoord, int id ) {

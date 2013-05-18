@@ -156,7 +156,7 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 							}
 
 							if (getGrid() != null) {
-								getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.CRAFTER_USEAGE_MULITPLIER);
+								getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.CRAFTER_USEAGE_MULITPLIER, this);
 							}
 
 						}
@@ -225,26 +225,8 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 	}
 
 	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public int getSizeInventory() {
 		return 19;
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public boolean hasEnoughItems( ItemStack[] items ) {
@@ -332,6 +314,12 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
+	@Override
 	public void setInventorySlotContents( int i, ItemStack stack ) {
 		inventory[i] = stack;
 	}
@@ -350,8 +338,10 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 				if (getGrid() != null) {
 					getGrid().removeMachine(this);
 				}
-				gridindex = -1;
-				setUpdate(true);
+				if (gridindex != -1) {
+					gridindex = -1;
+					setUpdate(true);
+				}
 			}
 
 		}
@@ -363,5 +353,23 @@ public class TEStearilliumCrafter extends TEMachineBase implements IXorGridObj {
 		}
 
 		TickSinceUpdate++;
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

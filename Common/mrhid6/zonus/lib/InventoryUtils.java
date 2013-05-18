@@ -34,6 +34,18 @@ public class InventoryUtils {
 
 	}
 
+	public static ItemStack copyStack( ItemStack stack ) {
+
+		if (stack == null) {
+			return null;
+		}
+		int quanity = stack.stackSize;
+		stack = stack.copy();
+		stack.stackSize = quanity;
+
+		return stack;
+	}
+
 	public static ItemStack copyStack( ItemStack stack, int quanity ) {
 
 		if (stack == null) {
@@ -128,6 +140,16 @@ public class InventoryUtils {
 		return -1;
 	}
 
+	public static int getEmptySlot( int startSlot, int endSlot, IInventory inv ) {
+		for (int i = startSlot; i < endSlot; i++) {
+			if (inv.getStackInSlot(i) == null) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
 	public static int getPartialChestSlot( ItemStack stack, int startSlot, int endSlot, TEZoroChest chest ) {
 
 		for (int i = startSlot; i < endSlot; i++) {
@@ -148,35 +170,25 @@ public class InventoryUtils {
 
 		return -1;
 	}
-	
-	public static int getEmptySlot( int startSlot, int endSlot, IInventory inv) {
-		for (int i = startSlot; i < endSlot; i++) {
-			if (inv.getStackInSlot(i) == null) {
-				return i;
-			}
-		}
-		
-		return -1;
-	}
-	
-	public static int getPartialSlot( ItemStack stack, int startSlot, int endSlot, IInventory inv) {
-		
+
+	public static int getPartialSlot( ItemStack stack, int startSlot, int endSlot, IInventory inv ) {
+
 		for (int i = startSlot; i < endSlot; i++) {
 			if (inv.getStackInSlot(i) == null) {
 				continue;
 			}
-			
+
 			if (!inv.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(inv.getStackInSlot(i), stack)) {
 				continue;
 			}
-			
+
 			if (inv.getStackInSlot(i).stackSize >= inv.getStackInSlot(i).getMaxStackSize()) {
 				continue;
 			}
-			
+
 			return i;
 		}
-		
+
 		return -1;
 	}
 

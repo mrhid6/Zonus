@@ -1,9 +1,13 @@
 package mrhid6.zonus;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import mrhid6.zonus.interfaces.ISidedBlock;
+import mrhid6.zonus.lib.ClosestChest;
 import mrhid6.zonus.lib.InventoryUtils;
 import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketGrid;
@@ -28,20 +32,21 @@ public class GridPower {
 	public static final float energyCubeIncrease = 5000.0F;
 	private HashMap<TECableBase, Integer> cablesArray;
 	private HashMap<TEZoroChest, Integer> chestArray;
-	private float maxPower = 30000.0F;
-	private float ClientMaxPower = maxPower;
 	private HashMap<TETriniumConverter, Integer> converterArray;
 	private HashMap<TEStearilliumEnergyCube, Integer> energyCubeArray;
 	public int energystorage = 0;
-
 	public int gridIndex;
 	private HashMap<TEMachineBase, Integer> machineArray;
 
 	public TEZoroController masterController;
+	private float maxPower = 30000.0F;
+	private float ClientMaxPower = maxPower;
 
 	private float Power = 0.0F;
 
 	private HashMap<TEStearilliumReactor, Integer> reactorArray;
+
+	private boolean removal = false;
 
 	public GridPower() {
 
@@ -83,14 +88,18 @@ public class GridPower {
 		}
 	}
 
-	public void addEnergy( float f ) {
+	public void addEnergy( float f, TEMachineBase src ) {
+
+		float powerbefore = Power;
+
 		Power += f;
 
 		if (Power > getMaxEnergy()) {
 			Power = getMaxEnergy();
 		}
 
-		if (masterController != null) {
+		if (masterController != null && powerbefore != Power) {
+			src.setUpdate(true);
 			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
 	}
@@ -257,30 +266,7 @@ public class GridPower {
 
 	}
 
-	public boolean checkCable( TECableBase te ) {
-
-		return (te.gridindex == gridIndex);
-	}
-
-	public void cleanup() {
-	}
-
-	public int countEnergyCubes() {
-
-		int res = 0;
-
-		for (TEStearilliumEnergyCube cube : energyCubeArray.keySet()) {
-
-			if (energyCubeArray.get(cube) == 2) {
-				res++;
-			}
-		}
-		return res;
-
-	}
-
 	public void discover() {
-		cleanup();
 
 		if (masterController == null) {
 			System.out.println("controller null!");
@@ -318,16 +304,54 @@ public class GridPower {
 
 	}
 
-	public ArrayList<TEZoroChest> getChestsForSend( int colour ) {
+	public ArrayList<TEZoroChest> getChestsForSend(TEPoweredBase start, int colour ) {
 
 		ArrayList<TEZoroChest> res = new ArrayList<TEZoroChest>();
+
+		ArrayList<ClosestChest> chests = new ArrayList<ClosestChest>();
 		for (TEZoroChest te1 : chestArray.keySet()) {
 
 			if (chestArray.get(te1) == 2 && te1.getMode() == 0 || te1.getMode() == 1 && (te1.getColour() == 0 || te1.getColour() == colour)) {
-				res.add(te1);
+				int xdif = te1.xCoord - start.xCoord;
+				int ydif = te1.yCoord - start.yCoord;
+				int zdif = te1.zCoord - start.zCoord;
+
+				chests.add(new ClosestChest(xdif, ydif, zdif, te1));
 			}
 		}
+
+		Collections.sort(chests, new ChestComparator());
+
+		for(ClosestChest c : chests){
+			res.add(c.chest);
+		}
+		chests.clear();
+
 		return res;
+
+	}
+
+	public void PathFindToObj(TEPoweredBase start, Class<?> end){
+
+		if(end.equals(TEZoroChest.class)){
+			System.out.println("########################");
+			ArrayList<ClosestChest> chests = new ArrayList<ClosestChest>();
+
+			for (TEZoroChest te1 : chestArray.keySet()) {
+				if (chestArray.get(te1) == 2 && te1.getMode() == 0 || te1.getMode() == 1) {
+					int xdif = te1.xCoord - start.xCoord;
+					int ydif = te1.yCoord - start.yCoord;
+					int zdif = te1.zCoord - start.zCoord;
+
+					chests.add(new ClosestChest(xdif, ydif, zdif, te1));
+					System.out.println("x"+xdif+"y"+ydif+"z"+zdif);
+				}
+			}
+
+			Collections.sort(chests, new ChestComparator());
+
+
+		}
 
 	}
 
@@ -350,12 +374,24 @@ public class GridPower {
 		return Power;
 	}
 
-	public TEZoroChest getFirstChestForReciveForItem( int colour, ItemStack stack ) {
+	public TEZoroChest getFirstChestForReciveForItem(TEPoweredBase start, int colour, ItemStack stack ) {
+
+		ArrayList<ClosestChest> chests = new ArrayList<ClosestChest>();
 		for (TEZoroChest te1 : chestArray.keySet()) {
 
 			if ((chestArray.get(te1) == 2) && (te1.getMode() == 0 || te1.getMode() == 2) && (te1.getColour() == 0 || te1.getColour() == colour) && InventoryUtils.canStoreInChest(te1, stack)) {
-				return te1;
+				int xdif = te1.xCoord - start.xCoord;
+				int ydif = te1.yCoord - start.yCoord;
+				int zdif = te1.zCoord - start.zCoord;
+
+				chests.add(new ClosestChest(xdif, ydif, zdif, te1));
 			}
+		}
+		Collections.sort(chests, new ChestComparator());
+		
+		if(chests.size()>0){
+			
+			return chests.get(0).chest;
 		}
 		return null;
 
@@ -375,6 +411,12 @@ public class GridPower {
 	public float getMaxEnergy() {
 		WorkOutMaxPower();
 		return ClientMaxPower;
+	}
+
+	public Packet getRemovalPacket() {
+
+		PacketGrid packet = new PacketGrid(gridIndex, new Payload(), 2);
+		return packet.getPacket();
 	}
 
 	public int getScaledEnergyStored( int scale ) {
@@ -446,10 +488,6 @@ public class GridPower {
 		return false;
 	}
 
-	public boolean hasPower() {
-		return (Power > 0);
-	}
-
 	public boolean hasReactor( TEStearilliumReactor te ) {
 
 		for (TEStearilliumReactor cube : reactorArray.keySet()) {
@@ -494,6 +532,8 @@ public class GridPower {
 	}
 
 	public void pathFinder( int x, int y, int z, World w, ArrayList<TECableBase> cab, ArrayList<TETriniumConverter> con ) {
+		
+		int[] invertedsides = new int[]{5,4,1,0,3,2};
 		for (int i = 0; i < 6; i++) {
 
 			int x1 = x + Config.SIDE_COORD_MOD[i][0];
@@ -518,7 +558,7 @@ public class GridPower {
 			if (te1 instanceof TETriniumConverter) {
 
 				TETriniumConverter converter = (TETriniumConverter) te1;
-				if (!con.contains(converter) && converter.canInteractWith(te)) {
+				if (!con.contains(converter) && converter.canInteractWith(te) && converter.canConnectOnSide(i)) {
 
 					addConverter(converter, i);
 					con.add(converter);
@@ -561,7 +601,14 @@ public class GridPower {
 			if (te1 instanceof TEMachineBase) {
 				TEMachineBase machine = (TEMachineBase) te1;
 				if (!hasMachine(machine) && machine.canInteractWith(te)) {
-					addMachine(machine);
+					if(te1 instanceof ISidedBlock){
+						if( ((ISidedBlock)machine).canConnectOnSide(i^1)){
+							addMachine(machine);
+						}
+						
+					}else{
+						addMachine(machine);
+					}
 				}
 			}
 		}
@@ -587,6 +634,7 @@ public class GridPower {
 		if (this.isController(w, x, y, z)) {
 			masterController = null;
 		}
+		GridManager.sendRemovalPacket(Side.CLIENT, w, x, y, z, gridIndex);
 		removeGrid();
 	}
 
@@ -619,8 +667,8 @@ public class GridPower {
 		energystorage = 0;
 		masterController = null;
 		reactorArray.clear();
+		removal = true;
 
-		System.out.println("grid was removed!");
 	}
 
 	public void removeMachine( TEMachineBase te ) {
@@ -645,34 +693,37 @@ public class GridPower {
 	}
 
 	public void setEnergyStored( float power ) {
+		float powerbefore = Power;
 
 		Power = power;
 		if (Power < 0) {
 			Power = 0;
 		}
-		if (masterController != null) {
+		if (masterController != null && powerbefore != Power) {
 			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
 	}
 
-	public void setMaxEnergy( float amount ) {
-		maxPower = amount;
-	}
-
-	public void subtractPower( float quantity ) {
-
+	public void subtractPower( float quantity, TEMachineBase src ) {
+		float powerbefore = Power;
 		Power -= quantity;
 
 		if (Power < 0.0F) {
 			Power = 0.0F;
 		}
 
-		if (masterController != null) {
+		if (masterController != null && powerbefore != Power) {
+			src.setUpdate(true);
 			GridManager.sendUpdatePacket(Side.CLIENT, masterController.worldObj, masterController.xCoord, masterController.yCoord, masterController.zCoord, gridIndex);
 		}
 	}
 
 	public void update() {
+
+		if (removal) {
+			return;
+		}
+
 		discover();
 		// WorkOutMaxPower();
 	}
@@ -685,5 +736,11 @@ public class GridPower {
 
 		data.setFloat("grid.power", getEnergyStored());
 		data.setInteger("grid.energystorage", energystorage);
+	}
+}
+
+class ChestComparator implements Comparator<ClosestChest> {
+	public int compare(ClosestChest chair1, ClosestChest chair2) {
+		return (chair1.xDiff + chair1.yDiff + chair1.zDiff) - (chair2.xDiff + chair2.yDiff + chair2.zDiff);
 	}
 }

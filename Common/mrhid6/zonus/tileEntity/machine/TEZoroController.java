@@ -47,6 +47,7 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 	public int particaltick = 0;
 
+	public boolean playedsound = false;
 	PowerMJProxy pp;
 
 	public TEZoroController() {
@@ -60,6 +61,9 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 	}
 
 	public void breakBlock() {
+		dropContent(0);
+		worldObj.playSoundEffect(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D, "mob.wither.death", 10F, worldObj.rand.nextFloat() * 0.1F + 0.9F);
+
 		if (getGrid() != null) {
 			getGrid().removeController(worldObj, xCoord, yCoord, zCoord);
 		}
@@ -155,17 +159,6 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 	public void doWork() {
 	}
 
-	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	/*
 	 * public void sendGuiNetworkData(Container container, ICrafting iCrafting){
@@ -178,10 +171,11 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 	@Override
 	public Packet getDescriptionPacket() {
-		Payload payload = new Payload(2, 1, 1, 3, 0);
+		Payload payload = new Payload(3, 1, 1, 3, 0);
 
 		payload.boolPayload[0] = isActive;
 		payload.boolPayload[1] = transmitpower;
+		payload.boolPayload[2] = playedsound;
 
 		payload.intPayload[0] = gridindex;
 
@@ -200,12 +194,6 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 	@Override
 	public IPowerProvider getPowerProvider() {
 		return pp;
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public boolean gridCheck() {
@@ -233,12 +221,19 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 	@Override
 	public void handleTilePacket( PacketTile packet ) {
+
+		playedsound = packet.payload.boolPayload[2];
+
 		if (Reference.useBuildCraft) {
 			pp.setEnergyStored(packet.payload.floatPayload[2]);
 
 			if (Utils.isClientWorld()) {
 				pp.setEnergyStored(packet.payload.floatPayload[2]);
 			}
+		}
+
+		if (Utils.isClientWorld()) {
+			playedsound = packet.payload.boolPayload[2];
 		}
 		super.handleTilePacket(packet);
 	}
@@ -255,7 +250,7 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 			gridindex = myGrid.gridIndex;
 			getGrid().setEnergyStored(energyToStore);
 
-			setUpdate(true);
+			// setUpdate(true);
 
 		} else if (getGrid() != null && !getGrid().isController(worldObj, xCoord, yCoord, zCoord)) {
 
@@ -291,6 +286,13 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 		// updateGrid();
 	}
 
+	public void playSound() {
+		if (!playedsound) {
+			worldObj.playSoundEffect(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D, "mob.wither.idle", 10F, worldObj.rand.nextFloat() * 0.1F + 0.9F);
+			playedsound = true;
+		}
+	}
+
 	@Override
 	public int powerRequest( ForgeDirection from ) {
 		if (getGrid() != null && Reference.useBuildCraft && getGrid().getMaxEnergy() > getGrid().getEnergyStored()) {
@@ -317,6 +319,8 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 			getGrid().energystorage = 0;
 		}
 
+		playedsound = data.getBoolean("playedsound");
+
 		// System.out.println("read nbt - "+energyToStore);
 
 	}
@@ -334,13 +338,21 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
+	@Override
 	public void setPowerProvider( IPowerProvider provider ) {
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void spawnParticles() {
+
 		if ((particaltick % 8) == 0) {
+
 			double x = xCoord + 0.5F + (Math.random() * 0.6) - 0.3;
 			double z = zCoord + 0.5F + (Math.random() * 0.6) - 0.3;
 
@@ -364,14 +376,18 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 			return;
 		}
 
+		playSound();
+
 		if (isUpdate()) {
-			GridManager.sendUpdatePacket(Side.CLIENT, worldObj, xCoord, yCoord, zCoord, gridindex);
+			// GridManager.sendUpdatePacket(Side.CLIENT, worldObj, xCoord,
+			// yCoord, zCoord, gridindex);
 			sendUpdatePacket(Side.CLIENT);
+			setUpdate(false);
 		}
 
 		if (getGrid() != null) {
 			getGrid().update();
-			setUpdate(true);
+			// setUpdate(true);
 		}
 		if ((TickSinceUpdate % 3) == 0) {
 
@@ -380,12 +396,12 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 				if (Reference.useBuildCraft) {
 					float want = (getGrid().getMaxEnergy() - getGrid().getEnergyStored() / 3);
 					float used = pp.useEnergy(1.0F, Math.min(want, pp.getMaxEnergyStored()), true);
-					getGrid().addEnergy(used * 3.0F);
-					setUpdate(true);
+					getGrid().addEnergy(used * 3.0F, this);
+					// setUpdate(true);
 				}
 
-				getGrid().addEnergy(500);
-				setUpdate(true);
+				// getGrid().addEnergy(500,this);
+				// setUpdate(true);
 			}
 		}
 
@@ -403,9 +419,28 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 		super.writeToNBT(data);
 
 		data.setInteger("grid.index", gridindex);
+		data.setBoolean("playedsound", playedsound);
 
 		if (getGrid() != null) {
 			getGrid().writeToNBT(data);
 		}
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

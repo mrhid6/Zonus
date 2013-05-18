@@ -45,7 +45,7 @@ public class TETriniumPlanter extends TEMachineBase implements IXorGridObj, ILog
 
 		if (getGrid() != null) {
 
-			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour, stack);
+			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(this,colour, stack);
 			if (chest != null) {
 				int injected = 0;
 
@@ -219,15 +219,6 @@ public class TETriniumPlanter extends TEMachineBase implements IXorGridObj, ILog
 		return false;
 	}
 
-	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
 
 	public int getColour() {
 		return colour;
@@ -315,12 +306,6 @@ public class TETriniumPlanter extends TEMachineBase implements IXorGridObj, ILog
 	@Override
 	public int getSizeInventory() {
 		return 2;
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -436,6 +421,12 @@ public class TETriniumPlanter extends TEMachineBase implements IXorGridObj, ILog
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
+	@Override
 	public void setMode( int mode ) {
 	}
 
@@ -510,5 +501,23 @@ public class TETriniumPlanter extends TEMachineBase implements IXorGridObj, ILog
 		super.writeToNBT(data);
 		data.setInteger("mode", mode);
 		data.setInteger("colour", colour);
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

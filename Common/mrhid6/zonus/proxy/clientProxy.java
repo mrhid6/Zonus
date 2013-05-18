@@ -7,6 +7,7 @@ import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.models.ModelTitan;
 import mrhid6.zonus.network.PacketHandler;
 import mrhid6.zonus.render.RenderItemNoxiteTurret;
+import mrhid6.zonus.render.RenderTECrystalForge;
 import mrhid6.zonus.render.RenderTENoxiteTurret;
 import mrhid6.zonus.render.RenderTEStearilliumCrafter;
 import mrhid6.zonus.render.RenderTETriniumConverter;
@@ -16,6 +17,7 @@ import mrhid6.zonus.render.RenderTEZoroController;
 import mrhid6.zonus.render.RenderTitan;
 import mrhid6.zonus.tileEntity.TEMachineBase;
 import mrhid6.zonus.tileEntity.TENoxiteTurret;
+import mrhid6.zonus.tileEntity.machine.TECrystalForge;
 import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import mrhid6.zonus.tileEntity.machine.TETriniumMiner;
@@ -85,6 +87,7 @@ public class clientProxy extends commonProxy implements ITickHandler {
 		ClientRegistry.bindTileEntitySpecialRenderer(TETriniumMiner.class, new RenderTETriniumMiner());
 		ClientRegistry.bindTileEntitySpecialRenderer(TETriniumConverter.class, new RenderTETriniumConverter());
 		ClientRegistry.bindTileEntitySpecialRenderer(TEZoroChest.class, new RenderTEZoroChest());
+		ClientRegistry.bindTileEntitySpecialRenderer(TECrystalForge.class, new RenderTECrystalForge());
 
 		MinecraftForgeClient.registerItemRenderer(BlockIds.getID("noxiteTurret"), new RenderItemNoxiteTurret());
 

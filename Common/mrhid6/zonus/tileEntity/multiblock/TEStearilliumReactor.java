@@ -8,33 +8,53 @@ import mrhid6.zonus.interfaces.IXorGridObj;
 import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.network.PacketTile;
+import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TEMachineBase;
 import mrhid6.zonus.tileEntity.TETriniumCable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidTank;
 import cpw.mods.fml.relauncher.Side;
 
-public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, ITriniumObj {
+public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, ITriniumObj, ITankContainer {
 
+	public static int MAX_LIQUID = LiquidContainerRegistry.BUCKET_VOLUME * 10;
 	public boolean breakingBlock = false;
+
 	private int cablesConnected = 0;
 
 	private boolean causeExplosion = false;
-
+	private LiquidTank coolantTank;
 	private TEStearilliumReactor coreBlock;
+
 	private boolean isCore = false;
+
 	private boolean loaded = false;
+	public int oldBlockId = 0;
 
 	public boolean state = false;
+	public int tempLiquidAmt = -1;
+	public int tempLiquidId = -1;
 
+	private LiquidTank tempTank;
 	private boolean update = false;
+	private float heat = 0.0F;
 
 	public TEStearilliumReactor() {
-		inventory = new ItemStack[19];
+		inventory = new ItemStack[getSizeInventory()];
 
 		invName = "stear.reactor";
+		coolantTank = new LiquidTank(MAX_LIQUID);
+		tempTank = new LiquidTank(MAX_LIQUID);
 	}
 
 	public void blockBreak() {
@@ -125,6 +145,33 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 		}
 	}
 
+	@Override
+	public LiquidStack drain( ForgeDirection from, int maxDrain, boolean doDrain ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LiquidStack drain( int tankIndex, int maxDrain, boolean doDrain ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int fill( ForgeDirection from, LiquidStack resource, boolean doFill ) {
+
+		if (resource != null /* && resource.itemID == ModBlocks.zoroStill.blockID */ && getCoreBlock()!=null && getCoreBlock().coolantTank!=null) {
+			setUpdate(true);
+			return getCoreBlock().coolantTank.fill(resource, doFill);
+		}
+		return 0;
+	}
+
+	@Override
+	public int fill( int tankIndex, LiquidStack resource, boolean doFill ) {
+		return 0;
+	}
+
 	public boolean foundController() {
 
 		if (getGrid() != null) {
@@ -134,15 +181,6 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 		return false;
 	}
 
-	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
 
 	public int getCellCount() {
 		int cellCount = 0;
@@ -153,12 +191,19 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 				continue;
 			}
 
-			if (item.itemID == ModItems.zoroStaff.itemID) {
+			if (item.itemID == ModItems.zoroWrench.itemID) {
 				cellCount++;
 			}
 		}
 
 		return cellCount;
+	}
+
+	public LiquidStack getCoolant() {
+		if (getCoreBlock() != null && coolantTank != null) {
+			return getCoreBlock().coolantTank.getLiquid();
+		}
+		return null;
 	}
 
 	public TEStearilliumReactor getCoreBlock() {
@@ -189,13 +234,72 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 	}
 
 	@Override
-	public int getSizeInventory() {
-		return 19;
+	public Packet getDescriptionPacket() {
+		Payload payload = new Payload(2, 1, 5, 3, 0);
+
+		payload.boolPayload[0] = isActive;
+		payload.boolPayload[1] = transmitpower;
+
+		payload.intPayload[0] = gridindex;
+		payload.intPayload[1] = oldBlockId;
+		payload.intPayload[2] = cablesConnected;
+		if (getCoolant() != null) {
+			payload.intPayload[3] = getCoolant().itemID;
+			payload.intPayload[4] = getCoolant().amount;
+		}
+
+		payload.floatPayload[0] = processCur;
+		payload.floatPayload[1] = processEnd;
+		payload.floatPayload[2] = heat;
+
+		payload.bytePayload[0] = (byte) facing;
+
+		PacketTile packet = new PacketTile(descPacketId, xCoord, yCoord, zCoord, payload);
+		return packet.getPacket();
 	}
 
 	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		return null;
+	public int getGridIndex() {
+		return getCoreBlock().gridindex;
+	}
+
+	public int getScaledCoolant( int i ) {
+		return getCoolant() != null ? (int) (((float) getCoolant().amount / (float) (MAX_LIQUID)) * i) : 0;
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return 26;
+	}
+
+	@Override
+	public ILiquidTank getTank( ForgeDirection direction, LiquidStack type ) {
+		return coolantTank;
+	}
+
+	@Override
+	public ILiquidTank[] getTanks( ForgeDirection direction ) {
+		return new LiquidTank[] { coolantTank };
+	}
+
+	@Override
+	public void handleTilePacket( PacketTile packet ) {
+
+		oldBlockId = packet.payload.intPayload[1];
+		cablesConnected = packet.payload.intPayload[2];
+		heat = packet.payload.floatPayload[2];
+
+		if (getCoreBlock() != null && getCoreBlock().coolantTank != null) {
+			getCoreBlock().coolantTank.setLiquid(new LiquidStack(packet.payload.intPayload[3], packet.payload.intPayload[4]));
+		}
+
+		if (Utils.isClientWorld()) {
+			oldBlockId = packet.payload.intPayload[1];
+			cablesConnected = packet.payload.intPayload[2];
+			heat = packet.payload.floatPayload[2];
+		}
+
+		super.handleTilePacket(packet);
 	}
 
 	@Override
@@ -241,21 +345,66 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 				continue;
 			}
 
-			if (item.itemID == ModItems.zoroStaff.itemID) {
+			if (item.itemID == ModItems.zoroWrench.itemID) {
 
 				item.setItemDamage(item.getItemDamage() + 1);
-				System.out.println(item.getItemDamage());
+				// System.out.println(item.getItemDamage());
 				if (item.getItemDamageForDisplay() >= item.getMaxDamage()) {
 					setInventorySlotContents(i, null);
 				}
 			}
 		}
-
+		if(heat==0){
+			heat = (getCellCount()+cablesConnected)*2.289F;
+		}
+		controlHeat();
+		
+		heat+=(heat/2.5F*(getCellCount()/8+1.3129856F))/3;
+		if(heat>=10000){
+			setCauseExplosion(true);
+		}
+		System.out.println("heat:"+heat);
+		
+		if(getCoolant()!=null){
+			System.out.println("liquid:"+getCoolant().amount);
+		}
+	}
+	
+	public void controlHeat(){
+		
+		if(getCoolant()!=null){
+			
+			if(getCoolant().amount>=heat){
+				getCoolant().amount-=heat;
+				heat = 0;
+				setUpdate(true);
+			}else{
+				heat-= getCoolant().amount;
+				getCoolant().amount=0;
+				setUpdate(true);
+			}
+			
+			if(heat<0){
+				heat=0;
+			}
+		}else{
+			//System.out.println("collant null!");
+		}
+		
+		//System.out.println("heat:"+heat);
 	}
 
 	@Override
 	public void readFromNBT( NBTTagCompound data ) {
 		super.readFromNBT(data);
+
+		oldBlockId = data.getInteger("oldBlockId");
+		isCore = data.getBoolean("iscore");
+
+		if (isCore()) {
+			System.out.println("loaded coolant");
+			coolantTank.readFromNBT(data.getCompoundTag("coolantTank"));
+		}
 	}
 
 	public void setCauseExplosion( boolean causeExplosion ) {
@@ -264,6 +413,11 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 
 	public void setCoreBlock( TEStearilliumReactor coreBlock ) {
 		this.coreBlock = coreBlock;
+	}
+
+	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
 	}
 
 	public void setIsCore( boolean isCore ) {
@@ -295,14 +449,16 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 					if (getGrid() != null) {
 						getGrid().removeReactor(this);
 					}
-					gridindex = -1;
-					this.setUpdate(true);
+					if (gridindex != -1) {
+						gridindex = -1;
+						setUpdate(true);
+					}
 				}
 
 				countCablesAroundReactor();
 
 				if (canCycle()) {
-					getGrid().addEnergy(Reference.POWER_GENERATION_RATE * (cablesConnected + getCellCount()));
+					getGrid().addEnergy(Reference.POWER_GENERATION_RATE * (cablesConnected + getCellCount()), this);
 
 					if (TickSinceUpdate % 20 == 0) {
 						processCycle();
@@ -323,6 +479,39 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 	@Override
 	public void writeToNBT( NBTTagCompound data ) {
 		super.writeToNBT(data);
+
+		data.setInteger("oldBlockId", oldBlockId);
+		data.setBoolean("iscore", isCore);
+
+		if (isCore() && getCoolant() != null) {
+			System.out.println("saving liquid!");
+			data.setTag("coolantTank", getCoolant().writeToNBT(new NBTTagCompound()));
+		} else {
+
+			if (!isCore()) {
+
+			} else if (getCoolant() == null) {
+				System.out.println("coolant null!");
+			}
+		}
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

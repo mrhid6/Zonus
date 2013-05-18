@@ -10,6 +10,7 @@ public abstract class TileRoot extends TileEntity {
 	public boolean transmitpower = false;
 
 	public void sendUpdatePacket( Side side ) {
+
 		if ((Utils.isServerWorld()) && (side == Side.CLIENT)) {
 			PacketUtils.sendToPlayers(getDescriptionPacket(), worldObj, xCoord, yCoord, zCoord, 192);
 

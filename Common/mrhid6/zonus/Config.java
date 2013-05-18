@@ -6,6 +6,8 @@ import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.lib.CreativeTabXor;
 import mrhid6.zonus.lib.ItemIds;
 import mrhid6.zonus.lib.event.BonemealHandler;
+import mrhid6.zonus.lib.event.GridEventHandler;
+import mrhid6.zonus.render.BRCrystalForge;
 import mrhid6.zonus.render.BRTriniumConverter;
 import mrhid6.zonus.render.BRZoroChest;
 import mrhid6.zonus.render.RenderBlockCable;
@@ -41,6 +43,7 @@ public class Config extends Configuration {
 
 		RenderingRegistry.registerBlockHandler(new BRTriniumConverter());
 		RenderingRegistry.registerBlockHandler(new BRZoroChest());
+		RenderingRegistry.registerBlockHandler(new BRCrystalForge());
 
 		RegisterEvents();
 
@@ -55,7 +58,6 @@ public class Config extends Configuration {
 		BlockIds.addBlockID(config, "triniumMiner");
 		BlockIds.addBlockID(config, "triniumConverter");
 		BlockIds.addBlockID(config, "triniumChiller");
-		BlockIds.addBlockID(config, "triniumPlanter");
 		BlockIds.addBlockID(config, "stearilliumCrafter");
 		BlockIds.addBlockID(config, "stearilliumEnergyBlock");
 		BlockIds.addBlockID(config, "stearilliumReactor");
@@ -67,28 +69,26 @@ public class Config extends Configuration {
 		BlockIds.addBlockID(config, "hazelspringLeaves");
 		BlockIds.addBlockID(config, "winterbirchLeaves");
 		BlockIds.addBlockID(config, "winterbirchSapling");
-		BlockIds.addBlockID(config, "zoroBrick");
 		BlockIds.addBlockID(config, "triniumBrick");
-		BlockIds.addBlockID(config, "stearilliumStone");
+		BlockIds.addBlockID(config, "blockFancy");
 		BlockIds.addBlockID(config, "stearilliumGlass");
 		BlockIds.addBlockID(config, "stearilliumReactorCore");
 
 		BlockIds.addBlockID(config, "zoroFlowing");
 		BlockIds.addBlockID(config, "zoroStill");
 
-		BlockIds.addBlockID(config, "zoroOre");
-		BlockIds.addBlockID(config, "stearilliumOre");
-		BlockIds.addBlockID(config, "triniumOre");
-		BlockIds.addBlockID(config, "noxiteOre");
+		BlockIds.addBlockID(config, "zonusOres");
+
+		BlockIds.addBlockID(config, "cableTip");
+		BlockIds.addBlockID(config, "crystalForge");
 
 		ItemIds.addItemID(config, "zoroIngot");
 		ItemIds.addItemID(config, "triniumIngot");
 		ItemIds.addItemID(config, "zoroBucket");
 		ItemIds.addItemID(config, "zoroCable");
 		ItemIds.addItemID(config, "triniumCable");
-		ItemIds.addItemID(config, "zoroStaff");
-		ItemIds.addItemID(config, "stearilliumOre");
-		ItemIds.addItemID(config, "noxiteCrystal");
+		ItemIds.addItemID(config, "zoroWrench");
+		ItemIds.addItemID(config, "zonusItems");
 		ItemIds.addItemID(config, "triniumHelm");
 		ItemIds.addItemID(config, "triniumPlate");
 		ItemIds.addItemID(config, "triniumLegs");
@@ -103,6 +103,7 @@ public class Config extends Configuration {
 
 	public static void RegisterEvents() {
 		MinecraftForge.EVENT_BUS.register(new BonemealHandler());
+		MinecraftForge.EVENT_BUS.register(new GridEventHandler());
 	}
 
 	public static void set( String categoryName, String propertyName, String newValue ) {

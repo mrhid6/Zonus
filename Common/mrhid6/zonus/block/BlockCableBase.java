@@ -3,6 +3,7 @@ package mrhid6.zonus.block;
 import java.util.List;
 import mrhid6.zonus.Config;
 import mrhid6.zonus.Zonus;
+import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.tileEntity.TECableBase;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
@@ -129,6 +130,13 @@ public class BlockCableBase extends BlockTexturedBase {
 		}
 
 		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int idPicked( World par1World, int par2, int par3, int par4 ) {
+
+		return ModItems.zoroCable.itemID;
 	}
 
 	public boolean isBlockNormalCube() {

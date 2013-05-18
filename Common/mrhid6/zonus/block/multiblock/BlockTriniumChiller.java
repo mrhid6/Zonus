@@ -4,6 +4,7 @@ import java.util.Random;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
 import mrhid6.zonus.block.ModBlocks;
+import mrhid6.zonus.items.Materials;
 import mrhid6.zonus.tileEntity.multiblock.TETriniumChillerBase;
 import mrhid6.zonus.tileEntity.multiblock.TETriniumChillerCore;
 import net.minecraft.block.Block;
@@ -198,7 +199,7 @@ public class BlockTriniumChiller extends BlockMachine {
 	public int idDropped( int meta, Random par2Random, int par3 ) {
 
 		if (((meta % 2 == 0) || (meta == 5) || (meta == 11) || (par3 == 0)) && (meta != 10)) {
-			return ModBlocks.stearilliumStone.blockID;
+			return Materials.StearilliumStone.itemID;
 		} else if (meta == 10) {
 			return Block.fenceIron.blockID;
 		} else {

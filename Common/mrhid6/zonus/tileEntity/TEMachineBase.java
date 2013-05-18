@@ -25,7 +25,7 @@ public abstract class TEMachineBase extends TEBlock implements ISidedInventory, 
 		return true;
 	}
 
-	private short facing = 3;
+	public short facing = 3;
 
 	protected float processCur;
 	protected float processEnd;

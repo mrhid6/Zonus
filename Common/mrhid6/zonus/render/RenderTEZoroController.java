@@ -89,7 +89,7 @@ public class RenderTEZoroController extends TileEntitySpecialRenderer {
 
 			EntityPlayer p = mc.thePlayer;
 
-			ItemStack stack = new ItemStack(ModItems.zoroStaff, 1);
+			ItemStack stack = new ItemStack(ModItems.zoroWrench, 1);
 
 			EntityItem ei = new EntityItem(tpb.worldObj);
 			ei.hoverStart = 0f;

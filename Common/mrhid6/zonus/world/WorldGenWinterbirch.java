@@ -70,8 +70,6 @@ public class WorldGenWinterbirch {
 
 		int treeTop = y + height + 1;
 
-		// System.out.println(height);
-
 		for (int y1 = y + 2; (y1 <= treeTop); y1++) {
 
 			if (outdentCount >= 1 && (y1 < treeTop && y1 < (treeTop - 1))) {
@@ -86,14 +84,12 @@ public class WorldGenWinterbirch {
 				for (int x1 = -radius; x1 <= radius; x1++) {
 					for (int z1 = -radius; z1 <= radius; z1++) {
 
-						if (Math.sqrt((x1 * x1) + (z1 * z1)) <= radius) {
-
-							if (world.getBlockId(x1 + x, y1, z1 + z) == 0) {
-								world.setBlock(x1 + x, y1, z1 + z, ModBlocks.winterbirchLeaves.blockID);
-							}
+						if (world.getBlockId(x1 + x, y1, z1 + z) == 0) {
+							world.setBlock(x1 + x, y1, z1 + z, ModBlocks.winterbirchLeaves.blockID);
 						}
 					}
 				}
+				makeRounded(radius, x, y1, z, world);
 			} else {
 				world.setBlock(x, y1, z, ModBlocks.winterbirchLeaves.blockID);
 			}
@@ -102,5 +98,17 @@ public class WorldGenWinterbirch {
 
 		return true;
 
+	}
+
+	public void makeRounded( int radius, int x, int y, int z, World world ) {
+		int x1 = x - radius;
+		int x2 = x + radius;
+		int z1 = z - radius;
+		int z2 = z + radius;
+
+		world.setBlock(x1, y, z1, 0);
+		world.setBlock(x2, y, z1, 0);
+		world.setBlock(x1, y, z2, 0);
+		world.setBlock(x2, y, z2, 0);
 	}
 }

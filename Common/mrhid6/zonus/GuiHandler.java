@@ -1,13 +1,16 @@
 package mrhid6.zonus;
 
+import mrhid6.zonus.gui.ContainerCrystalForge;
 import mrhid6.zonus.gui.ContainerStearilliumCrafter;
 import mrhid6.zonus.gui.ContainerStearilliumReactor;
 import mrhid6.zonus.gui.ContainerZoroChest;
 import mrhid6.zonus.gui.ContainerZoroFurnace;
+import mrhid6.zonus.gui.GuiCrystalForge;
 import mrhid6.zonus.gui.GuiStearilliumCrafter;
 import mrhid6.zonus.gui.GuiStearilliumReactor;
 import mrhid6.zonus.gui.GuiZoroChest;
 import mrhid6.zonus.gui.GuiZoroFurnace;
+import mrhid6.zonus.tileEntity.machine.TECrystalForge;
 import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
 import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import mrhid6.zonus.tileEntity.machine.TEZoroFurnace;
@@ -33,6 +36,9 @@ public class GuiHandler implements IGuiHandler {
 		if (tileEntity instanceof TEZoroChest) {
 			return new GuiZoroChest(new ContainerZoroChest(player, (TEZoroChest) tileEntity));
 		}
+		if (tileEntity instanceof TECrystalForge) {
+			return new GuiCrystalForge(new ContainerCrystalForge(player, (TECrystalForge) tileEntity));
+		}
 		/*
 		 * if(tileEntity instanceof TETriniumChillerBase || tileEntity
 		 * instanceof TETriniumChillerCore){ TETriniumChillerCore core = null;
@@ -45,7 +51,7 @@ public class GuiHandler implements IGuiHandler {
 
 		if (tileEntity instanceof TEStearilliumReactor) {
 
-			System.out.println("gui" + (((TEStearilliumReactor) tileEntity).getCoreBlock() != null));
+			//System.out.println("gui" + (((TEStearilliumReactor) tileEntity).getCoreBlock() != null));
 
 			return new GuiStearilliumReactor(new ContainerStearilliumReactor(player, ((TEStearilliumReactor) tileEntity).getCoreBlock()));
 		}
@@ -67,6 +73,10 @@ public class GuiHandler implements IGuiHandler {
 		if (tileEntity instanceof TEZoroChest) {
 			return new ContainerZoroChest(player, (TEZoroChest) tileEntity);
 		}
+		
+		if (tileEntity instanceof TECrystalForge) {
+			return new ContainerCrystalForge(player, (TECrystalForge) tileEntity);
+		}
 		/*
 		 * if(tileEntity instanceof TETriniumChillerBase || tileEntity
 		 * instanceof TETriniumChillerCore){ TETriniumChillerCore core = null;
@@ -78,7 +88,7 @@ public class GuiHandler implements IGuiHandler {
 		 */
 
 		if (tileEntity instanceof TEStearilliumReactor) {
-			System.out.println("con" + (((TEStearilliumReactor) tileEntity).getCoreBlock() != null));
+			//System.out.println("con" + (((TEStearilliumReactor) tileEntity).getCoreBlock() != null));
 			return new ContainerStearilliumReactor(player, ((TEStearilliumReactor) tileEntity).getCoreBlock());
 		}
 		return null;

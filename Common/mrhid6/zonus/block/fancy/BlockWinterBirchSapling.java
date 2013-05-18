@@ -26,6 +26,7 @@ public class BlockWinterBirchSapling extends BlockSapling {
 
 		this.setCreativeTab(Config.creativeTabXor);
 		this.setUnlocalizedName(name);
+		setStepSound(soundGrassFootstep);
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class BlockWinterBirchSapling extends BlockSapling {
 	}
 
 	@Override
-	public void func_96477_c( World par1World, int par2, int par3, int par4, Random par5Random ) {
+	public void updateTick( World par1World, int par2, int par3, int par4, Random par5Random ) {
 		this.growTree(par1World, par2, par3, par4, par5Random);
 	}
 

@@ -60,16 +60,6 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 		return false;
 	}
 
-	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
 	public ItemStack getResultFor( ItemStack itemstack ) {
 		ItemStack item = (ItemStack) recipes.get(itemstack.itemID);
 		return (item == null) ? null : item.copy();
@@ -78,12 +68,6 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 	@Override
 	public int getSizeInventory() {
 		return 2;
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -107,6 +91,12 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
+	@Override
 	public void setUpdate( boolean update ) {
 		this.update = update;
 	}
@@ -122,9 +112,11 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 		if (!foundController()) {
 			if (getGrid() != null) {
 				getGrid().removeEnergyCube(this);
-				this.setUpdate(true);
 			}
-			gridindex = -1;
+			if (gridindex != -1) {
+				gridindex = -1;
+				setUpdate(true);
+			}
 		}
 
 		if (isUpdate()) {
@@ -133,5 +125,23 @@ public class TEStearilliumEnergyCube extends TEMachineBase implements IXorGridOb
 		}
 
 		TickSinceUpdate++;
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

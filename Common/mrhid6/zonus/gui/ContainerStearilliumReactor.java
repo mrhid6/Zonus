@@ -1,5 +1,6 @@
 package mrhid6.zonus.gui;
 
+import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.tileEntity.multiblock.TEStearilliumReactor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -31,34 +32,41 @@ public class ContainerStearilliumReactor extends ContainerXorbo {
 	}
 
 	public void addSlots() {
-		// lvl1
-		addSlotToContainer(new Slot(tileEntity, 0, 62, 17));
-		addSlotToContainer(new Slot(tileEntity, 1, 80, 17));
-		addSlotToContainer(new Slot(tileEntity, 2, 98, 17));
 
-		// lvl2
-		addSlotToContainer(new Slot(tileEntity, 3, 53, 35));
-		addSlotToContainer(new Slot(tileEntity, 4, 71, 35));
-		addSlotToContainer(new Slot(tileEntity, 5, 89, 35));
-		addSlotToContainer(new Slot(tileEntity, 6, 107, 35));
+		int xoffset = 9;
+		int yoffset = 13;
 
-		// lvl3
-		addSlotToContainer(new Slot(tileEntity, 7, 44, 53));
-		addSlotToContainer(new Slot(tileEntity, 8, 62, 53));
-		addSlotToContainer(new Slot(tileEntity, 9, 80, 53));
-		addSlotToContainer(new Slot(tileEntity, 10, 98, 53));
-		addSlotToContainer(new Slot(tileEntity, 11, 116, 53));
+		for (int chestRow = 0; chestRow < 5; chestRow++) {
+			for (int chestCol = 0; chestCol < 5; chestCol++) {
+				addSlotToContainer(new Slot(tileEntity, chestCol + chestRow * 5, xoffset + chestCol * 18, yoffset + chestRow * 18));
+			}
 
-		// lvl4
-		addSlotToContainer(new Slot(tileEntity, 12, 53, 71));
-		addSlotToContainer(new Slot(tileEntity, 13, 71, 71));
-		addSlotToContainer(new Slot(tileEntity, 14, 89, 71));
-		addSlotToContainer(new Slot(tileEntity, 15, 107, 71));
-
-		// lvl5
-		addSlotToContainer(new Slot(tileEntity, 16, 62, 89));
-		addSlotToContainer(new Slot(tileEntity, 17, 80, 89));
-		addSlotToContainer(new Slot(tileEntity, 18, 98, 89));
+		}
+		/*
+		 * // lvl1 addSlotToContainer(new Slot(tileEntity, 0, 62, 17));
+		 * addSlotToContainer(new Slot(tileEntity, 1, 80, 17));
+		 * addSlotToContainer(new Slot(tileEntity, 2, 98, 17));
+		 * 
+		 * // lvl2 addSlotToContainer(new Slot(tileEntity, 3, 53, 35));
+		 * addSlotToContainer(new Slot(tileEntity, 4, 71, 35));
+		 * addSlotToContainer(new Slot(tileEntity, 5, 89, 35));
+		 * addSlotToContainer(new Slot(tileEntity, 6, 107, 35));
+		 * 
+		 * // lvl3 addSlotToContainer(new Slot(tileEntity, 7, 44, 53));
+		 * addSlotToContainer(new Slot(tileEntity, 8, 62, 53));
+		 * addSlotToContainer(new Slot(tileEntity, 9, 80, 53));
+		 * addSlotToContainer(new Slot(tileEntity, 10, 98, 53));
+		 * addSlotToContainer(new Slot(tileEntity, 11, 116, 53));
+		 * 
+		 * // lvl4 addSlotToContainer(new Slot(tileEntity, 12, 53, 71));
+		 * addSlotToContainer(new Slot(tileEntity, 13, 71, 71));
+		 * addSlotToContainer(new Slot(tileEntity, 14, 89, 71));
+		 * addSlotToContainer(new Slot(tileEntity, 15, 107, 71));
+		 * 
+		 * // lvl5 addSlotToContainer(new Slot(tileEntity, 16, 62, 89));
+		 * addSlotToContainer(new Slot(tileEntity, 17, 80, 89));
+		 * addSlotToContainer(new Slot(tileEntity, 18, 98, 89));
+		 */
 	}
 
 	@Override
@@ -89,7 +97,7 @@ public class ContainerStearilliumReactor extends ContainerXorbo {
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
-			if (i < tileEntity.getSizeInventory()) {
+			if (i < tileEntity.getSizeInventory() && itemstack.itemID == ModItems.zoroWrench.itemID) {
 				if (!mergeItemStack(itemstack1, tileEntity.getSizeInventory(), inventorySlots.size(), true)) {
 					return null;
 				}

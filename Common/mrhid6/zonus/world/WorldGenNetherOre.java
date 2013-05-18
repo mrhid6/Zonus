@@ -8,10 +8,12 @@ import net.minecraft.world.World;
 public class WorldGenNetherOre {
 
 	private int minableBlockId;
+	private int minableBlockMeta;
 	private int numberOfBlocks;
 
-	public WorldGenNetherOre( int par1, int par3 ) {
+	public WorldGenNetherOre( int par1, int par2, int par3 ) {
 		minableBlockId = par1;
+		minableBlockMeta = par2;
 		numberOfBlocks = par3;
 	}
 
@@ -58,7 +60,7 @@ public class WorldGenNetherOre {
 
 						double d14 = ((i3 + 0.5D) - d8) / (d10 / 2D);
 						if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && world.getBlockId(k2, l2, i3) == Block.netherrack.blockID) {
-							world.setBlock(k2, l2, i3, minableBlockId);
+							world.setBlock(k2, l2, i3, minableBlockId, minableBlockMeta, 2);
 						}
 					}
 				}

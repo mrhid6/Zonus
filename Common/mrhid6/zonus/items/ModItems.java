@@ -5,37 +5,36 @@ import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.lib.ItemIds;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.EnumHelper;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class ModItems {
 
 	static EnumArmorMaterial ArmorMaterial = EnumHelper.addArmorMaterial("triniumArmorMaterial", 40, new int[] { 5, 14, 9, 5 }, 15);
 	public static Item debug;
-	public static Item noxiteCrystal;
-	public static Item stearilliumOre;
 	public static Item triniumBoots;
 	public static Item triniumCable;
 	public static Item triniumHelm;
 
-	public static Item triniumIngot;
 	public static Item triniumLegs;
 	public static Item triniumPlate;
-	public static Item triniumSludge;
 	public static Item zoroBucket;
 	public static Item zoroCable;
-	public static Item zoroIngot;
 
-	public static Item zoroStaff;
+	public static Item zoroWrench;
 
 	public static void init() {
 
 		// ingots
-		zoroIngot = new ItemTexturedBase(ItemIds.getID("zoroIngot"), 64, "zoroIngot");
+		Item zoroIngot = new ItemZonCrafting(ItemIds.getID("zoroIngot"), 64, "zoroIngot");
 		LanguageRegistry.addName(zoroIngot, "Zoro Ingot");
+		Materials.ZoroIngot = new ItemStack(zoroIngot);
 
-		triniumIngot = new ItemTexturedBase(ItemIds.getID("triniumIngot"), 64, "triniumIngot");
+		Item triniumIngot = new ItemZonCrafting(ItemIds.getID("triniumIngot"), 64, "triniumIngot");
 		LanguageRegistry.addName(triniumIngot, "Trinium Ingot");
+		Materials.TriniumIngot = new ItemStack(triniumIngot);
 
 		// cable
 		zoroCable = new ItemZoroCable(ItemIds.getID("zoroCable"), 64, "zoroCable");
@@ -48,23 +47,29 @@ public class ModItems {
 		zoroBucket = new ItemZoroBucket(ItemIds.getID("zoroBucket"), BlockIds.getID("zoroFlowing"), "zorobucket");
 		LanguageRegistry.addName(zoroBucket, "Volatile Zoro");
 
-		zoroStaff = new ItemZoroStaff(ItemIds.getID("zoroStaff"), "zoroStaff");
-		LanguageRegistry.addName(zoroStaff, "Zoro Staff");
+		zoroWrench = new ItemZoroStaff(ItemIds.getID("zoroWrench"), "zoroWrench");
+		LanguageRegistry.addName(zoroWrench, "Zoro Wrench");
 
 		debug = new ItemDebug(ItemIds.getID("debugTool"), "debug");
 		LanguageRegistry.addName(debug, "debug");
 
 		// ore drops
-		stearilliumOre = new ItemStearilliumOre(ItemIds.getID("stearilliumOre"), "stearilliumore");
-		LanguageRegistry.addName(stearilliumOre, "Stearillium Ore");
+		Item multiItem = new RecipeItems(ItemIds.getID("zonusItems"), 64, "stearilliumore");
+		GameRegistry.registerItem(multiItem, "multiItem");
+		
+		Materials.StearilliumOre = new ItemStack(multiItem,1,0);
+		LanguageRegistry.addName(Materials.StearilliumOre, "Stearillium Ore");
 
-		noxiteCrystal = new ItemNoxiteCrystal(ItemIds.getID("noxiteCrystal"), "noxitecrystal");
-		LanguageRegistry.addName(noxiteCrystal, "Noxite Crystal");
+		Materials.NoxiteCystal = new ItemStack(multiItem,1,1);
+		LanguageRegistry.addName(Materials.NoxiteCystal, "Noxite Crystal");
 
 		// dusts
 
-		triniumSludge = new ItemTexturedBase(ItemIds.getID("triniumSludge"), 64, "triniumSludge");
+		Item triniumSludge = new ItemTexturedBase(ItemIds.getID("triniumSludge"), 64, "triniumSludge");
 		LanguageRegistry.addName(triniumSludge, "Trinium Sludge");
+		Materials.TriniumSludge = new ItemStack(triniumSludge);
+
+		Materials.NoxiteDust = Materials.TriniumSludge.copy();
 
 		// armour
 		int data = 3;

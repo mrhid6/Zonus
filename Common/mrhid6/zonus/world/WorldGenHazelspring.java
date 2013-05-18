@@ -39,13 +39,13 @@ public class WorldGenHazelspring {
 	}
 
 	public boolean growTree( World world, int x, int y, int z, Random random ) {
-		if ((world == null) || (ModBlocks.winterbirchLog == null)) {
+		if ((world == null) || (ModBlocks.hazelspringLog == null)) {
 			System.out.println("[ERROR] Had a null that shouldn't have been. Winter Birch did not spawn! w=" + world + " r=" + ModBlocks.winterbirchLog);
 			return false;
 		}
 
-		if (random.nextInt(20) > 4) {
-			return false;
+		if (random.nextInt(20) > 2) {
+			// return false;
 		}
 
 		int height = getGrowHeight(world, x, y, z);
@@ -91,6 +91,7 @@ public class WorldGenHazelspring {
 						}
 					}
 				}
+				makeRounded(width, x, y1, z, world);
 				// System.out.println(width);
 				if (width == 1) {
 					width = 3;
@@ -109,5 +110,17 @@ public class WorldGenHazelspring {
 
 		return true;
 
+	}
+
+	public void makeRounded( int radius, int x, int y, int z, World world ) {
+		int x1 = x - radius;
+		int x2 = x + radius;
+		int z1 = z - radius;
+		int z2 = z + radius;
+
+		world.setBlock(x1, y, z1, 0);
+		world.setBlock(x2, y, z1, 0);
+		world.setBlock(x1, y, z2, 0);
+		world.setBlock(x2, y, z2, 0);
 	}
 }

@@ -49,6 +49,10 @@ public abstract class TEPoweredBase extends TileRoot implements IGridInterface {
 
 	}
 
+	public int getGridIndex() {
+		return gridindex;
+	}
+
 	public abstract void init();
 
 	public boolean isLoaded() {

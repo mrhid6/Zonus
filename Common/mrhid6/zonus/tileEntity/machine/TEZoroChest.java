@@ -140,16 +140,6 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		return false;
 	}
 
-	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
 	public int getColour() {
 		return colour;
 	}
@@ -228,11 +218,6 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	@Override
 	public int getSizeInventory() {
 		return getRowCount() * getRowLength();
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		return null;
 	}
 
 	@Override
@@ -363,6 +348,12 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
+	@Override
 	public void setInventorySlotContents( int par1, ItemStack par2ItemStack ) {
 		inventory[par1] = par2ItemStack;
 
@@ -442,8 +433,10 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 				if (getGrid() != null) {
 					getGrid().removeChest(this);
 				}
-				gridindex = -1;
-				setUpdate(true);
+				if (gridindex != -1) {
+					gridindex = -1;
+					setUpdate(true);
+				}
 			}
 		}
 
@@ -461,5 +454,23 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 		data.setByte("facing", facing);
 		data.setInteger("mode", mode);
 		data.setInteger("colour", colour);
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

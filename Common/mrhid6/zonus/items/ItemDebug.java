@@ -6,6 +6,7 @@ import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.tileEntity.TECableBase;
 import mrhid6.zonus.tileEntity.TEPoweredBase;
 import mrhid6.zonus.tileEntity.machine.TEZoroController;
+import mrhid6.zonus.tileEntity.multiblock.TEStearilliumReactor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -109,12 +110,21 @@ public class ItemDebug extends ItemTexturedBase {
 
 		if (te instanceof TEZoroController) {
 
-			System.out.println(((TEZoroController) te).gridindex);
+			System.out.println(((TEZoroController) te).getGridIndex());
 		} else if (te instanceof TECableBase) {
 			System.out.println(((TECableBase) te).gridindex);
 
 		} else if (te instanceof TEPoweredBase) {
-			System.out.println(((TEPoweredBase) te).gridindex);
+			System.out.println(((TEPoweredBase) te).getGridIndex());
+
+		}
+
+		if (te instanceof TEStearilliumReactor) {
+
+			TEStearilliumReactor tile = (TEStearilliumReactor) te;
+			if (tile.getCoolant() != null) {
+				System.out.println(tile.getCoolant().amount);
+			}
 
 		}
 

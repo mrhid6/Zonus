@@ -3,7 +3,6 @@ package mrhid6.zonus.block.machine;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
 import mrhid6.zonus.tileEntity.machine.TENoxiteLogger;
-import mrhid6.zonus.tileEntity.machine.TEZoroChest;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
@@ -23,7 +22,7 @@ public class BlockNoxiteLogger extends BlockMachine {
 
 		setLightValue(1.0F);
 	}
-	
+
 	@Override
 	public void breakBlock( World world, int x, int y, int z, int par5, int par6 ) {
 
@@ -35,6 +34,7 @@ public class BlockNoxiteLogger extends BlockMachine {
 
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
+
 	@Override
 	public TileEntity createNewTileEntity( World var1 ) {
 		return new TENoxiteLogger();

@@ -93,18 +93,6 @@ public class TETriniumChillerCore extends TEMachineBase implements ITankContaine
 	}
 
 	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Packet getDescriptionPacket() {
 		Payload payload = new Payload(0, 0, 1, 0, 0);
 
@@ -117,12 +105,6 @@ public class TETriniumChillerCore extends TEMachineBase implements ITankContaine
 	@Override
 	public int getSizeInventory() {
 		return 1;
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/*
@@ -217,10 +199,34 @@ public class TETriniumChillerCore extends TEMachineBase implements ITankContaine
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void writeToNBT( NBTTagCompound data ) {
 		super.writeToNBT(data);
 		data.setInteger("qty.water", myTank.getLiquid().amount);
 
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

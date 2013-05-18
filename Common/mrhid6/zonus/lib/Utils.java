@@ -1,9 +1,14 @@
 package mrhid6.zonus.lib;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import mrhid6.zonus.block.ModBlocks;
+import mrhid6.zonus.tileEntity.multiblock.TEStearilliumReactor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -14,6 +19,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 public class Utils {
 
 	public static final String[] ColourName = { "White", "Orange", "Magenta", "Light Blue", "Yellow", "Lime Green", "Pink", "Gray", "Light Gray", "Cyan", "Purple", "Blue", "Brown", "Green", "Red", "Black" };
+	public static Random rand = new Random();
 
 	public static final int[][] SIDE_COORD_MOD = { { 0, -1, 0 }, { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 }, { -1, 0, 0 }, { 1, 0, 0 } };
 
@@ -79,14 +85,34 @@ public class Utils {
 
 	public static List<ItemStack> getItemStackFromBlock( World world, int i, int j, int k ) {
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
-
+		ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
 		if (block == null) {
 			return null;
 		}
 
 		int meta = world.getBlockMetadata(i, j, k);
 
-		return block.getBlockDropped(world, i, j, k, meta, 0);
+		drops = block.getBlockDropped(world, i, j, k, meta, 0);
+
+		TileEntity te = world.getBlockTileEntity(i, j, k);
+
+		if (te != null && te instanceof IInventory) {
+
+			IInventory inv = (IInventory) te;
+			for (int c = 0; c < inv.getSizeInventory(); c++) {
+
+				if (inv.getStackInSlot(c) != null) {
+					drops.add(InventoryUtils.copyStack(inv.getStackInSlot(c), inv.getStackInSlot(c).stackSize));
+					inv.setInventorySlotContents(c, null);
+				}
+			}
+		}
+
+		return drops;
+	}
+
+	public static int getRandomInt( int multiplier ) {
+		return rand.nextInt(multiplier);
 	}
 
 	public static TileEntity getTileEntity( World world, int x, int y, int z, int meta, int blockId ) {
@@ -133,6 +159,12 @@ public class Utils {
 						// System.out.println(md);
 						world.setBlock(x + xx, y + yy, z + zz, ModBlocks.stearilliumReactor.blockID, md, 2);
 						world.addBlockEvent(x + xx, y + yy, z + zz, ModBlocks.stearilliumReactor.blockID, 1, 4);
+
+						TileEntity tile = world.getBlockTileEntity(x + xx, y + yy, z + zz);
+
+						if (tile instanceof TEStearilliumReactor) {
+							((TEStearilliumReactor) tile).oldBlockId = blockid;
+						}
 						step++;
 					}
 				}

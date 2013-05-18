@@ -12,6 +12,7 @@ import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
 import mrhid6.zonus.network.Payload;
+import mrhid6.zonus.tileEntity.machine.TEStearilliumEnergyCube;
 import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
@@ -21,15 +22,16 @@ import cpw.mods.fml.relauncher.Side;
 public class TECableBase extends TileEntity implements IGridInterface, IPacketXorHandler {
 
 	protected static int descPacketId;
-	public int gridindex = -1;
+	public boolean coupling;
 
+	public int gridindex = -1;
 	public boolean init = false;
 	public double maxPower = 5.0D;
 	public double tempPower = 0.0D;
+
 	public int ticks = 0;
 
 	public int type = 0;
-
 	private boolean update = false;
 
 	public TECableBase() {
@@ -43,17 +45,10 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 		}
 	}
 
-	public boolean canInteractRender( TileEntity te, int side ) {
-		if (te instanceof TETriniumConverter) {
+	public boolean canInteractRender( TileEntity te, int side, int sidefrom ) {
+		
 
-			if (side == 2 || side == 3) {
-				return false;
-			}
-
-			return true;
-		}
-
-		if (te instanceof ISidedBlock) {
+		if (te instanceof TEStearilliumEnergyCube) {
 			TEMachineBase te1 = (TEMachineBase) te;
 
 			if (side == 2 && te1.getFacing() == 1) {
@@ -72,7 +67,11 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 
 			return false;
 		}
-		return canInteractWith(te, side, false);
+		if(te instanceof ISidedBlock){
+			
+			return ((ISidedBlock)te).canConnectOnSide(sidefrom);
+		}
+		return canInteractWith(te, side, true);
 	}
 
 	public boolean canInteractWith( TileEntity te, int side, boolean boundingbox ) {
@@ -176,6 +175,8 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 
 	public void sendUpdatePacket( Side side ) {
 		if ((Utils.isServerWorld()) && (side == Side.CLIENT)) {
+
+			// System.out.println("sent cable packet!");
 			PacketUtils.sendToPlayers(getDescriptionPacket(), worldObj, xCoord, yCoord, zCoord, 192);
 
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -185,8 +186,15 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 		}
 	}
 
+	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
 	public void setUpdate( boolean update ) {
 		this.update = update;
+		// System.out.println("update "+update);
 	}
 
 	@Override
@@ -206,8 +214,10 @@ public class TECableBase extends TileEntity implements IGridInterface, IPacketXo
 				if (getGrid() != null) {
 					getGrid().removeCable(this);
 				}
-				gridindex = -1;
-				setUpdate(true);
+				if (gridindex != -1) {
+					gridindex = -1;
+					setUpdate(true);
+				}
 			}
 
 			if (isUpdate()) {

@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 public abstract class BlockTexturedBase extends BlockContainer {
 
@@ -29,6 +30,8 @@ public abstract class BlockTexturedBase extends BlockContainer {
 		this.setResistance(89.5F);
 		this.setStepSound(soundStoneFootstep);
 		this.setUnlocalizedName(name);
+		
+		//MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 2);
 	}
 
 	@Override

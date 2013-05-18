@@ -5,4 +5,6 @@ import mrhid6.zonus.GridPower;
 public abstract interface IGridInterface {
 
 	public abstract GridPower getGrid();
+
+	public abstract void setGridIndex( int id );
 }

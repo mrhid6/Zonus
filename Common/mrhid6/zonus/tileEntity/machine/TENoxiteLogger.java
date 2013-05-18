@@ -1,11 +1,11 @@
 package mrhid6.zonus.tileEntity.machine;
 
 import java.util.ArrayList;
-import mrhid6.zonus.block.ModBlocks;
-import mrhid6.zonus.lib.InventoryUtils;
+import mrhid6.zonus.items.Materials;
 import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.lib.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
@@ -35,10 +35,10 @@ public class TENoxiteLogger extends TETriniumMiner {
 
 		res = canProgress();
 		int id = worldObj.getBlockId(x, yCoord, z);
-		
-		Block soil = Block.blocksList[worldObj.getBlockId(x, yCoord-1, z)];
-		
-		if (!soil.canSustainPlant(worldObj, x, yCoord, z, ForgeDirection.UP, (BlockSapling)Block.sapling)) {
+
+		Block soil = Block.blocksList[worldObj.getBlockId(x, yCoord - 1, z)];
+
+		if (soil == null || !soil.canSustainPlant(worldObj, x, yCoord, z, ForgeDirection.UP, (BlockSapling) Block.sapling)) {
 			res = false;
 		}
 		if (id != 0 && id != Block.snow.blockID && id != Block.tallGrass.blockID) {
@@ -52,7 +52,6 @@ public class TENoxiteLogger extends TETriniumMiner {
 	}
 
 	public boolean canProgress() {
-		ItemStack sapling = null;
 
 		for (int i = 0; i < this.getSizeInventory(); i++) {
 			if (inventory[i] == null) {
@@ -64,7 +63,7 @@ public class TENoxiteLogger extends TETriniumMiner {
 		}
 
 		if (getGrid() != null) {
-			ArrayList<TEZoroChest> chests = getGrid().getChestsForSend(colour);
+			ArrayList<TEZoroChest> chests = getGrid().getChestsForSend(this, colour);
 
 			for (int i = 0; i < chests.size(); i++) {
 				TEZoroChest chest = chests.get(i);
@@ -82,12 +81,24 @@ public class TENoxiteLogger extends TETriniumMiner {
 				}
 			}
 		}
+		
+		return false;
+	}
 
-		if (sapling == null) {
-			return false;
+	public boolean checkStructure() {
+
+		for (int x = -10; x <= 10; x++) {
+			for (int z = -10; z <= 10; z++) {
+
+				int id = worldObj.getBlockId(x + xCoord, yCoord, z + zCoord);
+				if (id != Materials.ZoroBrick.itemID) {
+					return false;
+				}
+			}
 		}
 
-		return false;
+		return true;
+
 	}
 
 	public int countSaplingsLeft() {
@@ -111,6 +122,38 @@ public class TENoxiteLogger extends TETriniumMiner {
 		return super.getPower() + (Reference.POWER_GENERATION_RATE * 12);
 	}
 
+	public ItemStack getSaplingFromChests( int x, int z ) {
+		ArrayList<TEZoroChest> chests = getGrid().getChestsForSend(this, colour);
+
+		for (int i = 0; i < chests.size(); i++) {
+			TEZoroChest chest = chests.get(i);
+
+			for (int i1 = 0; i1 < chest.getSizeInventory(); i1++) {
+				if (chest.getStackInSlot(i1) != null) {
+					if (isSapling(chest.getStackInSlot(i1).itemID)) {
+
+						if (!canPlantSappling(x, z)) {
+							break;
+						}
+
+						ItemStack res = chest.getStackInSlot(i1);
+
+						chest.getStackInSlot(i1).stackSize -= 1;
+						if (chest.getStackInSlot(i1).stackSize <= 0) {
+							chest.setInventorySlotContents(i1, null);
+						}
+						chest.onInventoryChanged();
+
+						return res;
+					}
+				}
+			}
+
+		}
+
+		return null;
+	}
+
 	@Override
 	public int getSizeInventory() {
 		return 10;
@@ -132,8 +175,8 @@ public class TENoxiteLogger extends TETriniumMiner {
 				return true;
 			}
 		}
-
-		return (id == Block.sapling.blockID);
+		
+		return (Block.blocksList[id] instanceof BlockSapling || Block.blocksList[id] instanceof BlockFlower);
 	}
 
 	public void placeSaplings() {
@@ -177,17 +220,17 @@ public class TENoxiteLogger extends TETriniumMiner {
 					}
 
 					if (getGrid() != null) {
-						
-						ItemStack sapling = getSaplingFromChests(x,z);
-						
-						if(sapling!=null){
-							
+
+						ItemStack sapling = getSaplingFromChests(x, z);
+
+						if (sapling != null) {
+
 							int id = sapling.itemID;
 							int md = sapling.getItemDamage();
-							
+
 							worldObj.setBlock(x, yCoord, z, id, md, 2);
 							worldObj.markBlockForUpdate(x, yCoord, z);
-							
+
 							plantCount++;
 						}
 					}
@@ -213,38 +256,6 @@ public class TENoxiteLogger extends TETriniumMiner {
 
 		}
 	}
-	
-	public ItemStack getSaplingFromChests(int x,int z){
-		ArrayList<TEZoroChest> chests = getGrid().getChestsForSend(colour);
-
-		for (int i = 0; i < chests.size(); i++) {
-			TEZoroChest chest = chests.get(i);
-
-			for (int i1 = 0; i1 < chest.getSizeInventory(); i1++) {
-				if (chest.getStackInSlot(i1) != null) {
-					if (isSapling(chest.getStackInSlot(i1).itemID)) {
-
-						if (!canPlantSappling(x, z)) {
-							break;
-						}
-						
-						ItemStack res = chest.getStackInSlot(i1);
-						
-						chest.getStackInSlot(i1).stackSize -= 1;
-						if (chest.getStackInSlot(i1).stackSize <= 0) {
-							chest.setInventorySlotContents(i1, null);
-						}
-						chest.onInventoryChanged();
-						
-						return res;
-					}
-				}
-			}
-
-		}
-		
-		return null;
-	}
 
 	public void quickGrowAll() {
 		for (int x = xCoord - 7; x < xCoord + 9; x++) {
@@ -252,7 +263,7 @@ public class TENoxiteLogger extends TETriniumMiner {
 
 				if (isSapling(worldObj.getBlockId(x, yCoord, z))) {
 					worldObj.spawnParticle("happyVillager", x, yCoord, z, 0, 0, 0);
-					((BlockSapling) Block.blocksList[worldObj.getBlockId(x, yCoord, z)]).growTree(worldObj, x, yCoord, z, worldObj.rand);
+					((BlockFlower) Block.blocksList[worldObj.getBlockId(x, yCoord, z)]).updateTick(worldObj, x, yCoord, z, worldObj.rand);
 				}
 			}
 		}
@@ -302,22 +313,6 @@ public class TENoxiteLogger extends TETriniumMiner {
 		}
 
 		return false;
-	}
-	
-	public boolean checkStructure(){
-
-		for(int x = -10;x<=10;x++){
-			for(int z = -10;z<=10;z++){
-				
-				int id = worldObj.getBlockId(x + xCoord, yCoord, z + zCoord);
-				if(id!=ModBlocks.zoroBrick.blockID){
-					return false;
-				}
-			}
-		}
-		
-		return true;
-
 	}
 
 	@Override

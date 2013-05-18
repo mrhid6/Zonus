@@ -2,8 +2,16 @@ package mrhid6.zonus.lib;
 
 import java.util.List;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentProtection;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class ZonExplosion {
@@ -25,6 +33,13 @@ public class ZonExplosion {
 	}
 
 	public void doExplosion() {
+
+		int i;
+		int j;
+		int k;
+		double d0;
+		double d1;
+		double d2;
 		double radius = explosionSize / 2;
 
 		for (double X = -radius; X < radius; X++) {
@@ -50,6 +65,44 @@ public class ZonExplosion {
 							worldObj.setBlock((int) (explosionX + X), (int) (explosionY + Y), (int) (explosionZ + Z), 0);
 						}
 					}
+				}
+			}
+		}
+
+		this.explosionSize *= 2.0F;
+		i = MathHelper.floor_double(this.explosionX - (double)this.explosionSize - 1.0D);
+		j = MathHelper.floor_double(this.explosionX + (double)this.explosionSize + 1.0D);
+		k = MathHelper.floor_double(this.explosionY - (double)this.explosionSize - 1.0D);
+		int l1 = MathHelper.floor_double(this.explosionY + (double)this.explosionSize + 1.0D);
+		int i2 = MathHelper.floor_double(this.explosionZ - (double)this.explosionSize - 1.0D);
+		int j2 = MathHelper.floor_double(this.explosionZ + (double)this.explosionSize + 1.0D);
+		List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB((double)i, (double)k, (double)i2, (double)j, (double)l1, (double)j2));
+		Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.explosionX, this.explosionY, this.explosionZ);
+
+		for (int k2 = 0; k2 < list.size(); ++k2)
+		{
+			Entity entity = (Entity)list.get(k2);
+			double d7 = entity.getDistance(this.explosionX, this.explosionY, this.explosionZ) / (double)this.explosionSize;
+
+			if (d7 <= 1.0D)
+			{
+				d0 = entity.posX - this.explosionX;
+				d1 = entity.posY + (double)entity.getEyeHeight() - this.explosionY;
+				d2 = entity.posZ - this.explosionZ;
+				double d8 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
+
+				if (d8 != 0.0D)
+				{
+					d0 /= d8;
+					d1 /= d8;
+					d2 /= d8;
+					double d9 = (double)this.worldObj.getBlockDensity(vec3, entity.boundingBox);
+					double d10 = (1.0D - d7) * d9;
+					entity.attackEntityFrom(DamageSource.setExplosionSource(new Explosion(worldObj, entity, explosionX, explosionY, explosionZ, explosionSize)), (int)((d10 * d10 + d10) / 2.0D * 8.0D * (double)this.explosionSize + 1.0D));
+					double d11 = EnchantmentProtection.func_92092_a(entity, d10);
+					entity.motionX += d0 * d11;
+					entity.motionY += d1 * d11;
+					entity.motionZ += d2 * d11;
 				}
 			}
 		}

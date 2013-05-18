@@ -13,16 +13,23 @@ public class PacketGrid extends PacketMain {
 	public int yCoord;
 	public int zCoord;
 
-	public PacketGrid( int id, EntityPlayerMP player ) {
+	public PacketGrid( int id, EntityPlayerMP player, int type ) {
 		packetId = id;
 		thePlayer = player;
-		packetType = 1;
+		packetType = type;
 		payload = new Payload();
 	}
 
 	public PacketGrid( int id, Payload payload ) {
 		packetId = id;
 		packetType = 1;
+
+		this.payload = payload;
+	}
+
+	public PacketGrid( int id, Payload payload, int type ) {
+		packetId = id;
+		packetType = type;
 
 		this.payload = payload;
 	}

@@ -1,8 +1,9 @@
 package mrhid6.zonus.world;
 
 import java.util.Random;
-import mrhid6.zonus.block.ModBlocks;
+import mrhid6.zonus.items.Materials;
 import mrhid6.zonus.lib.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -43,7 +44,7 @@ public class WorldGenBase implements IWorldGenerator {
 			int firstBlockXCoord = chunkX + rand.nextInt(16);
 			int firstBlockYCoord = rand.nextInt(20);
 			int firstBlockZCoord = chunkZ + rand.nextInt(16);
-			(new WorldGenMinable(ModBlocks.noxiteOre.blockID, 4)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+			(new WorldGenMinable(Materials.NoxiteOre.itemID, Materials.NoxiteOre.getItemDamage(), 4, Block.stone.blockID)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	}
 
@@ -67,13 +68,13 @@ public class WorldGenBase implements IWorldGenerator {
 			int firstBlockYCoord = rand.nextInt(256);
 			int firstBlockZCoord = chunkZ + rand.nextInt(16);
 
-			(new WorldGenNetherOre(ModBlocks.stearilliumOre.blockID, 12)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+			(new WorldGenNetherOre(Materials.StearilliumOreBlock.itemID, Materials.StearilliumOreBlock.getItemDamage(), 12)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	}
 
 	public void genTrees1( World world, Random random, int chunkX, int chunkZ ) {
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(chunkX * 16 + 16, chunkZ * 16 + 16);
-		int trees = 10;
+		int trees = 0;
 
 		if (biomegenbase.biomeName.toLowerCase().equals("taiga")) {
 			trees += random.nextInt(5) + 3;
@@ -97,11 +98,11 @@ public class WorldGenBase implements IWorldGenerator {
 		int trees = 0;
 
 		if (biomegenbase.biomeName.toLowerCase().equals("forest")) {
-			trees += random.nextInt(3) + 1;
+			trees += random.nextInt(8) + 8;
 		}
 
 		if (biomegenbase.biomeName.toLowerCase().equals("junglehills")) {
-			trees += random.nextInt(5) + 1;
+			trees += random.nextInt(10) + 4;
 		}
 
 		if (biomegenbase.biomeName.toLowerCase().equals("jungle")) {
@@ -118,7 +119,7 @@ public class WorldGenBase implements IWorldGenerator {
 			int firstBlockXCoord = chunkX + rand.nextInt(16);
 			int firstBlockYCoord = rand.nextInt(64);
 			int firstBlockZCoord = chunkZ + rand.nextInt(16);
-			(new WorldGenMinable(ModBlocks.triniumOre.blockID, 4)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+			(new WorldGenMinable(Materials.TriniumOre.itemID, Materials.TriniumOre.getItemDamage(), 4, Block.stone.blockID)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	}
 
@@ -127,7 +128,7 @@ public class WorldGenBase implements IWorldGenerator {
 			int firstBlockXCoord = chunkX + rand.nextInt(16);
 			int firstBlockYCoord = rand.nextInt(64);
 			int firstBlockZCoord = chunkZ + rand.nextInt(16);
-			(new WorldGenMinable(ModBlocks.zoroOre.blockID, 6)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+			(new WorldGenMinable(Materials.ZoroOre.itemID, Materials.ZoroOre.getItemDamage(), 6, Block.stone.blockID)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	}
 }

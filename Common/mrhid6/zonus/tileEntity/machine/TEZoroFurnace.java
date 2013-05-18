@@ -1,15 +1,15 @@
 package mrhid6.zonus.tileEntity.machine;
 
-import java.util.HashMap;
-import mrhid6.zonus.block.ModBlocks;
+import java.util.ArrayList;
 import mrhid6.zonus.interfaces.IConverterObj;
 import mrhid6.zonus.interfaces.ILogisticsMachine;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
-import mrhid6.zonus.items.ModItems;
+import mrhid6.zonus.items.Materials;
 import mrhid6.zonus.lib.InventoryUtils;
 import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.lib.ZonusFurnaceRecipe;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.Payload;
 import mrhid6.zonus.tileEntity.TEMachineBase;
@@ -22,7 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogisticsMachine {
 
 	public static int guiPacketId;
-	protected static final HashMap<Integer, ItemStack> recipes = new HashMap<Integer, ItemStack>();
+	protected static final ArrayList<ZonusFurnaceRecipe> recipes = new ArrayList<ZonusFurnaceRecipe>();
 
 	public static boolean setGuiPacketId( int id ) {
 		if (id == 0) {
@@ -43,9 +43,9 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 
 		invName = "xor.furnace";
 
-		recipes.put(ModBlocks.zoroOre.blockID, new ItemStack(ModItems.zoroIngot, 2));
-		recipes.put(ModBlocks.triniumOre.blockID, new ItemStack(ModItems.triniumSludge, 2));
-		recipes.put(ModItems.triniumSludge.itemID, new ItemStack(ModItems.triniumIngot, 1));
+		recipes.add(new ZonusFurnaceRecipe(Materials.ZoroOre, Materials.ZoroIngot, 2));
+		recipes.add(new ZonusFurnaceRecipe(Materials.TriniumOre, Materials.TriniumSludge, 2));
+		recipes.add(new ZonusFurnaceRecipe(Materials.TriniumSludge, Materials.TriniumIngot, 1));
 	}
 
 	private ItemStack addToNetworkedInventory( ItemStack stack ) {
@@ -53,7 +53,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 
 		if (getGrid() != null) {
 
-			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(colour, stack);
+			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(this, colour, stack);
 			if (chest != null) {
 				int injected = 0;
 
@@ -242,16 +242,6 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 		return false;
 	}
 
-	@Override
-	public boolean func_102007_a( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
-	@Override
-	public boolean func_102008_b( int i, ItemStack itemstack, int j ) {
-		return false;
-	}
-
 	public int getColour() {
 		return colour;
 	}
@@ -336,8 +326,16 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 		if (itemstack == null) {
 			return null;
 		}
-		ItemStack item = recipes.get(itemstack.itemID);
-		return (item == null) ? null : InventoryUtils.copyStack(item, item.stackSize);
+
+		ItemStack result = null;
+		for (int i = 0; i < recipes.size(); i++) {
+			ZonusFurnaceRecipe recipe = recipes.get(i);
+			if (itemstack.isItemEqual(recipe.getInput())) {
+				result = recipe.getOutput();
+			}
+		}
+
+		return result;
 	}
 
 	@Override
@@ -351,12 +349,6 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 	@Override
 	public int getSizeInventory() {
 		return 2;
-	}
-
-	@Override
-	public int[] getSizeInventorySide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -416,6 +408,12 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 	}
 
 	@Override
+	public void setGridIndex( int id ) {
+		gridindex = id;
+
+	}
+
+	@Override
 	public void setMode( int mode ) {
 	}
 
@@ -432,10 +430,15 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 				if (getGrid() != null) {
 					getGrid().removeMachine(this);
 				}
-				gridindex = -1;
-				setUpdate(true);
+
+				if (gridindex != -1) {
+					gridindex = -1;
+					setUpdate(true);
+				}
 			}
 		}
+
+		boolean curActive = isActive;
 
 		if (isActive) {
 			if (processCur < processEnd) {
@@ -444,7 +447,7 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 
 					if (getGrid().getEnergyStored() >= (Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER)) {
 						processCur++;
-						getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER);
+						getGrid().subtractPower(Reference.POWER_GENERATION_RATE * Reference.FURNACE_USEAGE_MULITPLIER, this);
 					}
 				}
 			}
@@ -472,11 +475,18 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 
 		ejectItemsToNetwork();
 
+		if ((curActive != isActive) && (isActive == true)) {
+			this.setUpdate(true);
+		} else if ((wasActive)) {
+			wasActive = false;
+			this.setUpdate(true);
+		}
+
 		if (isUpdate()) {
 			sendUpdatePacket(Side.CLIENT);
 			this.setUpdate(false);
+			onInventoryChanged();
 		}
-		onInventoryChanged();
 
 		TickSinceUpdate++;
 	}
@@ -486,5 +496,23 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 		super.writeToNBT(data);
 		data.setInteger("mode", mode);
 		data.setInteger("colour", colour);
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide( int var1 ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

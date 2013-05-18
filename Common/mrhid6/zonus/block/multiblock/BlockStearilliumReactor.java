@@ -18,11 +18,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockStearilliumReactor extends BlockMachine {
 
 	public BlockStearilliumReactor( int id, String name ) {
-
 		super(id, name, name, false);
-
 		icons = new Icon[80];
-		setBlockUnbreakable();
+		
+		this.setResistance(4.0F);
+		this.setHardness(4.0F);
 	}
 
 	@Override
@@ -198,30 +198,21 @@ public class BlockStearilliumReactor extends BlockMachine {
 
 	private void restoreBlocks( World par1World, int par2, int par3, int par4 ) {
 
-		TEStearilliumReactor core = null;
 		for (int yy = -3; yy <= 3; yy++) {
 			for (int xx = -3; xx <= 3; xx++) {
 				for (int zz = -3; zz <= 3; zz++) {
 					int block = par1World.getBlockId(par2 + xx, par3 + yy, par4 + zz);
 					par1World.getBlockMetadata(par2 + xx, par3 + yy, par4 + zz);
 					if (block == blockID) {
+						TileEntity tile = par1World.getBlockTileEntity(par2 + xx, par3 + yy, par4 + zz);
+						if (tile != null && tile instanceof TEStearilliumReactor) {
 
-						TEStearilliumReactor te = (TEStearilliumReactor) par1World.getBlockTileEntity(par2 + xx, par3 + yy, par4 + zz);
+							TEStearilliumReactor te = (TEStearilliumReactor) par1World.getBlockTileEntity(par2 + xx, par3 + yy, par4 + zz);
 
-						if (te != null) {
-							core = te.getCoreBlock();
-
-							if (core != null) {
-								System.out.println("not null");
-								core.setCauseExplosion(true);
-								core.blockBreak();
-							} else {
-								System.out.println("null");
-								te.setCauseExplosion(true);
-								te.blockBreak();
+							if (te != null) {
+								par1World.setBlock(par2 + xx, par3 + yy, par4 + zz, te.oldBlockId);
 							}
 						}
-						par1World.setBlock(par2 + xx, par3 + yy, par4 + zz, 0);
 					}
 				}
 			}

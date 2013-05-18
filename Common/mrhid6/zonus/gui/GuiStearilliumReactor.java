@@ -22,11 +22,16 @@ public class GuiStearilliumReactor extends GuiMain {
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+
+		drawGaugeBg(x, y, 32, 128);
+		if (container.tileEntity.getScaledCoolant(58) > 0) {
+			displayGauge(x, y, 32, 128, container.tileEntity.getScaledCoolant(58), container.tileEntity.getCoolant());
+		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer( int param1, int param2 ) {
-		fontRenderer.drawString("Zoro Chest", 12, 12, 4210752);
+		// fontRenderer.drawString("Zoro Chest", 12, 12, 4210752);
 		// fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"),
 		// 8, ySize - 96 + 2, 4210752);
 		super.drawGuiContainerForegroundLayer(param1, param2);

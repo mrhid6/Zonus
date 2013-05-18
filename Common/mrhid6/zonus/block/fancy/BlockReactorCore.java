@@ -1,5 +1,6 @@
-package mrhid6.zonus.block;
+package mrhid6.zonus.block.fancy;
 
+import mrhid6.zonus.block.BlockTexturedBase;
 import mrhid6.zonus.lib.Utils;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +11,10 @@ public class BlockReactorCore extends BlockTexturedBase {
 
 	public BlockReactorCore( int id, String name ) {
 		super(id, name, name, true);
+
+		this.setResistance(4.0F);
+		this.setHardness(5.0F);
+
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class TETriniumCable extends TECableBase implements ITriniumObj {
 	}
 
 	@Override
-	public boolean canInteractRender( TileEntity te, int side ) {
+	public boolean canInteractRender( TileEntity te, int side,int sidefrom ) {
 		if (te instanceof TETriniumConverter) {
 
 			if (side == 2 || side == 3) {

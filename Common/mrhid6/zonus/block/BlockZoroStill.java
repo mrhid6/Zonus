@@ -1,8 +1,10 @@
 package mrhid6.zonus.block;
 
 import java.util.Random;
+import mrhid6.zonus.Config;
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.fx.FXSparkle;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockStationary;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -43,7 +45,7 @@ public class BlockZoroStill extends BlockStationary implements ILiquid {
 	public void randomDisplayTick( World par1World, int par2, int par3, int par4, Random par5Random ) {
 		super.randomDisplayTick(par1World, par2, par3, par4, par5Random);
 
-		if (par5Random.nextInt(1) == 0) {
+		if (par5Random.nextInt(5) == 0) {
 			FXSparkle bubble = new FXSparkle(par1World, par2 + par5Random.nextFloat(), par3 + 1.5F, par4 + par5Random.nextFloat());
 			Minecraft.getMinecraft().effectRenderer.addEffect(bubble);
 			Minecraft.getMinecraft().effectRenderer.renderParticles(bubble, 1);
@@ -51,6 +53,22 @@ public class BlockZoroStill extends BlockStationary implements ILiquid {
 			// par5Random.nextFloat()), (double)((float)par3 + 1.1F),
 			// (double)((float)par4 + par5Random.nextFloat()), 0.0D, 0.0D,
 			// 0.0D);
+		}
+
+		if (par5Random.nextInt(25) == 0) {
+			for (int i = 0; i < 6; i++) {
+
+				int x1 = par2 + Config.SIDE_COORD_MOD[i][0];
+				int y1 = par3 + Config.SIDE_COORD_MOD[i][1];
+				int z1 = par4 + Config.SIDE_COORD_MOD[i][2];
+				
+				int blockid = par1World.getBlockId(x1, y1, z1);
+				
+				if(blockid==Block.waterStill.blockID){
+					par1World.setBlock(x1, y1, z1, this.blockID);
+					return;
+				}
+			}
 		}
 	}
 

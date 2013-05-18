@@ -45,13 +45,14 @@ public class PacketHandler implements IPacketHandler {
 				((IPacketXorHandler) tile).handleTilePacket(tilePacket);
 			}
 
-			if (type == 1) {
+			if (type == 1 || type == 2) {
 
-				PacketGrid tilePacket = new PacketGrid(id, (player instanceof EntityPlayerMP) ? (EntityPlayerMP) player : null);
+				PacketGrid tilePacket = new PacketGrid(id, (player instanceof EntityPlayerMP) ? (EntityPlayerMP) player : null, type);
 				tilePacket.readData(data);
 
 				GridManager.handleGridPacket(id, tilePacket);
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

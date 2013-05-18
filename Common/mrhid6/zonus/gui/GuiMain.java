@@ -1,7 +1,11 @@
 package mrhid6.zonus.gui;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
+import net.minecraft.util.Icon;
+import net.minecraftforge.liquids.LiquidStack;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -14,9 +18,60 @@ public abstract class GuiMain extends GuiContainer {
 		super(par1Container);
 	}
 
+	protected void displayGauge( int j, int k, int line, int col, int squaled, LiquidStack liquid ) {
+
+		if (liquid == null) {
+			return;
+		}
+		int start = 0;
+
+		Icon liquidIcon;
+		String textureSheet;
+		if (liquid.canonical().getRenderingIcon() != null) {
+			textureSheet = liquid.canonical().getTextureSheet();
+			liquidIcon = liquid.canonical().getRenderingIcon();
+		} else {
+			if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID].blockID > 0) {
+				liquidIcon = Block.blocksList[liquid.itemID].getBlockTextureFromSide(0);
+				textureSheet = "/terrain.png";
+			} else {
+				liquidIcon = Item.itemsList[liquid.itemID].getIconFromDamage(liquid.itemMeta);
+				textureSheet = "/gui/items.png";
+			}
+		}
+		mc.renderEngine.bindTexture(textureSheet);
+
+		while (true) {
+			int x = 0;
+
+			if (squaled > 16) {
+				x = 16;
+				squaled -= 16;
+			} else {
+				x = squaled;
+				squaled = 0;
+			}
+
+			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquidIcon, 16, 16 - (16 - x));
+			start = start + 16;
+
+			if (x == 0 || squaled == 0) {
+				break;
+			}
+		}
+
+		mc.renderEngine.bindTexture("/mods/zonus/textures/gui/tankgui.png");
+		drawTexturedModalRect(j + col, k + line - 1, 18, 0, 16, 60);
+	}
+
 	public void drawColouredIcon( String texture, int x, int y, boolean hover, int color ) {
 		drawIcon(texture, 0, x, y, hover);
 		drawIcon(texture, 240 + color, x, y, false);
+	}
+
+	protected void drawGaugeBg( int j, int k, int line, int col ) {
+		mc.renderEngine.bindTexture("/mods/zonus/textures/gui/tankgui.png");
+		drawTexturedModalRect(j + col - 1, k + line - 1, 0, 0, 18, 60);
 	}
 
 	@Override

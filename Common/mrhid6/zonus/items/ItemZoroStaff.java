@@ -99,7 +99,7 @@ public class ItemZoroStaff extends ItemTexturedBase {
 	}
 
 	public boolean fit( World world, int x, int y, int z ) {
-		int bo = ModBlocks.stearilliumStone.blockID;
+		int bo = Materials.StearilliumStone.itemID;
 		int bn = ModBlocks.triniumBrick.blockID;
 		int bf = Block.fenceIron.blockID;
 		int bl = Block.ice.blockID;
@@ -133,7 +133,7 @@ public class ItemZoroStaff extends ItemTexturedBase {
 		boolean result = false;
 		ForgeDirection.getOrientation(side);
 
-		if ((bi == ModBlocks.stearilliumStone.blockID) || (bi == ModBlocks.triniumBrick.blockID) || (bi == Block.fenceIron.blockID)) {
+		if ((bi == Materials.StearilliumStone.itemID) || (bi == ModBlocks.triniumBrick.blockID) || (bi == Block.fenceIron.blockID)) {
 			// player.addChatMessage("" +world.isRemote);
 			result = createChiller(stack, player, world, x, y, z);
 		}

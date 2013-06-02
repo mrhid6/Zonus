@@ -13,6 +13,8 @@ public class GuiCrystalForge extends GuiMain {
 	public GuiCrystalForge( ContainerCrystalForge container ) {
 		super(container);
 		this.container = container;
+		ySize = 192;
+		xSize = 176;
 	}
 
 	@Override
@@ -20,7 +22,7 @@ public class GuiCrystalForge extends GuiMain {
 		// draw your Gui here, only thing you need to change is the path
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		mc.renderEngine.bindTexture("/mods/zonus/textures/gui/furnace.png");
+		mc.renderEngine.bindTexture("/mods/zonus/textures/gui/crystalforge.png");
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
@@ -28,18 +30,14 @@ public class GuiCrystalForge extends GuiMain {
 		GridPower grid = GridManager.getGrid(container.tileEntity.gridindex);
 
 		if (grid != null) {
-			int l = grid.getScaledEnergyStored(102);
+			int l = grid.getScaledEnergyStored(91);
 			if (l > 0) {
-				drawTexturedModalRect(x + 42, y + 61, 0, 166, l, 10);
+				drawTexturedModalRect(x + 153, y + 8 + 91 - l, 176, 91 - l, 14, l + 2);
 			}
 
 			l = container.tileEntity.getScaledProgress(24);
 			if (l > 0) {
-				drawTexturedModalRect(x + 79, y + 33, 176, 16, l, 16);
-			}
-
-			if (container.tileEntity.isActive) {
-				drawTexturedModalRect(x + 56, y + 42, 176, 0, 16, 16);
+				drawTexturedModalRect(x + 56, y + 36 + 12 - l, 176, 12 - l, 14, l + 2);
 			}
 		}
 
@@ -52,7 +50,7 @@ public class GuiCrystalForge extends GuiMain {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer( int param1, int param2 ) {
-		fontRenderer.drawString("Zoro Furnace", 50, 6, 4210752);
+		//fontRenderer.drawString("Zoro Furnace", 50, 6, 4210752);
 		fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96 + 2, 4210752);
 		super.drawGuiContainerForegroundLayer(param1, param2);
 	}
@@ -66,11 +64,11 @@ public class GuiCrystalForge extends GuiMain {
 			return;
 		}
 
-		if (isHovering(42, 144, 61, 71)) {
+		if (isHovering(153, 163, 8, 99)) {
 			drawToolTip(String.format(GridManager.GUISTRING, (int) grid.getEnergyStored(), (int) grid.getMaxEnergy()));
 		}
 
-		if (isHovering(10, 26, 16, 32)) {
+		if (isHovering(153, 8, 16, 32)) {
 			//drawToolTip(container.tileEntity.getModeText());
 
 		} else if (isHovering(10, 26, 34, 50)) {

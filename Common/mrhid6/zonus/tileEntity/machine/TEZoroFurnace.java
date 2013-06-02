@@ -499,15 +499,18 @@ public class TEZoroFurnace extends TEMachineBase implements IXorGridObj, ILogist
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
+	public int[] getAccessibleSlotsFromSide( int side ) {
+		if(side == 1 || side ==0 ){
+			return new int[]{0};
+		}
+		
+		return new int[]{1};
 	}
 
 	@Override
 	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

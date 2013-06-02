@@ -8,13 +8,12 @@ import net.minecraft.world.World;
 public class WorldGenHazelspring {
 
 	public static int getGrowHeight( World world, int x, int y, int z ) {
-		if (((world.getBlockId(x, y - 1, z) != Block.grass.blockID) && (world.getBlockId(x, y - 1, z) != Block.dirt.blockID)) || ((world.getBlockId(x, y, z) != 0))) {
+		if (((world.getBlockId(x, y - 1, z) != Block.grass.blockID) && (world.getBlockId(x, y - 1, z) != Block.dirt.blockID)) || ((world.getBlockId(x, y+1, z) != 0))) {
 			return 0;
 		}
 
 		int height = 1;
-
-		for (; (world.getBlockId(x, y + 1, z) == 0) && (height < 26); y++) {
+		for (; (world.getBlockId(x, y + 1, z) == 0 || isSameIdAsLeaves(world.getBlockId(x, y + 1, z)) || isSameIdAsLogs(world.getBlockId(x, y + 1, z))) && (height < 26); y++) {
 			height++;
 		}
 
@@ -37,6 +36,18 @@ public class WorldGenHazelspring {
 
 		}
 	}
+	
+	public static boolean isSameIdAsLeaves(int id){
+		
+		
+		return (id== ModBlocks.hazelspringLeaves.blockID);
+	}
+	
+	public static boolean isSameIdAsLogs(int id){
+		
+		
+		return (id== ModBlocks.hazelspringLog.blockID);
+	}
 
 	public boolean growTree( World world, int x, int y, int z, Random random ) {
 		if ((world == null) || (ModBlocks.hazelspringLog == null)) {
@@ -52,7 +63,7 @@ public class WorldGenHazelspring {
 
 		height -= random.nextInt(8) + 1;
 
-		if (height < 2) {
+		if (height <= 2) {
 			return false;
 		}
 
@@ -85,8 +96,8 @@ public class WorldGenHazelspring {
 			if (y1 < treeTop) {
 				for (int x1 = x - width; x1 <= x + width; x1++) {
 					for (int z1 = z - width; z1 <= z + width; z1++) {
-
-						if (world.getBlockId(x1, y1, z1) == 0) {
+						int id = world.getBlockId(x1, y1, z1);
+						if (id == 0 || isSameIdAsLeaves(id)) {
 							world.setBlock(x1, y1, z1, ModBlocks.hazelspringLeaves.blockID, 0, 0);
 						}
 					}
@@ -107,20 +118,23 @@ public class WorldGenHazelspring {
 			}
 
 		}
+		world.markBlockForUpdate(x, y, z);
+		world.markBlockRangeForRenderUpdate(x-4, y-1, z-4, x+4, y+28, z+4);
 
 		return true;
 
 	}
 
-	public void makeRounded( int radius, int x, int y, int z, World world ) {
+	public void makeRounded( int radius, int x, int y, int z, World world ) {	
+		
 		int x1 = x - radius;
 		int x2 = x + radius;
 		int z1 = z - radius;
 		int z2 = z + radius;
 
-		world.setBlock(x1, y, z1, 0);
-		world.setBlock(x2, y, z1, 0);
-		world.setBlock(x1, y, z2, 0);
-		world.setBlock(x2, y, z2, 0);
+		if(isSameIdAsLeaves(world.getBlockId(x1, y, z1)))world.setBlock(x1, y, z1, 0);
+		if(isSameIdAsLeaves(world.getBlockId(x2, y, z1)))world.setBlock(x2, y, z1, 0);
+		if(isSameIdAsLeaves(world.getBlockId(x1, y, z2)))world.setBlock(x1, y, z2, 0);
+		if(isSameIdAsLeaves(world.getBlockId(x2, y, z2)))world.setBlock(x2, y, z2, 0);
 	}
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 public class WorldGenWinterbirch {
 
 	public static int getGrowHeight( World world, int x, int y, int z ) {
-		if (((world.getBlockId(x, y - 1, z) != Block.grass.blockID) && (world.getBlockId(x, y - 1, z) != Block.dirt.blockID)) && (world.getBlockId(x, y, z) != Block.snow.blockID) || ((world.getBlockId(x, y, z) != 0))) {
+		if (((world.getBlockId(x, y - 1, z) != Block.grass.blockID) && (world.getBlockId(x, y - 1, z) != Block.dirt.blockID)) && (world.getBlockId(x, y, z) != Block.snow.blockID) || ((world.getBlockId(x, y+1, z) != 0))) {
 			return 0;
 		}
 

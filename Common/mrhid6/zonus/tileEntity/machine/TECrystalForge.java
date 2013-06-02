@@ -30,8 +30,21 @@ public class TECrystalForge extends TEMachineBase implements ISidedBlock {
 		inventory = new ItemStack[getSizeInventory()];
 		processInv = new ItemStack[3];
 		invName = "crystal.forge";
-
-		recipes.add(new CrystalForgeRecipe(Materials.NoxiteCystal, new ItemStack(ModBlocks.stearilliumGlass,1), new ItemStack(ModBlocks.stearilliumGlass,1), Materials.TriniumSludge, 1,380.0F));
+		initRecipes();
+	}
+	
+	public void initRecipes(){
+		
+		CrystalForgeRecipe r1 = new CrystalForgeRecipe();
+		r1.setInput1(Materials.NoxiteCystal);
+		r1.setInput2(new ItemStack(ModBlocks.stearilliumGlass,1));
+		r1.setInput3(new ItemStack(ModBlocks.stearilliumGlass,1));
+		r1.setOutput(Materials.Crystal);
+		r1.setOutputQuantity(1);
+		r1.setTimeRequired(380);
+		
+		recipes.add(r1);
+		
 	}
 
 	@Override

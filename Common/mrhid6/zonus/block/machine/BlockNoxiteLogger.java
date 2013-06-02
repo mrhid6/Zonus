@@ -2,6 +2,7 @@ package mrhid6.zonus.block.machine;
 
 import mrhid6.zonus.Zonus;
 import mrhid6.zonus.block.BlockMachine;
+import mrhid6.zonus.render.BRNoxiteLogger;
 import mrhid6.zonus.tileEntity.machine.TENoxiteLogger;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
@@ -64,6 +65,21 @@ public class BlockNoxiteLogger extends BlockMachine {
 	public void registerIcons( IconRegister iconRegister ) {
 		icons[0] = iconRegister.registerIcon(Zonus.Modname + textureName + "_top");
 		icons[1] = iconRegister.registerIcon(Zonus.Modname + textureName + "_side");
+	}
+	
+	@Override
+	public int getRenderType() {
+		return BRNoxiteLogger.renderID;
+	}
+	
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+	
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
 	}
 
 }

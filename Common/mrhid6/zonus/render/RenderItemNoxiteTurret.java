@@ -23,17 +23,17 @@ public class RenderItemNoxiteTurret implements IItemRenderer {
 	public void renderItem( ItemRenderType type, ItemStack item, Object... data ) {
 		switch (type) {
 		case ENTITY: {
-			renderTutBox(0f, 0f, 0f, 0.03f, 0);
+			renderTutBox(0f, 0f, 0f, 0.08f, 0);
 			return;
 		}
 
 		case EQUIPPED: {
-			renderTutBox(0f, 1f, 1f, 0.03f, -90F);
+			renderTutBox(0f, 1f, 1f, 0.08f, -90F);
 			return;
 		}
 
 		case INVENTORY: {
-			renderTutBox(0f, -0.4f, 0f, 0.03f, 180F);
+			renderTutBox(0f, -0.4f, 0f, 0.08f, 90F);
 			return;
 		}
 
@@ -50,7 +50,7 @@ public class RenderItemNoxiteTurret implements IItemRenderer {
 		GL11.glScalef(scale, scale, scale);
 		GL11.glRotatef(rotate, 0f, 1f, 0f);
 
-		FMLClientHandler.instance().getClient().renderEngine.bindTexture("/mods/zonus/textures/models/NoxiteTurret.png");
+		FMLClientHandler.instance().getClient().renderEngine.bindTexture("/mods/zonus/textures/models/suit.png");
 
 		modelTutBox.render();
 

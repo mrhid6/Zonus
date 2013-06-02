@@ -4,7 +4,7 @@ import mrhid6.zonus.Config;
 import mrhid6.zonus.GridManager;
 import mrhid6.zonus.GridPower;
 import mrhid6.zonus.block.ModBlocks;
-import mrhid6.zonus.fx.FXWords;
+import mrhid6.zonus.fx.FXBeam;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
 import mrhid6.zonus.lib.Reference;
@@ -32,7 +32,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TEZoroController extends TEMachineBase implements IXorGridObj, IPowerReceptor {
-
+	
+	FXBeam beam = null;
 	public static boolean setDescPacketId( int id ) {
 		if (id == 0) {
 			return false;
@@ -353,12 +354,18 @@ public class TEZoroController extends TEMachineBase implements IXorGridObj, IPow
 
 		if ((particaltick % 8) == 0) {
 
-			double x = xCoord + 0.5F + (Math.random() * 0.6) - 0.3;
-			double z = zCoord + 0.5F + (Math.random() * 0.6) - 0.3;
-
-			FXWords beam = new FXWords(worldObj, x, yCoord + 0.9F, z);
-			Minecraft.getMinecraft().effectRenderer.addEffect(beam);
-			Minecraft.getMinecraft().effectRenderer.renderParticles(beam, 1);
+			if(beam==null){
+				//double x = xCoord + 0.5F + (Math.random() * 0.6) - 0.3;
+				double x = xCoord;
+				//double z = zCoord + 0.5F + (Math.random() * 0.6) - 0.3;
+				double z = zCoord;
+	
+				beam = new FXBeam(worldObj, x, yCoord + 1F, z, 0.2D);
+				Minecraft.getMinecraft().effectRenderer.addEffect(beam);
+				Minecraft.getMinecraft().effectRenderer.renderParticles(beam, 1);
+			}else{
+				beam.updateStuff();
+			}
 		}
 		particaltick++;
 

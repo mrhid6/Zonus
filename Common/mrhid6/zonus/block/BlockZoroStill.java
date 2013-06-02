@@ -3,7 +3,7 @@ package mrhid6.zonus.block;
 import java.util.Random;
 import mrhid6.zonus.Config;
 import mrhid6.zonus.Zonus;
-import mrhid6.zonus.fx.FXSparkle;
+import mrhid6.zonus.fx.FXBeam;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStationary;
 import net.minecraft.block.material.Material;
@@ -45,8 +45,8 @@ public class BlockZoroStill extends BlockStationary implements ILiquid {
 	public void randomDisplayTick( World par1World, int par2, int par3, int par4, Random par5Random ) {
 		super.randomDisplayTick(par1World, par2, par3, par4, par5Random);
 
-		if (par5Random.nextInt(5) == 0) {
-			FXSparkle bubble = new FXSparkle(par1World, par2 + par5Random.nextFloat(), par3 + 1.5F, par4 + par5Random.nextFloat());
+		if (par5Random.nextInt(1) == 0) {
+			FXBeam bubble = new FXBeam(par1World, par2, par3 + 1F, par4,0.1D);
 			Minecraft.getMinecraft().effectRenderer.addEffect(bubble);
 			Minecraft.getMinecraft().effectRenderer.renderParticles(bubble, 1);
 			// par1World.spawnParticle("smoke", (double)((float)par2 +

@@ -15,23 +15,23 @@ public class ModelNoxiteTurret extends ModelBase {
 	private IModelCustom modelTutBox;
 
 	public ModelNoxiteTurret() {
-		modelTutBox = AdvancedModelLoader.loadModel("/mods/zonus/models/NoxiteTurret.obj");
+		modelTutBox = AdvancedModelLoader.loadModel("/mods/zonus/models/suit.obj");
 	}
 
 	public void render() {
 		modelTutBox.renderAll();
 	}
 
-	public void render( TENoxiteTurret box, double x, double y, double z ) {
+	public void render( TENoxiteTurret box, double x, double y, double z, float scale ) {
 		// Push a blank matrix onto the stack
 		GL11.glPushMatrix();
 		{
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glTranslatef((float) x + 0.5f, (float) y + 0f, (float) z + 0.5f);
-			GL11.glScalef(0.05f, 0.05f, 0.05f);
+			GL11.glScalef(scale, scale, scale);
 
 			GL11.glRotatef(box.getFacing() * 90F, 0f, 1f, 0f);
-			FMLClientHandler.instance().getClient().renderEngine.bindTexture("/mods/zonus/textures/models/NoxiteTurret.png");
+			FMLClientHandler.instance().getClient().renderEngine.bindTexture("/mods/zonus/textures/models/suit.png");
 			this.render();
 
 			GL11.glEnable(GL11.GL_LIGHTING);

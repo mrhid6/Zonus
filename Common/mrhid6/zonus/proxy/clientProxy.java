@@ -6,24 +6,9 @@ import mrhid6.zonus.entities.EntityTitan;
 import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.models.ModelTitan;
 import mrhid6.zonus.network.PacketHandler;
-import mrhid6.zonus.render.RenderItemNoxiteTurret;
-import mrhid6.zonus.render.RenderTECrystalForge;
-import mrhid6.zonus.render.RenderTENoxiteTurret;
-import mrhid6.zonus.render.RenderTEStearilliumCrafter;
-import mrhid6.zonus.render.RenderTETriniumConverter;
-import mrhid6.zonus.render.RenderTETriniumMiner;
-import mrhid6.zonus.render.RenderTEZoroChest;
-import mrhid6.zonus.render.RenderTEZoroController;
-import mrhid6.zonus.render.RenderTitan;
-import mrhid6.zonus.tileEntity.TEMachineBase;
-import mrhid6.zonus.tileEntity.TENoxiteTurret;
-import mrhid6.zonus.tileEntity.machine.TECrystalForge;
-import mrhid6.zonus.tileEntity.machine.TEStearilliumCrafter;
-import mrhid6.zonus.tileEntity.machine.TETriniumConverter;
-import mrhid6.zonus.tileEntity.machine.TETriniumMiner;
-import mrhid6.zonus.tileEntity.machine.TEZoroChest;
-import mrhid6.zonus.tileEntity.machine.TEZoroController;
-import mrhid6.zonus.tileEntity.machine.TEZoroFurnace;
+import mrhid6.zonus.render.*;
+import mrhid6.zonus.tileEntity.*;
+import mrhid6.zonus.tileEntity.machine.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -87,7 +72,9 @@ public class clientProxy extends commonProxy implements ITickHandler {
 		ClientRegistry.bindTileEntitySpecialRenderer(TETriniumMiner.class, new RenderTETriniumMiner());
 		ClientRegistry.bindTileEntitySpecialRenderer(TETriniumConverter.class, new RenderTETriniumConverter());
 		ClientRegistry.bindTileEntitySpecialRenderer(TEZoroChest.class, new RenderTEZoroChest());
+		ClientRegistry.bindTileEntitySpecialRenderer(TECrystal.class, new RenderTECrystal());
 		ClientRegistry.bindTileEntitySpecialRenderer(TECrystalForge.class, new RenderTECrystalForge());
+		ClientRegistry.bindTileEntitySpecialRenderer(TENoxiteLogger.class, new RenderTENoxiteLogger());
 
 		MinecraftForgeClient.registerItemRenderer(BlockIds.getID("noxiteTurret"), new RenderItemNoxiteTurret());
 

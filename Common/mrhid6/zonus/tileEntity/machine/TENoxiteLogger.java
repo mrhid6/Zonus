@@ -1,13 +1,17 @@
 package mrhid6.zonus.tileEntity.machine;
 
 import java.util.ArrayList;
+import cpw.mods.fml.relauncher.Side;
 import mrhid6.zonus.items.Materials;
 import mrhid6.zonus.lib.Reference;
 import mrhid6.zonus.lib.Utils;
+import mrhid6.zonus.network.PacketTile;
+import mrhid6.zonus.network.Payload;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -27,6 +31,56 @@ public class TENoxiteLogger extends TETriniumMiner {
 
 		inventory = new ItemStack[10];
 
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() {
+		Payload payload = new Payload(4, 1, 8, 2, 0);
+
+		payload.boolPayload[0] = isActive;
+		payload.boolPayload[1] = transmitpower;
+		payload.boolPayload[2] = doneMineing;
+		payload.boolPayload[3] = shouldMine;
+
+		payload.intPayload[0] = gridindex;
+		payload.intPayload[1] = colour;
+		payload.intPayload[2] = depth;
+		payload.intPayload[3] = depthLimit;
+		payload.intPayload[4] = radius;
+		payload.intPayload[5] = inputmode;
+		payload.intPayload[6] = outputmode;
+		payload.intPayload[7] = timeTillLogger;
+
+		payload.floatPayload[0] = processCur;
+		payload.floatPayload[1] = processEnd;
+
+		payload.bytePayload[0] = (byte) getFacing();
+
+		PacketTile packet = new PacketTile(descPacketId, xCoord, yCoord, zCoord, payload);
+		return packet.getPacket();
+	}
+
+	@Override
+	public void handleTilePacket( PacketTile packet ) {
+
+		shouldMine = packet.payload.boolPayload[3];
+
+		timeTillLogger = packet.payload.intPayload[7];
+
+		if (Utils.isClientWorld()) {
+			shouldMine = packet.payload.boolPayload[3];
+
+			timeTillLogger = packet.payload.intPayload[7];
+		}
+		super.handleTilePacket(packet);
+	}
+
+	public boolean shouldRenderBlade(){
+		if(shouldMine == true && getGrid()!=null){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	public boolean canPlantSappling( int x, int z ) {
@@ -81,7 +135,7 @@ public class TENoxiteLogger extends TETriniumMiner {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -89,10 +143,12 @@ public class TENoxiteLogger extends TETriniumMiner {
 
 		for (int x = -10; x <= 10; x++) {
 			for (int z = -10; z <= 10; z++) {
+				if (Math.sqrt((x * x) + (z * z)) <= 10) {
 
-				int id = worldObj.getBlockId(x + xCoord, yCoord, z + zCoord);
-				if (id != Materials.ZoroBrick.itemID) {
-					return false;
+					int id = worldObj.getBlockId(x + xCoord, yCoord, z + zCoord);
+					if (id != Materials.ZoroBrick.itemID) {
+						return false;
+					}
 				}
 			}
 		}
@@ -161,7 +217,7 @@ public class TENoxiteLogger extends TETriniumMiner {
 
 	@Override
 	public void init() {
-		depth = yCoord + 40;
+		depth = yCoord + 80;
 		radius = 21;
 		depthLimit = yCoord - 1;
 	}
@@ -175,8 +231,8 @@ public class TENoxiteLogger extends TETriniumMiner {
 				return true;
 			}
 		}
-		
-		return (Block.blocksList[id] instanceof BlockSapling || Block.blocksList[id] instanceof BlockFlower);
+
+		return (Block.blocksList.length>id && (Block.blocksList[id] instanceof BlockSapling || Block.blocksList[id] instanceof BlockFlower));
 	}
 
 	public void placeSaplings() {
@@ -342,11 +398,13 @@ public class TENoxiteLogger extends TETriniumMiner {
 					timeTillLogger = 2000;
 					plantingTries = 0;
 				} else {
+					//shouldMine = false;
 					timeTillLogger -= 8;
 				}
 
 				// System.out.println(timeTillLogger);
 			}
+			sendUpdatePacket(Side.CLIENT);
 		}
 
 		TickSinceUpdate++;

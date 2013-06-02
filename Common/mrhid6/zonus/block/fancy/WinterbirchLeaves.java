@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import mrhid6.zonus.Config;
 import mrhid6.zonus.block.ModBlocks;
+import mrhid6.zonus.items.Materials;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,13 +33,25 @@ public class WinterbirchLeaves extends BlockLeaves {
 	public int colorMultiplier( IBlockAccess par1iBlockAccess, int par2, int par3, int par4 ) {
 		return 0x71cae3;
 	}
+	@Override
+	public int damageDropped( int par1 ) {
+		return 0;
+	}
+	@Override
+	public int quantityDropped(Random par1Random)
+	{
+		return par1Random.nextInt(9) == 0 ? 1 : 0;
+	}
 
 	@Override
 	public void dropBlockAsItemWithChance( World par1World, int par2, int par3, int par4, int par5, float par6, int par7 ) {
 		if (!par1World.isRemote) {
-			if (par1World.rand.nextInt(35) == 0) {
+			int idx = par1World.rand.nextInt(5);
+			if (idx == 0) {
 				int var9 = idDropped(par5, par1World.rand, par7);
 				dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var9, 1, damageDropped(par5)));
+			}else{
+				System.out.println(idx);
 			}
 		}
 	}
@@ -56,7 +69,7 @@ public class WinterbirchLeaves extends BlockLeaves {
 
 	@Override
 	public int idDropped( int par1, Random random, int zero ) {
-		return ModBlocks.winterbirchSapling.blockID;
+		return Materials.winterbirchSapling.itemID;
 	}
 
 	@Override

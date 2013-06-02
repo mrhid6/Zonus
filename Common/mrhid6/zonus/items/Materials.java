@@ -22,5 +22,10 @@ public class Materials {
 	public static ItemStack ZoroIngot;
 	public static ItemStack ZoroOre;
 	public static ItemStack ZoroBrick;
+	
+	public static ItemStack Crystal;
+	
+	public static ItemStack winterbirchSapling;
+	public static ItemStack hazlespringSapling;
 
 }

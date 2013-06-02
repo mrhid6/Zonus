@@ -12,13 +12,30 @@ public class CrystalForgeRecipe {
 	private ItemStack output;
 	private float time;
 	
-	public CrystalForgeRecipe(ItemStack top, ItemStack left, ItemStack right, ItemStack output, int amount, float time) {
-		this.input1 = top.copy();
-		this.input2 = left.copy();
-		this.input3 = right.copy();
-		this.output = output.copy();
-		this.amount = amount;
-		this.time = time;
+	public CrystalForgeRecipe() {
+		
+	}
+	
+	public void setInput1(ItemStack i){
+		this.input1 = i.copy();
+	}
+	public void setInput2(ItemStack i){
+		this.input2 = i.copy();
+	}
+	public void setInput3(ItemStack i){
+		this.input3 = i.copy();
+	}
+	
+	public void setOutput(ItemStack i){
+		this.output = i.copy();
+	}
+	
+	public void setOutputQuantity(int a){
+		this.amount = a;
+	}
+	
+	public void setTimeRequired(int t){
+		this.time = t;
 	}
 	
 	public boolean checkRecipe(ItemStack top, ItemStack left, ItemStack right){

@@ -9,6 +9,7 @@ import mrhid6.zonus.interfaces.ILogisticsMachine;
 import mrhid6.zonus.interfaces.IPacketXorHandler;
 import mrhid6.zonus.interfaces.ITriniumObj;
 import mrhid6.zonus.interfaces.IXorGridObj;
+import mrhid6.zonus.lib.GridTileEntity;
 import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketTile;
 import mrhid6.zonus.network.PacketUtils;
@@ -134,7 +135,7 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 	public boolean foundController() {
 
 		if (getGrid() != null) {
-			return getGrid().hasChest(this) && getGrid().canDiscoverObj(this);
+			return getGrid().hasChest(new GridTileEntity(this)) && getGrid().canDiscoverObj(this);
 		}
 
 		return false;
@@ -458,19 +459,24 @@ public class TEZoroChest extends TEBlock implements ISidedInventory, IPacketXorH
 
 	@Override
 	public int[] getAccessibleSlotsFromSide( int var1 ) {
-		// TODO Auto-generated method stub
-		return null;
+		int[] res = new int[getSizeInventory()];
+		
+		for(int i = 0; i< res.length;i++){
+			res[i]=i;
+		}
+		
+		return res;
 	}
 
 	@Override
 	public boolean canInsertItem( int i, ItemStack itemstack, int j ) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean canExtractItem( int i, ItemStack itemstack, int j ) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

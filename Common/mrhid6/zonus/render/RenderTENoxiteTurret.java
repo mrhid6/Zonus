@@ -11,6 +11,6 @@ public class RenderTENoxiteTurret extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt( TileEntity tileEntity, double x, double y, double z, float tick ) {
-		modelTutBox.render((TENoxiteTurret) tileEntity, x, y, z);
+		modelTutBox.render((TENoxiteTurret) tileEntity, x, y, z,0.5F);
 	}
 }

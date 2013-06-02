@@ -1,17 +1,19 @@
 package mrhid6.zonus.block;
 
 import mrhid6.zonus.block.fancy.BlockCableTip;
+import mrhid6.zonus.block.fancy.BlockCrystal;
 import mrhid6.zonus.block.fancy.BlockFancy;
 import mrhid6.zonus.block.fancy.BlockHazelspringLog;
 import mrhid6.zonus.block.fancy.BlockNoxiteTurret;
 import mrhid6.zonus.block.fancy.BlockReactorCore;
 import mrhid6.zonus.block.fancy.BlockStearilliumGlass;
 import mrhid6.zonus.block.fancy.BlockTriniumBrick;
-import mrhid6.zonus.block.fancy.BlockWinterBirchSapling;
 import mrhid6.zonus.block.fancy.BlockWinterbirchLog;
+import mrhid6.zonus.block.fancy.BlockZonusSaplings;
 import mrhid6.zonus.block.fancy.BlockZoroGrass;
 import mrhid6.zonus.block.fancy.HazelspringLeaves;
 import mrhid6.zonus.block.fancy.ItemBlockFancy;
+import mrhid6.zonus.block.fancy.ItemBlockSaplings;
 import mrhid6.zonus.block.fancy.WinterbirchLeaves;
 import mrhid6.zonus.block.machine.BlockCrystalForge;
 import mrhid6.zonus.block.machine.BlockNoxiteLogger;
@@ -30,6 +32,7 @@ import mrhid6.zonus.items.Materials;
 import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.tileEntity.TECableBase;
+import mrhid6.zonus.tileEntity.TECrystal;
 import mrhid6.zonus.tileEntity.TENoxiteTurret;
 import mrhid6.zonus.tileEntity.TETriniumCable;
 import mrhid6.zonus.tileEntity.machine.TECrystalForge;
@@ -47,8 +50,12 @@ import mrhid6.zonus.tileEntity.multiblock.TETriniumChillerCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockLeaves;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.liquids.LiquidContainerData;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidDictionary;
@@ -56,6 +63,8 @@ import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ModBlocks {
 
@@ -75,7 +84,6 @@ public class ModBlocks {
 	public static Block triniumMiner;
 	public static BlockLeaves winterbirchLeaves;
 	public static Block winterbirchLog;
-	public static BlockWinterBirchSapling winterbirchSapling;
 	public static Block zoroCable;
 	public static Block zoroChest;
 	public static Block zoroController;
@@ -84,6 +92,7 @@ public class ModBlocks {
 	public static Block zoroGrass;
 	public static BlockFluid zoroStill;
 	public static Block crystalForge;
+	public static Block crystal;
 
 	public static void init() {
 		initOres();
@@ -152,23 +161,46 @@ public class ModBlocks {
 		GameRegistry.registerBlock(cableTip, cableTip.getUnlocalizedName());
 
 		Materials.CableTip = new ItemStack(cableTip);
+		
+		crystal = new BlockCrystal(BlockIds.getID("crystal"), "crystal");
+		LanguageRegistry.addName(crystal, "Crystal");
+		GameRegistry.registerBlock(crystal, crystal.getUnlocalizedName());
+		GameRegistry.registerTileEntity(TECrystal.class, "te" + crystal.getUnlocalizedName());
+		
+		Materials.Crystal = new ItemStack(crystal);
 	}
 
 	public static void initLiquids() {
 		// Liquids
 
-		zoroStill = new BlockZoroStill(BlockIds.getID("zoroStill"), "zorojuice");
-		zoroFlowing = new BlockZoroFlowing(BlockIds.getID("zoroFlowing"), "zorojuiceflowing");
+		zoroStill = new BlockZoroStill(BlockIds.getID("zoroStill"), "VolatileZoro");
+		zoroFlowing = new BlockZoroFlowing(BlockIds.getID("zoroFlowing"), "VolatileZoroflowing");
 
 		GameRegistry.registerBlock(zoroStill, zoroStill.getUnlocalizedName());
 		GameRegistry.registerBlock(zoroFlowing, zoroFlowing.getUnlocalizedName());
 
 		LanguageRegistry.addName(zoroStill, "Volatile Zoro");
 		LanguageRegistry.addName(zoroFlowing, "Volatile Zoro");
+		
+		LiquidStack zoroLiquidStack = new LiquidStack(zoroStill, 1);
+		
+		LiquidDictionary.getOrCreateLiquid("VolatileZoro", zoroLiquidStack);
 
-		LiquidDictionary.getOrCreateLiquid("zorojuice", new LiquidStack(zoroStill, LiquidContainerRegistry.BUCKET_VOLUME));
-
-		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(zoroStill, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(ModItems.zoroBucket), new ItemStack(Item.bucketEmpty)));
+		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("VolatileZoro", LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(
+				ModItems.zoroBucket), new ItemStack(Item.bucketEmpty)));
+		
+		MinecraftForge.EVENT_BUS.register(new ModBlocks());
+	}
+	
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Post event) {
+		System.out.println("############################# texturehook!");
+		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+			//LiquidDictionary.getCanonicalLiquid("Fuel").setRenderingIcon(fuel.getIconFromDamage(0)).setTextureSheet("/gui/items.png");
+		} else {
+			LiquidDictionary.getCanonicalLiquid("VolatileZoro").setRenderingIcon(zoroStill.getBlockTextureFromSide(1)).setTextureSheet("/terrain.png");
+		}
 	}
 
 	public static void initMachines() {
@@ -239,7 +271,9 @@ public class ModBlocks {
 		OreDictionary.registerOre("logWood", new ItemStack(hazelspringLog, 1, 0));
 		OreDictionary.registerOre("logWood", new ItemStack(winterbirchLog, 1, 0));
 		OreDictionary.registerOre("treeLeaves", new ItemStack(winterbirchLeaves, 1, 0));
-		OreDictionary.registerOre("treeSapling", new ItemStack(winterbirchSapling, 1, 0));
+		OreDictionary.registerOre("treeLeaves", new ItemStack(hazelspringLeaves, 1, 0));
+		OreDictionary.registerOre("treeSapling", Materials.winterbirchSapling);
+		OreDictionary.registerOre("treeSapling", Materials.hazlespringSapling);
 	}
 
 	public static void initOres() {
@@ -289,9 +323,14 @@ public class ModBlocks {
 		winterbirchLeaves = new WinterbirchLeaves(BlockIds.getID("winterbirchLeaves"), "winterbirchleaves");
 		LanguageRegistry.addName(winterbirchLeaves, "Winter Birch Leaves");
 		GameRegistry.registerBlock(winterbirchLeaves, winterbirchLeaves.getUnlocalizedName());
-
-		winterbirchSapling = new BlockWinterBirchSapling(BlockIds.getID("winterbirchSapling"), "winterbirchsapling");
-		LanguageRegistry.addName(winterbirchSapling, "Winter Birch Sapling");
-		GameRegistry.registerBlock(winterbirchSapling, winterbirchSapling.getUnlocalizedName());
+		
+		Block Blocksaplings = new BlockZonusSaplings(BlockIds.getID("zonusSaplings"), "zonussaplings");
+		GameRegistry.registerBlock(Blocksaplings, ItemBlockSaplings.class, "zonussaplings");
+		
+		Materials.winterbirchSapling = new ItemStack(Blocksaplings, 1, 0);
+		LanguageRegistry.addName(Materials.ZoroBrick, "Winter Birch Sapling");
+		
+		Materials.hazlespringSapling = new ItemStack(Blocksaplings, 1, 1);
+		LanguageRegistry.addName(Materials.StearilliumStone, "Hazlespring Sapling");
 	}
 }

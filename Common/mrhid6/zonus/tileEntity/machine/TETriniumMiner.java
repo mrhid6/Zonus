@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 
 public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITriniumObj, ILogisticsMachine {
@@ -31,6 +32,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 	protected int outputmode = 0;
 	public int radius = 15;
 	public int tempEng = 0;
+	public ForgeDirection directionTravel = ForgeDirection.DOWN;
 
 	public TETriniumMiner() {
 		inventory = new ItemStack[2];
@@ -99,7 +101,7 @@ public class TETriniumMiner extends TEMachineBase implements IXorGridObj, ITrini
 
 		if (getGrid() != null) {
 
-			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(this,colour, stack);
+			TEZoroChest chest = getGrid().getFirstChestForReciveForItem(this, colour, stack);
 			if (chest != null) {
 				int injected = 0;
 

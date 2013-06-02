@@ -354,12 +354,10 @@ public class TEStearilliumReactor extends TEMachineBase implements IXorGridObj, 
 				}
 			}
 		}
-		if(heat==0){
-			heat = (getCellCount()+cablesConnected)*2.289F;
-		}
+		
+		heat += (getCellCount()+cablesConnected)*2.289F;
 		controlHeat();
 		
-		heat+=(heat/2.5F*(getCellCount()/8+1.3129856F))/3;
 		if(heat>=10000){
 			setCauseExplosion(true);
 		}

@@ -3,6 +3,7 @@ package mrhid6.zonus.block.fancy;
 import java.util.List;
 import java.util.Random;
 import mrhid6.zonus.Config;
+import mrhid6.zonus.items.Materials;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.creativetab.CreativeTabs;
@@ -41,6 +42,11 @@ public class HazelspringLeaves extends BlockLeaves {
 			}
 		}
 	}
+	
+	@Override
+	public int damageDropped( int par1 ) {
+		return 1;
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -55,7 +61,7 @@ public class HazelspringLeaves extends BlockLeaves {
 
 	@Override
 	public int idDropped( int par1, Random random, int zero ) {
-		return blockID;
+		return Materials.hazlespringSapling.itemID;
 	}
 
 	@Override

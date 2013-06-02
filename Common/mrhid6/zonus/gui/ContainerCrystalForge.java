@@ -16,20 +16,20 @@ public class ContainerCrystalForge extends ContainerXorbo {
 
 	public ContainerCrystalForge( EntityPlayer inventory, TECrystalForge te ) {
 		tileEntity = te;
-		addSlotToContainer(new Slot(tileEntity, 0, 25, 5));
-		addSlotToContainer(new Slot(tileEntity, 1, 5, 24));
-		addSlotToContainer(new Slot(tileEntity, 2, 56, 24));
+		addSlotToContainer(new Slot(tileEntity, 0, 80, 11));
+		addSlotToContainer(new Slot(tileEntity, 1, 52, 47));
+		addSlotToContainer(new Slot(tileEntity, 2, 108, 47));
 		
-		addSlotToContainer(new SlotFurnace(inventory, tileEntity, 3, 116, 33));
+		addSlotToContainer(new SlotFurnace(inventory, tileEntity, 3, 80, 72));
 
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
-				addSlotToContainer(new Slot(inventory.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				addSlotToContainer(new Slot(inventory.inventory, j + i * 9 + 9, 8 + j * 18, 110 + i * 18));
 			}
 		}
 
 		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new Slot(inventory.inventory, i, 8 + i * 18, 142));
+			addSlotToContainer(new Slot(inventory.inventory, i, 8 + i * 18, 168));
 		}
 	}
 

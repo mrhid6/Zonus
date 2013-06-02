@@ -23,9 +23,9 @@ public class GuiStearilliumReactor extends GuiMain {
 		int y = (height - ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-		drawGaugeBg(x, y, 32, 128);
+		drawGaugeBg(x, y, 16, 128);
 		if (container.tileEntity.getScaledCoolant(58) > 0) {
-			displayGauge(x, y, 32, 128, container.tileEntity.getScaledCoolant(58), container.tileEntity.getCoolant());
+			displayGauge(x, y, 16, 128, container.tileEntity.getScaledCoolant(58), container.tileEntity.getCoolant());
 		}
 	}
 
@@ -39,7 +39,10 @@ public class GuiStearilliumReactor extends GuiMain {
 
 	@Override
 	protected void drawTooltips() {
+		if (isHovering(126, 145, 14, 75)) {
+			drawToolTip(container.tileEntity.getCoolant().amount+" / 10000 Mb");
 
+		}
 	}
 
 	public boolean handleMouseClicked( int x, int y, int mouseButton ) {

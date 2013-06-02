@@ -2,12 +2,15 @@ package mrhid6.zonus;
 
 import java.io.File;
 import java.util.HashMap;
+import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.lib.CreativeTabXor;
 import mrhid6.zonus.lib.ItemIds;
 import mrhid6.zonus.lib.event.BonemealHandler;
 import mrhid6.zonus.lib.event.GridEventHandler;
+import mrhid6.zonus.render.BRCrystal;
 import mrhid6.zonus.render.BRCrystalForge;
+import mrhid6.zonus.render.BRNoxiteLogger;
 import mrhid6.zonus.render.BRTriniumConverter;
 import mrhid6.zonus.render.BRZoroChest;
 import mrhid6.zonus.render.RenderBlockCable;
@@ -44,6 +47,8 @@ public class Config extends Configuration {
 		RenderingRegistry.registerBlockHandler(new BRTriniumConverter());
 		RenderingRegistry.registerBlockHandler(new BRZoroChest());
 		RenderingRegistry.registerBlockHandler(new BRCrystalForge());
+		RenderingRegistry.registerBlockHandler(new BRCrystal());
+		RenderingRegistry.registerBlockHandler(new BRNoxiteLogger());
 
 		RegisterEvents();
 
@@ -68,7 +73,7 @@ public class Config extends Configuration {
 		BlockIds.addBlockID(config, "winterbirchLog");
 		BlockIds.addBlockID(config, "hazelspringLeaves");
 		BlockIds.addBlockID(config, "winterbirchLeaves");
-		BlockIds.addBlockID(config, "winterbirchSapling");
+		BlockIds.addBlockID(config, "zonusSaplings");
 		BlockIds.addBlockID(config, "triniumBrick");
 		BlockIds.addBlockID(config, "blockFancy");
 		BlockIds.addBlockID(config, "stearilliumGlass");
@@ -81,6 +86,7 @@ public class Config extends Configuration {
 
 		BlockIds.addBlockID(config, "cableTip");
 		BlockIds.addBlockID(config, "crystalForge");
+		BlockIds.addBlockID(config, "crystal");
 
 		ItemIds.addItemID(config, "zoroIngot");
 		ItemIds.addItemID(config, "triniumIngot");

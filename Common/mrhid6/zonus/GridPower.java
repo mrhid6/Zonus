@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import mrhid6.zonus.interfaces.ISidedBlock;
 import mrhid6.zonus.lib.ClosestChest;
+import mrhid6.zonus.lib.GridTileEntity;
 import mrhid6.zonus.lib.InventoryUtils;
 import mrhid6.zonus.lib.Utils;
 import mrhid6.zonus.network.PacketGrid;
@@ -31,7 +32,7 @@ public class GridPower {
 
 	public static final float energyCubeIncrease = 5000.0F;
 	private HashMap<TECableBase, Integer> cablesArray;
-	private HashMap<TEZoroChest, Integer> chestArray;
+	private HashMap<GridTileEntity, Integer> chestArray;
 	private HashMap<TETriniumConverter, Integer> converterArray;
 	private HashMap<TEStearilliumEnergyCube, Integer> energyCubeArray;
 	public int energystorage = 0;
@@ -55,7 +56,8 @@ public class GridPower {
 		energyCubeArray = new HashMap<TEStearilliumEnergyCube, Integer>();
 		reactorArray = new HashMap<TEStearilliumReactor, Integer>();
 		converterArray = new HashMap<TETriniumConverter, Integer>();
-		chestArray = new HashMap<TEZoroChest, Integer>();
+
+		chestArray = new HashMap<GridTileEntity, Integer>();
 		energystorage = 0;
 		gridIndex = GridManager.addGridToManager(this);
 	}
@@ -70,12 +72,32 @@ public class GridPower {
 	}
 
 	public void addChest( TEZoroChest te ) {
-
-		if (!hasChest(te)) {
-			chestArray.put(te, 2);
+		GridTileEntity gte = new GridTileEntity(te);
+		if (!hasChest(gte)) {
+			chestArray.put(gte, 2);
+			
 			te.gridindex = gridIndex;
 			te.setUpdate(true);
+			System.out.println("added chest!");
 		}
+	}
+
+	public TileEntity getGridTileEntity(World world, GridTileEntity gte){
+
+		if(world == null || gte == null) {
+			System.out.println("world:"+(world!=null));
+			System.out.println("gte:"+(gte!=null));
+			return null;
+		}
+		
+		
+		TileEntity te = world.getBlockTileEntity(gte.getX(), gte.getY(), gte.getZ());
+		
+		if(te == null && Utils.isServerWorld()){
+			System.out.println(gte.toString());
+		}
+		
+		return te;
 	}
 
 	public void addConverter( TETriniumConverter te, int i ) {
@@ -226,7 +248,7 @@ public class GridPower {
 
 				if (te1 instanceof TEPoweredBase) {
 
-					if (te.xCoord == x1 && te.yCoord == y1 && te.zCoord == z1) {
+					if (te.xCoord == x1 && te.yCoord == y1 && te.zCoord == z1 && te.canInteractWith(cable)) {
 						return true;
 					}
 				}
@@ -309,9 +331,14 @@ public class GridPower {
 		ArrayList<TEZoroChest> res = new ArrayList<TEZoroChest>();
 
 		ArrayList<ClosestChest> chests = new ArrayList<ClosestChest>();
-		for (TEZoroChest te1 : chestArray.keySet()) {
+		for (GridTileEntity gte : chestArray.keySet()) {
 
-			if (chestArray.get(te1) == 2 && te1.getMode() == 0 || te1.getMode() == 1 && (te1.getColour() == 0 || te1.getColour() == colour)) {
+			TileEntity te = getGridTileEntity(start.worldObj,gte);
+			if(te == null || !(te instanceof TEZoroChest)) continue;
+
+			TEZoroChest te1 = (TEZoroChest)te;
+
+			if (chestArray.get(gte) == 2 && te1.getMode() == 0 || te1.getMode() == 1 && (te1.getColour() == 0 || te1.getColour() == colour)) {
 				int xdif = te1.xCoord - start.xCoord;
 				int ydif = te1.yCoord - start.yCoord;
 				int zdif = te1.zCoord - start.zCoord;
@@ -328,30 +355,6 @@ public class GridPower {
 		chests.clear();
 
 		return res;
-
-	}
-
-	public void PathFindToObj(TEPoweredBase start, Class<?> end){
-
-		if(end.equals(TEZoroChest.class)){
-			System.out.println("########################");
-			ArrayList<ClosestChest> chests = new ArrayList<ClosestChest>();
-
-			for (TEZoroChest te1 : chestArray.keySet()) {
-				if (chestArray.get(te1) == 2 && te1.getMode() == 0 || te1.getMode() == 1) {
-					int xdif = te1.xCoord - start.xCoord;
-					int ydif = te1.yCoord - start.yCoord;
-					int zdif = te1.zCoord - start.zCoord;
-
-					chests.add(new ClosestChest(xdif, ydif, zdif, te1));
-					System.out.println("x"+xdif+"y"+ydif+"z"+zdif);
-				}
-			}
-
-			Collections.sort(chests, new ChestComparator());
-
-
-		}
 
 	}
 
@@ -377,9 +380,17 @@ public class GridPower {
 	public TEZoroChest getFirstChestForReciveForItem(TEPoweredBase start, int colour, ItemStack stack ) {
 
 		ArrayList<ClosestChest> chests = new ArrayList<ClosestChest>();
-		for (TEZoroChest te1 : chestArray.keySet()) {
+		for (GridTileEntity gte : chestArray.keySet()) {
 
-			if ((chestArray.get(te1) == 2) && (te1.getMode() == 0 || te1.getMode() == 2) && (te1.getColour() == 0 || te1.getColour() == colour) && InventoryUtils.canStoreInChest(te1, stack)) {
+			TileEntity te = getGridTileEntity(start.worldObj, gte);
+			
+			if(te==null || !(te instanceof TEZoroChest)){
+				System.out.println("something went wrong!");
+				continue;
+			}
+
+			TEZoroChest te1 = (TEZoroChest)te;
+			if ((chestArray.get(gte) == 2) && (te1.getMode() == 0 || te1.getMode() == 2) && (te1.getColour() == 0 || te1.getColour() == colour) && InventoryUtils.canStoreInChest(te1, stack)) {
 				int xdif = te1.xCoord - start.xCoord;
 				int ydif = te1.yCoord - start.yCoord;
 				int zdif = te1.zCoord - start.zCoord;
@@ -388,18 +399,24 @@ public class GridPower {
 			}
 		}
 		Collections.sort(chests, new ChestComparator());
-		
+
 		if(chests.size()>0){
-			
+
 			return chests.get(0).chest;
+		}else{
+			//System.out.println("couldnt find chest!");
 		}
 		return null;
 
 	}
 
-	public TEZoroChest getFirstChestForSend( int colour ) {
-		for (TEZoroChest te1 : chestArray.keySet()) {
+	public TEZoroChest getFirstChestForSend(World world, int colour ) {
+		for (GridTileEntity gte : chestArray.keySet()) {
 
+			TileEntity te = getGridTileEntity(world,gte);
+			if(te == null || !(te instanceof TEZoroChest)) continue;
+
+			TEZoroChest te1 = (TEZoroChest)te;
 			if (chestArray.get(te1) == 2 && te1.getMode() == 0 || te1.getMode() == 1 && (te1.getColour() == 0 || te1.getColour() == colour)) {
 				return te1;
 			}
@@ -449,9 +466,10 @@ public class GridPower {
 		return false;
 	}
 
-	public boolean hasChest( TEZoroChest te ) {
-		for (TEZoroChest te1 : chestArray.keySet()) {
-			if (te == te1 && chestArray.get(te1) == 2) {
+	public boolean hasChest( GridTileEntity te ) {
+		
+		for (GridTileEntity te1 : chestArray.keySet()) {
+			if (te.isEqual(te1) && chestArray.get(te1) == 2) {
 				return true;
 			}
 		}
@@ -532,7 +550,7 @@ public class GridPower {
 	}
 
 	public void pathFinder( int x, int y, int z, World w, ArrayList<TECableBase> cab, ArrayList<TETriniumConverter> con ) {
-		
+
 		int[] invertedsides = new int[]{5,4,1,0,3,2};
 		for (int i = 0; i < 6; i++) {
 
@@ -585,7 +603,8 @@ public class GridPower {
 
 			if (te1 instanceof TEZoroChest) {
 				TEZoroChest chest = (TEZoroChest) te1;
-				if (!hasChest(chest) && chest.canInteractWith(te)) {
+				GridTileEntity gte = new GridTileEntity(chest);
+				if (!hasChest(gte) && chest.canInteractWith(te)) {
 					addChest(chest);
 					continue;
 				}
@@ -605,7 +624,7 @@ public class GridPower {
 						if( ((ISidedBlock)machine).canConnectOnSide(i^1)){
 							addMachine(machine);
 						}
-						
+
 					}else{
 						addMachine(machine);
 					}
@@ -623,9 +642,10 @@ public class GridPower {
 	}
 
 	public void removeChest( TEZoroChest te ) {
-		if (chestArray.containsKey(te) && chestArray.get(te).intValue() == 2) {
-			chestArray.put(te, 1);
-			// System.out.println("removed Chest!");
+		GridTileEntity gte = new GridTileEntity(te);
+		if (chestArray.containsKey(gte) && chestArray.get(gte).intValue() == 2) {
+			chestArray.put(gte, 1);
+			System.out.println("removed Chest!");
 		}
 	}
 

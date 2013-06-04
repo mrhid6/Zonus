@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 
 public class ItemBlockSaplings extends ItemBlock {
 
-	private final static String[] subNames = { "Winter Birch Sapling","Hazlespring Sapling", "Noxite Block", "Noxite Engineering Core", "lightBlue", "yellow", "lightGreen", "pink", "darkGrey", "lightGrey", "cyan", "purple", "blue", "brown", "green", "red", "black" };
+	private final static String[] subNames = { "Winter Birch Sapling","Hazlespring Sapling" };
 
 	public ItemBlockSaplings( int id ) {
 		super(id);

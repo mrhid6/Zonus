@@ -2,7 +2,6 @@ package mrhid6.zonus;
 
 import java.io.File;
 import java.util.HashMap;
-import mrhid6.zonus.block.ModBlocks;
 import mrhid6.zonus.lib.BlockIds;
 import mrhid6.zonus.lib.CreativeTabXor;
 import mrhid6.zonus.lib.ItemIds;

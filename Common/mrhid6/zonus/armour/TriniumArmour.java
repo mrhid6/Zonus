@@ -10,6 +10,7 @@ import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.IArmorTextureProvider;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -20,7 +21,8 @@ public class TriniumArmour extends ItemArmor implements IArmorTextureProvider {
 	public TriniumArmour( int id, EnumArmorMaterial enumMaterial, int par3, int par4 ) {
 		super(id, enumMaterial, par3, par4);
 		setCreativeTab(Config.creativeTabXor);
-
+		
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@Override

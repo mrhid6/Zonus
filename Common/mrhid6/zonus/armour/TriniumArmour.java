@@ -5,6 +5,7 @@ import mrhid6.zonus.Zonus;
 import mrhid6.zonus.items.ModItems;
 import mrhid6.zonus.lib.Utils;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.ItemArmor;
@@ -21,7 +22,6 @@ public class TriniumArmour extends ItemArmor implements IArmorTextureProvider {
 	public TriniumArmour( int id, EnumArmorMaterial enumMaterial, int par3, int par4 ) {
 		super(id, enumMaterial, par3, par4);
 		setCreativeTab(Config.creativeTabXor);
-		
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -38,7 +38,6 @@ public class TriniumArmour extends ItemArmor implements IArmorTextureProvider {
 
 	@ForgeSubscribe
 	public void onEntityLivingFallEvent( LivingFallEvent event ) {
-		System.out.println("fall event was called!");
 		if (Utils.isServerWorld() && event.entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.entity;
 			ItemStack armor = player.inventory.armorInventory[0];

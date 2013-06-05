@@ -79,7 +79,7 @@ public class Zonus {
 		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
 		GameRegistry.registerWorldGenerator(new WorldGenBase());
 
-		EntityRegistry.registerModEntity(EntityTitan.class, "Titan", 1, this, 80, 3, true);
+		//EntityRegistry.registerModEntity(EntityTitan.class, "Titan", 1, this, 80, 3, true);
 
 		// EntityRegistry.addSpawn(EntityTitan.class, 10, 2, 4,
 		// EnumCreatureType.creature, BiomeGenBase.plains,BiomeGenBase.forest);
@@ -88,8 +88,11 @@ public class Zonus {
 		registerEntityEgg(EntityTitan.class, 0xff0000, 0x0000ff);
 	}
 
+	
+	
 	@PreInit
 	public void preInit( FMLPreInitializationEvent event ) {
+		
 		Config.init(event.getSuggestedConfigurationFile());
 		VersionControll.Execute();
 		Reference.useBuildCraft = BuildcraftProxy.isBuildCraftInstalled();

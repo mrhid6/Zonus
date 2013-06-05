@@ -53,6 +53,9 @@ public class Config extends Configuration {
 
 		config = new Configuration(configFile);
 		config.load();
+		
+		config.addCustomCategoryComment(CATEGORY_BLOCK, "Default Block Ids Start from 500");
+		BlockIds.StartId = config.get(CATEGORY_GENERAL, "blockidstart", 500).getInt();
 
 		BlockIds.addBlockID(config, "zoroCable");
 		BlockIds.addBlockID(config, "triniumCable");
@@ -87,6 +90,9 @@ public class Config extends Configuration {
 		BlockIds.addBlockID(config, "crystalForge");
 		BlockIds.addBlockID(config, "crystal");
 
+		config.addCustomCategoryComment(CATEGORY_ITEM, "Default Item Ids Start from 5000");
+		ItemIds.StartId = config.get(CATEGORY_GENERAL, "itemidstart", 5000).getInt();
+		
 		ItemIds.addItemID(config, "zoroIngot");
 		ItemIds.addItemID(config, "triniumIngot");
 		ItemIds.addItemID(config, "zoroBucket");

@@ -195,7 +195,6 @@ public class ModBlocks {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
-		System.out.println("############################# texturehook!");
 		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
 			//LiquidDictionary.getCanonicalLiquid("Fuel").setRenderingIcon(fuel.getIconFromDamage(0)).setTextureSheet("/gui/items.png");
 		} else {
